@@ -1,10 +1,10 @@
-package org.umbrellahq.baseapp.ui.activity
+package org.umbrellahq.baseapp.activity
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.umbrellahq.baseapp.R
-import org.umbrellahq.baseapp.ui.fragment.MainFragment
+import org.umbrellahq.baseapp.fragment.MainFragment
 
 class MainActivity : AppCompatActivity() {
 

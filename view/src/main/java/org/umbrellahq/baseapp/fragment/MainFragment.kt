@@ -1,4 +1,4 @@
-package org.umbrellahq.baseapp.ui.fragment
+package org.umbrellahq.baseapp.fragment
 
 
 import android.os.Bundle
