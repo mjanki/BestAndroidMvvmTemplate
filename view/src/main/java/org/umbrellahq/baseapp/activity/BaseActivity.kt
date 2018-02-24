@@ -18,15 +18,13 @@ open class BaseActivity : AppCompatActivity() {
         NavigationUtil.setup(R.id.flContainer)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            // Respond to the action bar's Up/Home button
-            android.R.id.home -> {
-                popActivity()
-                return true
-            }
-        }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        android.R.id.home -> consume { popActivity() }
+        else -> super.onOptionsItemSelected(item)
+    }
 
-        return super.onOptionsItemSelected(item)
+    private inline fun consume(f: () -> Unit): Boolean {
+        f()
+        return true
     }
 }
