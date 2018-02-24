@@ -28,7 +28,9 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bSecondary.setOnClickListener {
-            activity?.pushActivity(SecondaryActivity::class)
+            val bundle = Bundle()
+            bundle.putString(SecondaryFragment.EXTRA_NAME, "This is the new text!")
+            activity?.pushActivity(SecondaryActivity::class, bundle)
         }
     }
 }

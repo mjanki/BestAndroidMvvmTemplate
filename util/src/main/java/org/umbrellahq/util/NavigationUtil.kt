@@ -1,6 +1,7 @@
 package org.umbrellahq.util
 
 import android.content.Intent
+import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
@@ -33,8 +34,10 @@ fun FragmentManager.pushFragment(fragment: Fragment) {
     beginTransaction().add(NavigationUtil.mainResId, fragment).commit()
 }
 
-fun FragmentActivity.pushActivity(cls: KClass<*>) {
-    startActivity(Intent(this, cls.java))
+fun FragmentActivity.pushActivity(cls: KClass<*>, bundle: Bundle? = null) {
+    startActivity(Intent(this, cls.java).apply {
+        if (bundle != null) putExtras(bundle)
+    })
 }
 
 fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, title: String = "") {
