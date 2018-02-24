@@ -1,6 +1,8 @@
 package org.umbrellahq.baseapp.fragment
 
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +17,9 @@ import org.umbrellahq.util.pushActivity
 
 class MainFragment : Fragment() {
     companion object {
+        const val REQUEST_CODE_1 = 1
+        const val EXTRA_NAME = "extra1"
+
         fun newInstance(): MainFragment {
             return MainFragment()
         }
@@ -30,7 +35,16 @@ class MainFragment : Fragment() {
         bSecondary.setOnClickListener {
             val bundle = Bundle()
             bundle.putString(SecondaryFragment.EXTRA_NAME, "This is the new text!")
-            activity?.pushActivity(SecondaryActivity::class, bundle)
+            pushActivity(SecondaryActivity::class, bundle, REQUEST_CODE_1)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_1 && resultCode == Activity.RESULT_OK) {
+            val string = data?.getStringExtra(EXTRA_NAME)
+            if (string != null) tvMain.text = string
         }
     }
 }

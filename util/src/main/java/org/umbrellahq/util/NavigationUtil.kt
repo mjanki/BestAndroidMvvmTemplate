@@ -1,5 +1,6 @@
 package org.umbrellahq.util
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -31,17 +32,24 @@ fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, tit
     this.title = title
 }
 
-fun FragmentActivity.pushActivity(cls: KClass<*>, bundle: Bundle? = null) {
-    startActivity(Intent(this, cls.java).apply {
+fun Fragment.pushActivity(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null) {
+    val intent = Intent(activity, cls.java).apply {
         if (bundle != null) putExtras(bundle)
-    })
+    }
+
+    if (code == null) startActivity(intent) else activity?.startActivityFromFragment(this, intent, code)
 }
 
-fun AppCompatActivity.popActivity() {
-    try {
-        NavUtils.navigateUpFromSameTask(this)
-    } catch (e: IllegalArgumentException) {
-        Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
+fun FragmentActivity.popActivity(intent: Intent? = null) {
+    if (intent != null) {
+        setResult(Activity.RESULT_OK, intent)
+        finish()
+    } else {
+        try {
+            NavUtils.navigateUpFromSameTask(this)
+        } catch (e: IllegalArgumentException) {
+            Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
+        }
     }
 }
 
