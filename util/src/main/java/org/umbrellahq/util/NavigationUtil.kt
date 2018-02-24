@@ -25,13 +25,10 @@ object NavigationUtil {
     }
 }
 
-fun FragmentManager.pushFragment(fragment: Fragment) {
-    if (NavigationUtil.mainResId == -1) {
-        Log.e(NavigationUtil.TAG, "Setup Main Res Id before using pushFragment")
-        return
-    }
-
-    beginTransaction().add(NavigationUtil.mainResId, fragment).commit()
+fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, title: String = "") {
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(showUp)
+    this.title = title
 }
 
 fun FragmentActivity.pushActivity(cls: KClass<*>, bundle: Bundle? = null) {
@@ -40,16 +37,19 @@ fun FragmentActivity.pushActivity(cls: KClass<*>, bundle: Bundle? = null) {
     })
 }
 
-fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, title: String = "") {
-    setSupportActionBar(toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(showUp)
-    this.title = title
-}
-
 fun AppCompatActivity.popActivity() {
     try {
         NavUtils.navigateUpFromSameTask(this)
     } catch (e: IllegalArgumentException) {
         Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
     }
+}
+
+fun FragmentManager.pushFragment(fragment: Fragment) {
+    if (NavigationUtil.mainResId == -1) {
+        Log.e(NavigationUtil.TAG, "Setup Main Res Id before using pushFragment")
+        return
+    }
+
+    beginTransaction().add(NavigationUtil.mainResId, fragment).commit()
 }
