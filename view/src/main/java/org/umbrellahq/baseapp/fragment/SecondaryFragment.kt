@@ -19,14 +19,14 @@ class SecondaryFragment : Fragment() {
             val secondaryFragment = SecondaryFragment()
 
             if (extras != null) {
-                secondaryFragment.text = extras.getString(EXTRA_NAME)
+                secondaryFragment.text = extras.getString(EXTRA_NAME, secondaryFragment.text)
             }
 
             return secondaryFragment
         }
     }
 
-    var text: String = ""
+    var text: String = "No Value"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return container?.inflate(R.layout.fragment_secondary)
