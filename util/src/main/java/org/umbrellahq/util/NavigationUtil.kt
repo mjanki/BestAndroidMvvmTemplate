@@ -8,9 +8,9 @@ import android.util.Log
  * Created by mjanki on 2/18/18.
  */
 
-const val TAG = "NavigationUtil"
-
 object NavigationUtil {
+    const val TAG = "NavigationUtil"
+
     var mainResId: Int = -1
 
     fun setup(mainResId: Int) {
@@ -20,7 +20,7 @@ object NavigationUtil {
 
 fun FragmentManager.pushFragment(fragment: Fragment) {
     if (NavigationUtil.mainResId == -1) {
-        Log.e(TAG, "Setup Main Res Id before using pushFragment")
+        Log.e(NavigationUtil.TAG, "Setup Main Res Id before using pushFragment")
         return
     }
 

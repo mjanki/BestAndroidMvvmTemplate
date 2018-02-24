@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.umbrellahq.baseapp.R
+import org.umbrellahq.util.inflate
 
 
 class MainFragment : Fragment() {
@@ -17,6 +18,6 @@ class MainFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return container?.inflate(R.layout.fragment_main)
     }
 }
