@@ -1,7 +1,6 @@
 package org.umbrellahq.baseapp.fragment
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -41,7 +40,7 @@ class SecondaryFragment : Fragment() {
         tvMain.text = text
 
         bMain.setOnClickListener {
-            activity?.popActivity(Intent().putExtra(MainFragment.EXTRA_NAME, "This is extra returned!"))
+            popActivity(Intent().putExtra(MainFragment.EXTRA_NAME, "This is extra returned!"))
         }
     }
 }

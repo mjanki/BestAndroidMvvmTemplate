@@ -32,12 +32,19 @@ fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, tit
     this.title = title
 }
 
-fun Fragment.pushActivity(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null) {
-    val intent = Intent(activity, cls.java).apply {
+fun FragmentActivity.pushActivity(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null) {
+    val intent = Intent(this, cls.java).apply {
         if (bundle != null) putExtras(bundle)
     }
 
-    if (code == null) startActivity(intent) else activity?.startActivityFromFragment(this, intent, code)
+    if (code != null) {
+        if (fragment != null) startActivityFromFragment(fragment, intent, code)
+        else startActivityForResult(intent, code)
+    } else startActivity(intent)
+}
+
+fun Fragment.pushActivity(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null) {
+    activity?.pushActivity(cls, bundle, code, this)
 }
 
 fun FragmentActivity.popActivity(intent: Intent? = null) {
@@ -51,6 +58,10 @@ fun FragmentActivity.popActivity(intent: Intent? = null) {
             Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
         }
     }
+}
+
+fun Fragment.popActivity(intent: Intent? = null) {
+    activity?.popActivity(intent)
 }
 
 fun FragmentManager.pushFragment(fragment: Fragment) {
