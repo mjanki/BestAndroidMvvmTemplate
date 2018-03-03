@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentManager
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -68,13 +69,18 @@ fun Fragment.push(fragment: Fragment, addToBackStack: Boolean = true, fragmentTa
 }
 
 /* Handle Pop */
-fun FragmentActivity.pop(intent: Intent? = null, forcePopActivity: Boolean = false) {
-    if (intent != null || supportFragmentManager.backStackEntryCount == 0 || forcePopActivity) popActivity(intent)
-    else supportFragmentManager.popBackStack()
+fun FragmentActivity.pop(intent: Intent? = null, forcePopActivity: Boolean = false, fragmentTag: String? = null, popInclusive: Boolean = false) {
+    if (intent != null || supportFragmentManager.backStackEntryCount == 0 || forcePopActivity) {
+        popActivity(intent)
+    } else if (fragmentTag != null && supportFragmentManager.findFragmentByTag(fragmentTag) != null) {
+        supportFragmentManager.popBackStack(fragmentTag, if (popInclusive) FragmentManager.POP_BACK_STACK_INCLUSIVE else 0)
+    } else {
+        supportFragmentManager.popBackStack()
+    }
 }
 
-fun Fragment.pop(intent: Intent? = null, forcePopActivity: Boolean = false) {
-    activity?.pop(intent, forcePopActivity)
+fun Fragment.pop(intent: Intent? = null, forcePopActivity: Boolean = false, fragmentTag: String? = null, popInclusive: Boolean = false) {
+    activity?.pop(intent, forcePopActivity, fragmentTag, popInclusive)
 }
 
 private fun FragmentActivity.popActivity(intent: Intent? = null) {
