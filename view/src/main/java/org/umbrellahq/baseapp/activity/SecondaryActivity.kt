@@ -4,7 +4,7 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.fragment.SecondaryFragment
-import org.umbrellahq.util.pushFragment
+import org.umbrellahq.util.push
 import org.umbrellahq.util.setupToolbar
 
 class SecondaryActivity : BaseActivity() {
@@ -16,6 +16,6 @@ class SecondaryActivity : BaseActivity() {
 
         if (savedInstanceState != null) { return }
 
-        pushFragment(SecondaryFragment.newInstance(intent.extras), addToBackStack = false)
+        push(SecondaryFragment.newInstance(intent.extras), addToBackStack = false)
     }
 }

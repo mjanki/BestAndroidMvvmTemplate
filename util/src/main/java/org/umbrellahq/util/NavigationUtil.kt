@@ -31,8 +31,8 @@ fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, tit
     this.title = title
 }
 
-// Go to new activity
-fun FragmentActivity.pushActivity(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null) {
+/* Handle Push */
+fun FragmentActivity.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null) {
     // Create Intent, with extras if available
     val intent = Intent(this, cls.java).apply {
         if (bundle != null) putExtras(bundle)
@@ -45,13 +45,39 @@ fun FragmentActivity.pushActivity(cls: KClass<*>, bundle: Bundle? = null, code: 
     } else startActivity(intent)
 }
 
-// Add ability to call pushActivity from Fragment
-fun Fragment.pushActivity(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null) {
-    activity?.pushActivity(cls, bundle, code, this)
+fun Fragment.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null) {
+    activity?.push(cls, bundle, code, this)
 }
 
-// Navigate up
-fun FragmentActivity.popActivity(intent: Intent? = null) {
+fun FragmentActivity.push(fragment: Fragment, addToBackStack: Boolean = true, fragmentTag: String? = null) {
+    if (NavigationUtil.mainResId == -1) {
+        Log.e(NavigationUtil.TAG, "Setup Main Res Id before using push")
+        return
+    }
+
+    val transaction = supportFragmentManager.beginTransaction()
+    transaction.replace(NavigationUtil.mainResId, fragment)
+
+    if (addToBackStack) transaction.addToBackStack(fragmentTag)
+
+    transaction.commit()
+}
+
+fun Fragment.push(fragment: Fragment, addToBackStack: Boolean = true, fragmentTag: String? = null) {
+    activity?.push(fragment, addToBackStack, fragmentTag)
+}
+
+/* Handle Pop */
+fun FragmentActivity.pop(intent: Intent? = null, forcePopActivity: Boolean = false) {
+    if (intent != null || supportFragmentManager.backStackEntryCount == 0 || forcePopActivity) popActivity(intent)
+    else supportFragmentManager.popBackStack()
+}
+
+fun Fragment.pop(intent: Intent? = null, forcePopActivity: Boolean = false) {
+    activity?.pop(intent, forcePopActivity)
+}
+
+private fun FragmentActivity.popActivity(intent: Intent? = null) {
     if (intent != null) {
         // Send results back to prior activity
         setResult(Activity.RESULT_OK, intent)
@@ -64,27 +90,4 @@ fun FragmentActivity.popActivity(intent: Intent? = null) {
             Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
         }
     }
-}
-
-// Add ability to call popActivity from Fragment
-fun Fragment.popActivity(intent: Intent? = null) {
-    activity?.popActivity(intent)
-}
-
-fun FragmentActivity.pushFragment(fragment: Fragment, addToBackStack: Boolean = true, fragmentTag: String? = null) {
-    if (NavigationUtil.mainResId == -1) {
-        Log.e(NavigationUtil.TAG, "Setup Main Res Id before using pushFragment")
-        return
-    }
-
-    val transaction = supportFragmentManager.beginTransaction()
-    transaction.replace(NavigationUtil.mainResId, fragment)
-
-    if (addToBackStack) transaction.addToBackStack(fragmentTag)
-
-    transaction.commit()
-}
-
-fun Fragment.pushFragment(fragment: Fragment, addToBackStack: Boolean = true, fragmentTag: String? = null) {
-    activity?.pushFragment(fragment, addToBackStack, fragmentTag)
 }

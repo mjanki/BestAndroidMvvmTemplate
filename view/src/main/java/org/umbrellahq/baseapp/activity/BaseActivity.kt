@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.util.NavigationUtil
-import org.umbrellahq.util.popActivity
+import org.umbrellahq.util.pop
 
 /**
  * Created by mjanki on 2/18/18.
@@ -19,7 +19,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        android.R.id.home -> consume { popActivity() }
+        android.R.id.home -> consume { pop() }
         else -> super.onOptionsItemSelected(item)
     }
 

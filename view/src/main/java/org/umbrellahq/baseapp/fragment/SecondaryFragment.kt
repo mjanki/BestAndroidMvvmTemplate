@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_secondary.*
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.util.inflate
-import org.umbrellahq.util.popActivity
-import org.umbrellahq.util.pushFragment
+import org.umbrellahq.util.pop
+import org.umbrellahq.util.push
 
 
 class SecondaryFragment : Fragment() {
@@ -41,11 +41,11 @@ class SecondaryFragment : Fragment() {
         tvMain.text = text
 
         bMain.setOnClickListener {
-            popActivity(Intent().putExtra(MainFragment.EXTRA_NAME, "This is extra returned!"))
+            pop(Intent().putExtra(MainFragment.EXTRA_NAME, "This is extra returned!"))
         }
 
         bFragment.setOnClickListener {
-            pushFragment(ThirdFragment.newInstance())
+            push(ThirdFragment.newInstance())
         }
     }
 }

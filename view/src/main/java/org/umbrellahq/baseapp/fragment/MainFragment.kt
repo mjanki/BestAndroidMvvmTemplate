@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.activity.SecondaryActivity
 import org.umbrellahq.util.inflate
-import org.umbrellahq.util.pushActivity
+import org.umbrellahq.util.push
 
 
 class MainFragment : Fragment() {
@@ -35,7 +35,7 @@ class MainFragment : Fragment() {
         bSecondary.setOnClickListener {
             val bundle = Bundle()
             bundle.putString(SecondaryFragment.EXTRA_NAME, "This is the new text!")
-            pushActivity(SecondaryActivity::class, bundle, REQUEST_CODE_1)
+            push(SecondaryActivity::class, bundle, REQUEST_CODE_1)
         }
     }
 
