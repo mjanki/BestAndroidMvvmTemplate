@@ -50,7 +50,7 @@ fun Fragment.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null) {
     activity?.push(cls, bundle, code, this)
 }
 
-fun FragmentActivity.push(fragment: Fragment, addToBackStack: Boolean = true, fragmentTag: String? = null) {
+fun FragmentActivity.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null) {
     if (NavigationUtil.mainResId == -1) {
         Log.e(NavigationUtil.TAG, "Setup Main Res Id before using push")
         return
@@ -59,13 +59,13 @@ fun FragmentActivity.push(fragment: Fragment, addToBackStack: Boolean = true, fr
     val transaction = supportFragmentManager.beginTransaction()
     transaction.replace(NavigationUtil.mainResId, fragment)
 
-    if (addToBackStack) transaction.addToBackStack(fragmentTag)
+    if (!isMainFragment) transaction.addToBackStack(fragmentTag)
 
     transaction.commit()
 }
 
-fun Fragment.push(fragment: Fragment, addToBackStack: Boolean = true, fragmentTag: String? = null) {
-    activity?.push(fragment, addToBackStack, fragmentTag)
+fun Fragment.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null) {
+    activity?.push(fragment, isMainFragment, fragmentTag)
 }
 
 /* Handle Pop */

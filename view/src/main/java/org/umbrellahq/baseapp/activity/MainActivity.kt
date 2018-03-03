@@ -16,6 +16,6 @@ class MainActivity : BaseActivity() {
 
         if (savedInstanceState != null) { return }
 
-        push(MainFragment.newInstance(), addToBackStack = false)
+        push(MainFragment.newInstance(), isMainFragment = true)
     }
 }
