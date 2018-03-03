@@ -42,5 +42,8 @@ class SecondaryFragment : Fragment() {
         bMain.setOnClickListener {
             popActivity(Intent().putExtra(MainFragment.EXTRA_NAME, "This is extra returned!"))
         }
+
+        bFragment.setOnClickListener {
+        }
     }
 }

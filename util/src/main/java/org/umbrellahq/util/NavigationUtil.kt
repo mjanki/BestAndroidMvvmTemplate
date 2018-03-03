@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -72,11 +71,15 @@ fun Fragment.popActivity(intent: Intent? = null) {
     activity?.popActivity(intent)
 }
 
-fun FragmentManager.pushFragment(fragment: Fragment) {
+fun FragmentActivity.pushFragment(fragment: Fragment) {
     if (NavigationUtil.mainResId == -1) {
         Log.e(NavigationUtil.TAG, "Setup Main Res Id before using pushFragment")
         return
     }
 
-    beginTransaction().add(NavigationUtil.mainResId, fragment).commit()
+    supportFragmentManager.beginTransaction().add(NavigationUtil.mainResId, fragment).commit()
+}
+
+fun Fragment.pushFragment() {
+    activity?.pushFragment(this)
 }
