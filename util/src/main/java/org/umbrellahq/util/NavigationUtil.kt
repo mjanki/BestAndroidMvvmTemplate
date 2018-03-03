@@ -80,6 +80,6 @@ fun FragmentActivity.pushFragment(fragment: Fragment) {
     supportFragmentManager.beginTransaction().add(NavigationUtil.mainResId, fragment).commit()
 }
 
-fun Fragment.pushFragment() {
-    activity?.pushFragment(this)
+fun Fragment.pushFragment(fragment: Fragment) {
+    activity?.pushFragment(fragment)
 }
