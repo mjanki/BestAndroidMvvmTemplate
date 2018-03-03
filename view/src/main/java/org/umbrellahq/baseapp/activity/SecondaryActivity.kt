@@ -16,6 +16,6 @@ class SecondaryActivity : BaseActivity() {
 
         if (savedInstanceState != null) { return }
 
-        pushFragment(SecondaryFragment.newInstance(intent.extras))
+        pushFragment(SecondaryFragment.newInstance(intent.extras), addToBackStack = false)
     }
 }

@@ -71,15 +71,20 @@ fun Fragment.popActivity(intent: Intent? = null) {
     activity?.popActivity(intent)
 }
 
-fun FragmentActivity.pushFragment(fragment: Fragment) {
+fun FragmentActivity.pushFragment(fragment: Fragment, addToBackStack: Boolean = true, fragmentTag: String? = null) {
     if (NavigationUtil.mainResId == -1) {
         Log.e(NavigationUtil.TAG, "Setup Main Res Id before using pushFragment")
         return
     }
 
-    supportFragmentManager.beginTransaction().add(NavigationUtil.mainResId, fragment).commit()
+    val transaction = supportFragmentManager.beginTransaction()
+    transaction.replace(NavigationUtil.mainResId, fragment)
+
+    if (addToBackStack) transaction.addToBackStack(fragmentTag)
+
+    transaction.commit()
 }
 
-fun Fragment.pushFragment(fragment: Fragment) {
-    activity?.pushFragment(fragment)
+fun Fragment.pushFragment(fragment: Fragment, addToBackStack: Boolean = true, fragmentTag: String? = null) {
+    activity?.pushFragment(fragment, addToBackStack, fragmentTag)
 }

@@ -13,7 +13,7 @@ import org.umbrellahq.util.inflate
 
 class ThirdFragment : Fragment() {
     companion object {
-        fun newInstance(extras: Bundle?): ThirdFragment {
+        fun newInstance(): ThirdFragment {
             return ThirdFragment()
         }
     }

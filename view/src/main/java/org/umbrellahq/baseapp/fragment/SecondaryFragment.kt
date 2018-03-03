@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_secondary.*
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.popActivity
+import org.umbrellahq.util.pushFragment
 
 
 class SecondaryFragment : Fragment() {
@@ -44,6 +45,7 @@ class SecondaryFragment : Fragment() {
         }
 
         bFragment.setOnClickListener {
+            pushFragment(ThirdFragment.newInstance())
         }
     }
 }
