@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.Button
 import kotlin.reflect.KClass
 
@@ -107,6 +108,14 @@ private fun FragmentActivity.popActivity(intent: Intent? = null) {
         } catch (e: IllegalArgumentException) {
             Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
         }
+    }
+}
+
+fun FragmentActivity.removeOverlay() {
+    val bOverlay: Button? = findViewById(R.id.overlay_id)
+    if (bOverlay != null) {
+        val parent = bOverlay.parent as ViewGroup
+        parent.removeView(bOverlay)
     }
 }
 
