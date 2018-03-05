@@ -5,17 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.NavUtils
+import android.support.v4.app.*
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
-import kotlin.reflect.KClass
 
 object NavigationUtil {
     const val TAG = "NavigationUtil"
@@ -36,12 +32,12 @@ fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, tit
 }
 
 /* Handle Push */
-fun FragmentActivity.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null, blocking: Boolean = true) {
+inline fun <reified T> FragmentActivity.push(bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null, blocking: Boolean = true) {
     // Add overlay if blocking
     if (blocking) addOverlay()
 
     // Create Intent, with extras if available
-    val intent = Intent(this, cls.java).apply {
+    val intent = Intent(this, T::class.java).apply {
         if (bundle != null) putExtras(bundle)
     }
 
@@ -52,8 +48,8 @@ fun FragmentActivity.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = n
     } else startActivity(intent)
 }
 
-fun Fragment.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, blocking: Boolean = true) {
-    activity?.push(cls, bundle, code, this, blocking)
+inline fun <reified T> Fragment.push(bundle: Bundle? = null, code: Int? = null, blocking: Boolean = true) {
+    activity?.push<T>(bundle, code, this, blocking)
 }
 
 fun FragmentActivity.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null, blocking: Boolean = true) {
@@ -115,7 +111,7 @@ fun FragmentActivity.removeOverlay() {
     }
 }
 
-private fun FragmentActivity.addOverlay() {
+fun FragmentActivity.addOverlay() {
     if (NavigationUtil.constraintLayoutResId == -1) {
         Log.e(NavigationUtil.TAG, "Setup Constraint Layout Res Id for blocking effect")
         return
