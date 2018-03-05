@@ -41,10 +41,7 @@ fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, tit
 /* Handle Push */
 fun FragmentActivity.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null, blocking: Boolean = true) {
     // Add overlay if blocking
-    if (blocking) {
-        if (NavigationUtil.constraintLayoutResId != -1) addOverlay()
-        else Log.e(NavigationUtil.TAG, "Setup Constraint Layout Red Id for blocking effect")
-    }
+    if (blocking) addOverlay()
 
     // Create Intent, with extras if available
     val intent = Intent(this, cls.java).apply {
@@ -62,7 +59,10 @@ fun Fragment.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, blo
     activity?.push(cls, bundle, code, this, blocking)
 }
 
-fun FragmentActivity.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null) {
+fun FragmentActivity.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null, blocking: Boolean = true) {
+    // Add overlay if blocking
+    if (blocking && !isMainFragment) addOverlay()
+
     if (NavigationUtil.fragmentLayoutResId == -1) {
         Log.e(NavigationUtil.TAG, "Setup Fragment Layout Res Id before using push for fragments")
         return
@@ -76,8 +76,8 @@ fun FragmentActivity.push(fragment: Fragment, isMainFragment: Boolean = false, f
     transaction.commit()
 }
 
-fun Fragment.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null) {
-    activity?.push(fragment, isMainFragment, fragmentTag)
+fun Fragment.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null, blocking: Boolean = true) {
+    activity?.push(fragment, isMainFragment, fragmentTag, blocking)
 }
 
 /* Handle Pop */
@@ -111,6 +111,11 @@ private fun FragmentActivity.popActivity(intent: Intent? = null) {
 }
 
 private fun FragmentActivity.addOverlay() {
+    if (NavigationUtil.constraintLayoutResId == -1) {
+        Log.e(NavigationUtil.TAG, "Setup Constraint Layout Red Id for blocking effect")
+        return
+    }
+
     // Add Overlay
     val constraintLayout = findViewById<ConstraintLayout>(NavigationUtil.constraintLayoutResId)
 

@@ -3,18 +3,18 @@ package org.umbrellahq.baseapp.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_secondary.*
 import org.umbrellahq.baseapp.R
+import org.umbrellahq.util.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.pop
 import org.umbrellahq.util.push
 
 
-class SecondaryFragment : Fragment() {
+class SecondaryFragment : FoundationFragment() {
     companion object {
         const val EXTRA_NAME = "name"
 

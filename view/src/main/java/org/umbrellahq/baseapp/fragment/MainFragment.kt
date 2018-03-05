@@ -4,18 +4,18 @@ package org.umbrellahq.baseapp.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.activity.SecondaryActivity
+import org.umbrellahq.util.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.push
 
 
-class MainFragment : Fragment() {
+class MainFragment : FoundationFragment() {
     companion object {
         const val REQUEST_CODE_1 = 1
         const val EXTRA_NAME = "extra1"
