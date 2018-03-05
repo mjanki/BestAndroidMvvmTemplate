@@ -32,7 +32,7 @@ fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, tit
 }
 
 /* Handle Push */
-inline fun <reified T> FragmentActivity.push(bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null, blocking: Boolean = true) {
+inline fun <reified T: AppCompatActivity> FragmentActivity.push(bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null, blocking: Boolean = true) {
     // Add overlay if blocking
     if (blocking) addOverlay()
 
@@ -48,7 +48,7 @@ inline fun <reified T> FragmentActivity.push(bundle: Bundle? = null, code: Int? 
     } else startActivity(intent)
 }
 
-inline fun <reified T> Fragment.push(bundle: Bundle? = null, code: Int? = null, blocking: Boolean = true) {
+inline fun <reified T: AppCompatActivity> Fragment.push(bundle: Bundle? = null, code: Int? = null, blocking: Boolean = true) {
     activity?.push<T>(bundle, code, this, blocking)
 }
 
