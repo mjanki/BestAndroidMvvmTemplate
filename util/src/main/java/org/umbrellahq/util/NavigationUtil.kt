@@ -125,6 +125,9 @@ private fun FragmentActivity.addOverlay() {
         return
     }
 
+
+    removeOverlay()
+    
     // Add Overlay
     val constraintLayout = findViewById<ConstraintLayout>(NavigationUtil.constraintLayoutResId)
 
