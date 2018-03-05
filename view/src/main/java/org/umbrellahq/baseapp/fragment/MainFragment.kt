@@ -14,7 +14,6 @@ import org.umbrellahq.util.foundation.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.push
 
-
 class MainFragment : FoundationFragment() {
     companion object {
         const val REQUEST_CODE_1 = 1

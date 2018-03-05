@@ -17,10 +17,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import kotlin.reflect.KClass
 
-/**
- * Created by mjanki on 2/18/18.
- */
-
 object NavigationUtil {
     const val TAG = "NavigationUtil"
 
@@ -121,7 +117,7 @@ fun FragmentActivity.removeOverlay() {
 
 private fun FragmentActivity.addOverlay() {
     if (NavigationUtil.constraintLayoutResId == -1) {
-        Log.e(NavigationUtil.TAG, "Setup Constraint Layout Red Id for blocking effect")
+        Log.e(NavigationUtil.TAG, "Setup Constraint Layout Res Id for blocking effect")
         return
     }
 

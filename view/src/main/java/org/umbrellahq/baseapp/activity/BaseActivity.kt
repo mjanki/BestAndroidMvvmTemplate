@@ -5,9 +5,6 @@ import org.umbrellahq.baseapp.R
 import org.umbrellahq.util.foundation.FoundationActivity
 import org.umbrellahq.util.NavigationUtil
 
-/**
- * Created by mjanki on 2/18/18.
- */
 open class BaseActivity : FoundationActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

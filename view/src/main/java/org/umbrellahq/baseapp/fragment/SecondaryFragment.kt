@@ -13,7 +13,6 @@ import org.umbrellahq.util.inflate
 import org.umbrellahq.util.pop
 import org.umbrellahq.util.push
 
-
 class SecondaryFragment : FoundationFragment() {
     companion object {
         const val EXTRA_NAME = "name"

@@ -12,7 +12,6 @@ import org.umbrellahq.util.foundation.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.pop
 
-
 class ThirdFragment : FoundationFragment() {
     companion object {
         fun newInstance(): ThirdFragment {
@@ -27,7 +26,7 @@ class ThirdFragment : FoundationFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvMain.text = "This is the third Fragment!"
+        tvMain.text = getString(R.string.this_is_third_fragment)
 
         bBack.setOnClickListener {
             pop(Intent().putExtra(MainFragment.EXTRA_NAME, "Forced Pop Activity"), forcePopActivity = true)

@@ -5,9 +5,6 @@ import android.view.MenuItem
 import org.umbrellahq.util.pop
 import org.umbrellahq.util.removeOverlay
 
-/**
- * Created by mjanki on 2/18/18.
- */
 open class FoundationActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
