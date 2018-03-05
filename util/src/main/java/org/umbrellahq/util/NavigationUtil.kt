@@ -3,13 +3,17 @@ package org.umbrellahq.util
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
+import android.support.constraint.ConstraintSet
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.NavUtils
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.widget.Button
 import kotlin.reflect.KClass
 
 /**
@@ -19,10 +23,12 @@ import kotlin.reflect.KClass
 object NavigationUtil {
     const val TAG = "NavigationUtil"
 
-    var mainResId: Int = -1
+    var fragmentLayoutResId: Int = -1
+    var constraintLayoutResId: Int = -1
 
-    fun setup(mainResId: Int) {
-        this.mainResId = mainResId
+    fun setup(fragmentLayoutResId: Int, constraintLayoutResId: Int) {
+        this.fragmentLayoutResId = fragmentLayoutResId
+        this.constraintLayoutResId = constraintLayoutResId
     }
 }
 
@@ -33,7 +39,13 @@ fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, tit
 }
 
 /* Handle Push */
-fun FragmentActivity.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null) {
+fun FragmentActivity.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null, blocking: Boolean = true) {
+    // Add overlay if blocking
+    if (blocking) {
+        if (NavigationUtil.constraintLayoutResId != -1) addOverlay()
+        else Log.e(NavigationUtil.TAG, "Setup Constraint Layout Red Id for blocking effect")
+    }
+
     // Create Intent, with extras if available
     val intent = Intent(this, cls.java).apply {
         if (bundle != null) putExtras(bundle)
@@ -46,18 +58,18 @@ fun FragmentActivity.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = n
     } else startActivity(intent)
 }
 
-fun Fragment.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null) {
-    activity?.push(cls, bundle, code, this)
+fun Fragment.push(cls: KClass<*>, bundle: Bundle? = null, code: Int? = null, blocking: Boolean = true) {
+    activity?.push(cls, bundle, code, this, blocking)
 }
 
 fun FragmentActivity.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null) {
-    if (NavigationUtil.mainResId == -1) {
-        Log.e(NavigationUtil.TAG, "Setup Main Res Id before using push")
+    if (NavigationUtil.fragmentLayoutResId == -1) {
+        Log.e(NavigationUtil.TAG, "Setup Fragment Layout Res Id before using push for fragments")
         return
     }
 
     val transaction = supportFragmentManager.beginTransaction()
-    transaction.replace(NavigationUtil.mainResId, fragment)
+    transaction.replace(NavigationUtil.fragmentLayoutResId, fragment)
 
     if (!isMainFragment) transaction.addToBackStack(fragmentTag)
 
@@ -96,4 +108,24 @@ private fun FragmentActivity.popActivity(intent: Intent? = null) {
             Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
         }
     }
+}
+
+private fun FragmentActivity.addOverlay() {
+    // Add Overlay
+    val constraintLayout = findViewById<ConstraintLayout>(NavigationUtil.constraintLayoutResId)
+
+    val bOverlay = Button(this)
+    bOverlay.id = R.id.overlay_id
+    bOverlay.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
+    bOverlay.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT)
+
+    constraintLayout.addView(bOverlay)
+
+    val constraintSet = ConstraintSet()
+    constraintSet.clone(constraintLayout)
+    constraintSet.connect(bOverlay.id, ConstraintSet.TOP, constraintLayout.id, ConstraintSet.TOP, 0)
+    constraintSet.connect(bOverlay.id, ConstraintSet.BOTTOM, constraintLayout.id, ConstraintSet.BOTTOM, 0)
+    constraintSet.connect(bOverlay.id, ConstraintSet.LEFT, constraintLayout.id, ConstraintSet.LEFT, 0)
+    constraintSet.connect(bOverlay.id, ConstraintSet.RIGHT, constraintLayout.id, ConstraintSet.RIGHT, 0)
+    constraintSet.applyTo(constraintLayout)
 }
