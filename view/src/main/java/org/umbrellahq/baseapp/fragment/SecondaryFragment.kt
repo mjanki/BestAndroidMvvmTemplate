@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_secondary.*
 import org.umbrellahq.baseapp.R
-import org.umbrellahq.util.FoundationFragment
+import org.umbrellahq.util.foundation.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.pop
 import org.umbrellahq.util.push

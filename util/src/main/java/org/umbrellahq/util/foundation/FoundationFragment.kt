@@ -1,9 +1,10 @@
-package org.umbrellahq.util
+package org.umbrellahq.util.foundation
 
 
 import android.support.v4.app.Fragment
 import android.view.ViewGroup
 import android.widget.Button
+import org.umbrellahq.util.R
 
 
 open class FoundationFragment : Fragment() {

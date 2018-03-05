@@ -2,7 +2,7 @@ package org.umbrellahq.baseapp.activity
 
 import android.os.Bundle
 import org.umbrellahq.baseapp.R
-import org.umbrellahq.util.FoundationActivity
+import org.umbrellahq.util.foundation.FoundationActivity
 import org.umbrellahq.util.NavigationUtil
 
 /**

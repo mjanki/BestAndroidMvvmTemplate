@@ -1,9 +1,11 @@
-package org.umbrellahq.util
+package org.umbrellahq.util.foundation
 
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.Button
+import org.umbrellahq.util.R
+import org.umbrellahq.util.pop
 
 /**
  * Created by mjanki on 2/18/18.
