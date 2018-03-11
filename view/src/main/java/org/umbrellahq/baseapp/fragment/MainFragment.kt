@@ -34,7 +34,9 @@ class MainFragment : FoundationFragment() {
         bSecondary.setOnClickListener {
             val bundle = Bundle()
             bundle.putString(SecondaryFragment.EXTRA_NAME, "This is the new text!")
-            push<SecondaryActivity>(bundle, REQUEST_CODE_1)
+            push<SecondaryActivity>(bundle, REQUEST_CODE_1, sharedViews = arrayListOf(
+                    ivAndroid, tvAndroid
+            ))
         }
     }
 

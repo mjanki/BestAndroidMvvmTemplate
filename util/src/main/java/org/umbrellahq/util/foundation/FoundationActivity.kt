@@ -2,14 +2,14 @@ package org.umbrellahq.util.foundation
 
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import org.umbrellahq.util.helper.removeOverlay
 import org.umbrellahq.util.pop
-import org.umbrellahq.util.removeOverlay
 
 open class FoundationActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        removeOverlay()
+        removeOverlay(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -17,8 +17,8 @@ open class FoundationActivity : AppCompatActivity() {
         else -> super.onOptionsItemSelected(item)
     }
 
-    private inline fun consume(f: () -> Unit): Boolean {
-        f()
+    private inline fun consume(block: () -> Unit): Boolean {
+        block()
         return true
     }
 }

@@ -1,17 +1,17 @@
 package org.umbrellahq.util
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
+import android.os.Handler
 import android.support.v4.app.*
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.view.ViewGroup
-import android.widget.Button
+import android.view.View
+import org.umbrellahq.util.helper.addOverlay
+import org.umbrellahq.util.helper.createSceneTransitionAnimation
 
 object NavigationUtil {
     const val TAG = "NavigationUtil"
@@ -31,30 +31,50 @@ fun AppCompatActivity.setupToolbar(toolbar: Toolbar, showUp: Boolean = true, tit
     this.title = title
 }
 
-/* Handle Push */
-inline fun <reified T: AppCompatActivity> FragmentActivity.push(bundle: Bundle? = null, code: Int? = null, fragment: Fragment? = null, blocking: Boolean = true) {
+/* Handle Push Activity */
+@SuppressLint("RestrictedApi")
+inline fun <reified T: AppCompatActivity> FragmentActivity.push(
+        bundle: Bundle? = null,
+        code: Int? = null,
+        fragment: Fragment? = null,
+        blocking: Boolean = true,
+        sharedView: View? = null,
+        sharedViews: ArrayList<View>? = null) {
+
     // Add overlay if blocking
-    if (blocking) addOverlay()
+    if (blocking) addOverlay(this)
 
     // Create Intent, with extras if available
     val intent = Intent(this, T::class.java).apply {
         if (bundle != null) putExtras(bundle)
     }
 
-    if (code != null) {
-        // Start activity for result either from Fragment or Activity
-        if (fragment != null) startActivityFromFragment(fragment, intent, code)
-        else startActivityForResult(intent, code)
-    } else startActivity(intent)
+    val optionsBundle: ActivityOptionsCompat? = createSceneTransitionAnimation(this, sharedView, sharedViews)
+
+    // Handler().post will make sure the overlay is put instantly before animating
+    Handler().post {
+        if (code != null) {
+            // Start activity for result either from Fragment or Activity
+            if (fragment != null) startActivityFromFragment(fragment, intent, code, optionsBundle?.toBundle())
+            else startActivityForResult(intent, code, optionsBundle?.toBundle())
+        } else startActivity(intent, optionsBundle?.toBundle())
+    }
 }
 
-inline fun <reified T: AppCompatActivity> Fragment.push(bundle: Bundle? = null, code: Int? = null, blocking: Boolean = true) {
-    activity?.push<T>(bundle, code, this, blocking)
+inline fun <reified T: AppCompatActivity> Fragment.push(
+        bundle: Bundle? = null,
+        code: Int? = null,
+        blocking: Boolean = true,
+        sharedView: View? = null,
+        sharedViews: ArrayList<View>? = null) {
+
+    activity?.push<T>(bundle, code, this, blocking, sharedView, sharedViews)
 }
 
+/* Handle Push Fragment */
 fun FragmentActivity.push(fragment: Fragment, isMainFragment: Boolean = false, fragmentTag: String? = null, blocking: Boolean = true) {
     // Add overlay if blocking
-    if (blocking && !isMainFragment) addOverlay()
+    if (blocking && !isMainFragment) addOverlay(this)
 
     if (NavigationUtil.fragmentLayoutResId == -1) {
         Log.e(NavigationUtil.TAG, "Setup Fragment Layout Res Id before using push for fragments")
@@ -62,6 +82,7 @@ fun FragmentActivity.push(fragment: Fragment, isMainFragment: Boolean = false, f
     }
 
     val transaction = supportFragmentManager.beginTransaction()
+    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
     transaction.replace(NavigationUtil.fragmentLayoutResId, fragment)
 
     if (!isMainFragment) transaction.addToBackStack(fragmentTag)
@@ -89,52 +110,14 @@ fun Fragment.pop(intent: Intent? = null, forcePopActivity: Boolean = false, frag
 }
 
 private fun FragmentActivity.popActivity(intent: Intent? = null) {
-    if (intent != null) {
-        // Send results back to prior activity
-        setResult(Activity.RESULT_OK, intent)
-        finish()
-    } else {
-        try {
-            // Navigate up if no result is expected
-            NavUtils.navigateUpFromSameTask(this)
-        } catch (e: IllegalArgumentException) {
-            Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
-        }
-    }
-}
+    if (intent != null) setResult(Activity.RESULT_OK, intent)
+    if (supportFragmentManager.backStackEntryCount == 0) onBackPressed() else finish()
 
-fun FragmentActivity.removeOverlay() {
-    val bOverlay: Button? = findViewById(R.id.overlay_id)
-    if (bOverlay != null) {
-        val parent = bOverlay.parent as ViewGroup
-        parent.removeView(bOverlay)
-    }
-}
-
-fun FragmentActivity.addOverlay() {
-    if (NavigationUtil.constraintLayoutResId == -1) {
-        Log.e(NavigationUtil.TAG, "Setup Constraint Layout Res Id for blocking effect")
-        return
-    }
-
-    // Remove overlay if exists before adding again
-    removeOverlay()
-
-    // Add Overlay
-    val constraintLayout = findViewById<ConstraintLayout>(NavigationUtil.constraintLayoutResId)
-
-    val bOverlay = Button(this)
-    bOverlay.id = R.id.overlay_id
-    bOverlay.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
-    bOverlay.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT)
-
-    constraintLayout.addView(bOverlay)
-
-    val constraintSet = ConstraintSet()
-    constraintSet.clone(constraintLayout)
-    constraintSet.connect(bOverlay.id, ConstraintSet.TOP, constraintLayout.id, ConstraintSet.TOP, 0)
-    constraintSet.connect(bOverlay.id, ConstraintSet.BOTTOM, constraintLayout.id, ConstraintSet.BOTTOM, 0)
-    constraintSet.connect(bOverlay.id, ConstraintSet.LEFT, constraintLayout.id, ConstraintSet.LEFT, 0)
-    constraintSet.connect(bOverlay.id, ConstraintSet.RIGHT, constraintLayout.id, ConstraintSet.RIGHT, 0)
-    constraintSet.applyTo(constraintLayout)
+    //TODO: Research how to preserve animations on back without using onBackPressed() or finish()
+    /*try {
+        // Navigate up if no result is expected
+        NavUtils.navigateUpFromSameTask(this)
+    } catch (e: IllegalArgumentException) {
+        Log.e(NavigationUtil.TAG, "Setup android:parentActivityName in Activity's Manifest")
+    }*/
 }
