@@ -1,7 +1,7 @@
 package org.umbrellahq.util.foundation
 
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import org.umbrellahq.util.helper.removeOverlay
 import org.umbrellahq.util.pop
 

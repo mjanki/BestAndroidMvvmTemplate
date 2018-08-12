@@ -1,7 +1,7 @@
 package org.umbrellahq.util.foundation
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import org.umbrellahq.util.helper.removeOverlay
 
 open class FoundationFragment : Fragment() {

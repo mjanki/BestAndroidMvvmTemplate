@@ -1,16 +1,16 @@
 package org.umbrellahq.util.helper
 
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
-import android.support.v4.util.Pair
-import android.support.v4.view.ViewCompat
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.core.util.Pair
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.FragmentActivity
 import org.umbrellahq.util.NavigationUtil
 import org.umbrellahq.util.R
 
@@ -20,7 +20,8 @@ fun createSceneTransitionAnimation(activity: FragmentActivity,
 
     try {
         if (sharedView != null) {
-            return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, sharedView, ViewCompat.getTransitionName(sharedView))
+            val transitionName = ViewCompat.getTransitionName(sharedView) ?: throw IllegalArgumentException()
+            return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, sharedView, transitionName)
         } else if (sharedViews != null) {
             val sharedViewsArray = sharedViews.map { view -> Pair.create(view, ViewCompat.getTransitionName(view)) }.toTypedArray()
             return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, *sharedViewsArray)
