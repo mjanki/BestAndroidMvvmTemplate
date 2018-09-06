@@ -8,12 +8,12 @@ import org.umbrellahq.database.entity.TaskEntity
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * from users")
+    @Query("SELECT * from tasks")
     fun getAll(): List<TaskEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(taskEntity: TaskEntity)
 
-    @Query("DELETE from users")
+    @Query("DELETE from tasks")
     fun deleteAll()
 }
