@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import org.umbrellahq.database.dao.TaskDao
 import org.umbrellahq.database.entity.TaskEntity
 
-@Database(entities = arrayOf(TaskEntity::class), version = 1)
+@Database(entities = [TaskEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
 
