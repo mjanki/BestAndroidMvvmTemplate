@@ -27,7 +27,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.appcompat:appcompat:$androidx_version"
     implementation "androidx.legacy:legacy-support-v4:$androidx_version"
-    implementation "androidx.constraintlayout:constraintlayout:1.1.2"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
     implementation 'com.google.android.material:material:1.0.0-rc01'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'

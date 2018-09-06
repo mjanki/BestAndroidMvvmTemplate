@@ -19,7 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
                 synchronized(AppDatabase::class) {
                     //TODO: change database name
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
-                            AppDatabase::class.java, "appDb.db")
+                            AppDatabase::class.java, "simplyToDo.db")
                             .build()
                 }
             }
