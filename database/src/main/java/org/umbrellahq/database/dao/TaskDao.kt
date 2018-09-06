@@ -4,15 +4,15 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import org.umbrellahq.database.entity.UserEntity
+import org.umbrellahq.database.entity.TaskEntity
 
 @Dao
-interface UserDao {
+interface TaskDao {
     @Query("SELECT * from users")
-    fun getAll(): List<UserEntity>
+    fun getAll(): List<TaskEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(userEntity: UserEntity)
+    fun insert(taskEntity: TaskEntity)
 
     @Query("DELETE from users")
     fun deleteAll()
