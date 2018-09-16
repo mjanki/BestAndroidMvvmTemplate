@@ -1,4 +1,4 @@
-package org.umbrellahq.viewmodel
+package org.umbrellahq.viewmodel.viewmodel
 
 import androidx.lifecycle.ViewModel
 
