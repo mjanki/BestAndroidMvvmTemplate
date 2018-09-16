@@ -27,6 +27,10 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$androidx_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+
+    // OffsetDateTime backport
+    implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
