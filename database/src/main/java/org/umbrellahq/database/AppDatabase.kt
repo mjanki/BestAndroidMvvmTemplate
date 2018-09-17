@@ -19,6 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase? {
+            println("INSTANCE")
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
                     //TODO: change database name
@@ -27,6 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
                             .build()
                 }
             }
+
             return INSTANCE
         }
 

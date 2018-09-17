@@ -43,8 +43,12 @@ dependencies {
     // Room Dependencies
     implementation "androidx.room:room-compiler:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-testing:$room_version"
+
+    // Live Data
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
 
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"

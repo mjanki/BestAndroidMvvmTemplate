@@ -30,6 +30,9 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
     implementation 'com.google.android.material:material:1.0.0-rc02'
 
+    // ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"
 
@@ -38,5 +41,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
 
     implementation project(":viewmodel")
+    implementation project(":database")
     implementation project(":util")
 }

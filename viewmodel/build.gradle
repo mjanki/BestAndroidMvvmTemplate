@@ -37,6 +37,7 @@ dependencies {
 
     implementation project(':util')
     implementation project(':repository')
+    implementation project(':database')
 }
 repositories {
     mavenCentral()
