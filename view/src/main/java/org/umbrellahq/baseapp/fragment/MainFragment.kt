@@ -64,6 +64,12 @@ class MainFragment : FoundationFragment() {
 
         bPrintTasks.setOnClickListener {
             println("SIZE: ${taskVM.getAllTasks()?.value?.size}")
+            val tasks = taskVM.getAllTasks()?.value
+            if (tasks != null) {
+                for (task in tasks) {
+                    println("${task.id}: ${task.name}")
+                }
+            }
         }
 
         taskVM.getAllTasks()?.observe(this, Observer<List<TaskEntity>> {
