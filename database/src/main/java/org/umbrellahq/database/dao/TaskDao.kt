@@ -6,7 +6,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import org.umbrellahq.database.model.TaskEntity
+import org.umbrellahq.model.TaskEntity
 
 @Dao
 interface TaskDao {

@@ -8,17 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.activity.SecondaryActivity
-import org.umbrellahq.database.model.TaskEntity
+import org.umbrellahq.model.TaskEntity
 import org.umbrellahq.util.foundation.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.push
-import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 import org.umbrellahq.viewmodel.viewmodel.TaskViewModel
 
 class MainFragment : FoundationFragment() {
@@ -58,8 +56,6 @@ class MainFragment : FoundationFragment() {
 
         bAddTask.setOnClickListener {
             taskVM.insertTask("New Task ${taskVM.getAllTasks()?.value?.size}")
-            //taskVM.insertTask(TaskViewModelEntity(name = "New Entity ${taskVM.getAllTasks()?.value?.size}"))
-
         }
 
         bPrintTasks.setOnClickListener {
@@ -78,12 +74,6 @@ class MainFragment : FoundationFragment() {
                 println("Name: ${taskVMEntity.name}")
             }
         })
-        /*taskVM.getAllTasks()?.observe(this, Observer<List<TaskViewModelEntity>> { taskVMEntities ->
-            println("OBSERVING")
-            for (taskVMEntity in taskVMEntities) {
-                println("Name: ${taskVMEntity.name}")
-            }
-        })*/
     }
 
     override fun onResume() {

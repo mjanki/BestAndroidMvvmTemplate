@@ -1,15 +1,19 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion project.ext.compiledSdkVersion
+    compileSdkVersion 28
+
+
+
     defaultConfig {
-        minSdkVersion project.ext.minSdkVersion
-        targetSdkVersion project.ext.targetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -23,22 +27,26 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    // Room Dependencies
+    implementation "androidx.room:room-compiler:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-testing:$room_version"
+
+    // Live Data
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "androidx.test:runner:$test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-
-    implementation project(':util')
-    implementation project(':repository')
-    implementation project(':model')
 }
+
 repositories {
     mavenCentral()
 }

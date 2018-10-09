@@ -1,4 +1,4 @@
-package org.umbrellahq.database.model
+package org.umbrellahq.model
 
 
 import androidx.room.ColumnInfo

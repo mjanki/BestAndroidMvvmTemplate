@@ -28,7 +28,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidx_version"
     implementation "androidx.legacy:legacy-support-v4:$androidx_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
-    implementation 'com.google.android.material:material:1.0.0-rc02'
+    implementation "com.google.android.material:material:1.0.0"
 
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
@@ -36,11 +36,11 @@ dependencies {
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    testImplementation "junit:junit:4.12"
+    androidTestImplementation "androidx.test:runner:$test_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
 
     implementation project(":viewmodel")
-    implementation project(":database")
+    implementation project(":model")
     implementation project(":util")
 }
