@@ -31,7 +31,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
-    fun getAllTasks(): LiveData<List<TaskViewModelEntity>>? {
+    fun getAllTasks(): LiveData<List<TaskViewModelEntity>> {
         return allTasks
     }
 

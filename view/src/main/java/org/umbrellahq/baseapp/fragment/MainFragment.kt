@@ -21,7 +21,6 @@ import org.umbrellahq.viewmodel.viewmodel.TaskViewModel
 
 class MainFragment : FoundationFragment() {
     lateinit var taskVM: TaskViewModel
-    var number = 0
 
     companion object {
         const val REQUEST_CODE_1 = 1
@@ -56,20 +55,19 @@ class MainFragment : FoundationFragment() {
         }
 
         bAddTask.setOnClickListener {
-            taskVM.insertTask("New Task ${number++}")
+            taskVM.insertTask("New Task ${taskVM.getAllTasks().value?.size}")
         }
 
         bPrintTasks.setOnClickListener {
-            println("NOTE NOTE: SIZE: ${taskVM.getAllTasks()?.value?.size}")
-            val tasks = taskVM.getAllTasks()?.value
-            if (tasks != null) {
-                for (task in tasks) {
+            println("NOTE NOTE: SIZE: ${taskVM.getAllTasks().value?.size}")
+            taskVM.getAllTasks().value?.let {
+                for (task in it) {
                     println("NOTE NOTE: ${task.id}: ${task.name}")
                 }
             }
         }
 
-        taskVM.getAllTasks()?.observe(this, Observer<List<TaskViewModelEntity>> {
+        taskVM.getAllTasks().observe(this, Observer<List<TaskViewModelEntity>> {
             println("NOTE NOTE: OBSERVING")
             for (taskVMEntity in it) {
                 println("NOTE NOTE: Name: ${taskVMEntity.name}")
