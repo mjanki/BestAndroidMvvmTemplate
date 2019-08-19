@@ -38,4 +38,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     fun insertTask(name: String) {
         taskRepository.insertTask(name)
     }
+
+    override fun onCleared() {
+        disposables.clear()
+    }
 }
