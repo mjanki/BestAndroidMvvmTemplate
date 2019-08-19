@@ -45,6 +45,5 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
 
     implementation project(":viewmodel")
-    implementation project(":model")
     implementation project(":util")
 }

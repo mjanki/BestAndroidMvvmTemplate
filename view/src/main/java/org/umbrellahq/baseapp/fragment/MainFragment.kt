@@ -13,14 +13,15 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.activity.SecondaryActivity
-import org.umbrellahq.model.TaskEntity
 import org.umbrellahq.util.foundation.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.push
+import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 import org.umbrellahq.viewmodel.viewmodel.TaskViewModel
 
 class MainFragment : FoundationFragment() {
     lateinit var taskVM: TaskViewModel
+    var number = 0
 
     companion object {
         const val REQUEST_CODE_1 = 1
@@ -55,23 +56,23 @@ class MainFragment : FoundationFragment() {
         }
 
         bAddTask.setOnClickListener {
-            taskVM.insertTask("New Task ${taskVM.getAllTasks()?.value?.size}")
+            taskVM.insertTask("New Task ${number++}")
         }
 
         bPrintTasks.setOnClickListener {
-            println("SIZE: ${taskVM.getAllTasks()?.value?.size}")
+            println("NOTE NOTE: SIZE: ${taskVM.getAllTasks()?.value?.size}")
             val tasks = taskVM.getAllTasks()?.value
             if (tasks != null) {
                 for (task in tasks) {
-                    println("${task.id}: ${task.name}")
+                    println("NOTE NOTE: ${task.id}: ${task.name}")
                 }
             }
         }
 
-        taskVM.getAllTasks()?.observe(this, Observer<List<TaskEntity>> {
-            println("OBSERVING")
+        taskVM.getAllTasks()?.observe(this, Observer<List<TaskViewModelEntity>> {
+            println("NOTE NOTE: OBSERVING")
             for (taskVMEntity in it) {
-                println("Name: ${taskVMEntity.name}")
+                println("NOTE NOTE: Name: ${taskVMEntity.name}")
             }
         })
     }

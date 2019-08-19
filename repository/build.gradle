@@ -28,14 +28,17 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+    // RxKotlin
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
 
     // Room Dependencies
     implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
 
     // Anko Commons
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
@@ -47,7 +50,6 @@ dependencies {
     implementation project(':network')
     implementation project(':database')
     implementation project(':util')
-    implementation project(':model')
 }
 
 repositories {

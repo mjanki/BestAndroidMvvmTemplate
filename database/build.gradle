@@ -46,9 +46,10 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-testing:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
 
-    // Live Data
-    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+    // RxKotlin
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
 
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"
@@ -59,7 +60,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation project(':util')
-    implementation project(':model')
 }
 
 repositories {
