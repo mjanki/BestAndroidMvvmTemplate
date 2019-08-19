@@ -22,12 +22,7 @@ class TaskRepository(ctx: Context) {
         return allTasks.flatMap {
             val newArray = ArrayList<TaskRepoEntity>()
             for (task in it) {
-                newArray.add(TaskRepoEntity(
-                        task.id,
-                        task.name,
-                        task.date,
-                        task.status
-                ))
+                newArray.add(TaskRepoEntity(task))
             }
 
             return@flatMap Flowable.fromArray(newArray)
@@ -35,11 +30,11 @@ class TaskRepository(ctx: Context) {
     }
 
     fun insertTask(name: String) {
-        val taskEntity = TaskDatabaseEntity()
-        taskEntity.name = name
+        val taskRepoEntity = TaskRepoEntity()
+        taskRepoEntity.name = name
 
         doAsync {
-            taskDao.insert(taskEntity)
+            taskDao.insert(taskRepoEntity.mapToDatabase())
         }
     }
 }
