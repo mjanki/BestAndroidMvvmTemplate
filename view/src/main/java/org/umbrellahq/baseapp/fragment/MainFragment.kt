@@ -35,8 +35,19 @@ class MainFragment : FoundationFragment() {
         super.onCreate(savedInstanceState)
 
         AndroidThreeTen.init(activity?.application)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         taskVM = ViewModelProviders.of(this).get(TaskViewModel::class.java)
+
+        taskVM.getAllTasks().observe(viewLifecycleOwner, Observer<List<TaskViewModelEntity>> {
+            println("NOTE NOTE: OBSERVING")
+            for (taskVMEntity in it) {
+                println("NOTE NOTE: Name: ${taskVMEntity.name}")
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -66,13 +77,6 @@ class MainFragment : FoundationFragment() {
                 }
             }
         }
-
-        taskVM.getAllTasks().observe(viewLifecycleOwner, Observer<List<TaskViewModelEntity>> {
-            println("NOTE NOTE: OBSERVING")
-            for (taskVMEntity in it) {
-                println("NOTE NOTE: Name: ${taskVMEntity.name}")
-            }
-        })
     }
 
     override fun onResume() {
