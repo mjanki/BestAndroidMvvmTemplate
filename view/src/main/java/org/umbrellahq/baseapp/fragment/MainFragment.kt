@@ -67,7 +67,7 @@ class MainFragment : FoundationFragment() {
             }
         }
 
-        taskVM.getAllTasks().observe(this, Observer<List<TaskViewModelEntity>> {
+        taskVM.getAllTasks().observe(viewLifecycleOwner, Observer<List<TaskViewModelEntity>> {
             println("NOTE NOTE: OBSERVING")
             for (taskVMEntity in it) {
                 println("NOTE NOTE: Name: ${taskVMEntity.name}")
