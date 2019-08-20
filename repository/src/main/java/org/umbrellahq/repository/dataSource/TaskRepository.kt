@@ -29,10 +29,7 @@ class TaskRepository(ctx: Context) {
         }
     }
 
-    fun insertTask(name: String) {
-        val taskRepoEntity = TaskRepoEntity()
-        taskRepoEntity.name = name
-
+    fun insertTask(taskRepoEntity: TaskRepoEntity) {
         doAsync {
             taskDao.insert(taskRepoEntity.mapToDatabase())
         }

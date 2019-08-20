@@ -19,12 +19,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         disposables.add(taskRepository.getTasks().subscribe {
             val newArray = ArrayList<TaskViewModelEntity>()
             for (task in it) {
-                newArray.add(TaskViewModelEntity(
-                        task.id,
-                        task.name,
-                        task.date,
-                        task.status
-                ))
+                newArray.add(TaskViewModelEntity(task))
             }
 
             allTasks.postValue(newArray)
@@ -36,7 +31,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun insertTask(name: String) {
-        taskRepository.insertTask(name)
+        val taskViewModelEntity = TaskViewModelEntity()
+        taskViewModelEntity.name = name
+
+        taskRepository.insertTask(taskViewModelEntity.mapToRepo())
     }
 
     override fun onCleared() {

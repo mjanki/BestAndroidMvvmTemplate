@@ -11,11 +11,11 @@ data class TaskRepoEntity(
 
     constructor(): this(null, "")
 
-    constructor(databaseEntity: TaskDatabaseEntity) : this(
-            databaseEntity.id,
-            databaseEntity.name,
-            databaseEntity.date,
-            databaseEntity.status
+    constructor(taskDatabaseEntity: TaskDatabaseEntity) : this(
+            taskDatabaseEntity.id,
+            taskDatabaseEntity.name,
+            taskDatabaseEntity.date,
+            taskDatabaseEntity.status
     )
 
     fun mapToDatabase(): TaskDatabaseEntity {
