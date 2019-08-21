@@ -21,15 +21,13 @@ class TaskRepository(ctx: Context) {
         allTasks = taskDao.getAll()
     }
 
-    fun getTasks(): Flowable<List<TaskRepoEntity>> {
-        return allTasks.flatMap { taskDatabaseEntityList ->
-            return@flatMap Flowable.fromArray(
+    fun getTasks(): Flowable<List<TaskRepoEntity>> =
+            allTasks.flatMap { taskDatabaseEntityList -> Flowable.fromArray(
                     taskDatabaseEntityList.map { taskDatabaseEntity ->
                         taskRepoDatabaseMapper.upstream(taskDatabaseEntity)
                     }
-            )
-        }
-    }
+                )
+            }
 
     fun insertTask(taskRepoEntity: TaskRepoEntity) {
         doAsync {

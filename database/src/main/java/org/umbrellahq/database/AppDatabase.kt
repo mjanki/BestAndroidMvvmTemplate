@@ -25,8 +25,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context) = Room.databaseBuilder(
                 context.applicationContext,
-                AppDatabase::class.java, "simplyToDo.db")
-                .build()
+                AppDatabase::class.java, "simplyToDo.db"
+        ).build()
 
         fun destroyInstance() {
             instance = null
