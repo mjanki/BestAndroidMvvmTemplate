@@ -1,6 +1,6 @@
-package org.umbrellahq.repository.interfaces
+package org.umbrellahq.viewmodel.interfaces
 
-interface MapperInterface<T, V> {
+interface ViewModelMapperInterface<T, V> {
     fun downstream(currentLayerEntity: T): V
     fun upstream(nextLayerEntity: V): T
 }

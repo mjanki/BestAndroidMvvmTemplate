@@ -6,7 +6,7 @@ import org.jetbrains.anko.doAsync
 import org.umbrellahq.database.AppDatabase
 import org.umbrellahq.database.dao.TaskDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
-import org.umbrellahq.repository.mappers.TaskRepoDatabaseMapper
+import org.umbrellahq.repository.mappers.TaskDatabaseRepoMapper
 import org.umbrellahq.repository.model.TaskRepoEntity
 
 class TaskRepository(ctx: Context) {
@@ -14,7 +14,7 @@ class TaskRepository(ctx: Context) {
     private var taskDao: TaskDao
     private var allTasks: Flowable<List<TaskDatabaseEntity>>
 
-    private var taskRepoDatabaseMapper = TaskRepoDatabaseMapper()
+    private var taskRepoDatabaseMapper = TaskDatabaseRepoMapper()
 
     init {
         taskDao = appDatabase.taskDao()
