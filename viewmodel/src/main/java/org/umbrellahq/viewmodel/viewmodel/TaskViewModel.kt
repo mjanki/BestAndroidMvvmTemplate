@@ -24,9 +24,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
-    fun getAllTasks(): LiveData<List<TaskViewModelEntity>> {
-        return allTasks
-    }
+    fun getAllTasks(): LiveData<List<TaskViewModelEntity>> = allTasks
 
     fun insertTask(name: String) {
         val taskViewModelEntity = TaskViewModelEntity()
