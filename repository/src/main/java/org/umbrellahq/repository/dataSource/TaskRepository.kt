@@ -6,12 +6,15 @@ import org.jetbrains.anko.doAsync
 import org.umbrellahq.database.AppDatabase
 import org.umbrellahq.database.dao.TaskDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
+import org.umbrellahq.repository.mappers.TaskRepoDatabaseMapper
 import org.umbrellahq.repository.model.TaskRepoEntity
 
 class TaskRepository(ctx: Context) {
     private var appDatabase: AppDatabase = AppDatabase(ctx)
     private var taskDao: TaskDao
     private var allTasks: Flowable<List<TaskDatabaseEntity>>
+
+    private var taskRepoDatabaseMapper = TaskRepoDatabaseMapper()
 
     init {
         taskDao = appDatabase.taskDao()
@@ -22,7 +25,7 @@ class TaskRepository(ctx: Context) {
         return allTasks.flatMap { taskDatabaseEntityList ->
             return@flatMap Flowable.fromArray(
                     taskDatabaseEntityList.map { taskDatabaseEntity ->
-                        TaskRepoEntity(taskDatabaseEntity)
+                        taskRepoDatabaseMapper.upstream(taskDatabaseEntity)
                     }
             )
         }
@@ -30,7 +33,7 @@ class TaskRepository(ctx: Context) {
 
     fun insertTask(taskRepoEntity: TaskRepoEntity) {
         doAsync {
-            taskDao.insert(taskRepoEntity.mapToDatabase())
+            taskDao.insert(taskRepoDatabaseMapper.downstream(taskRepoEntity))
         }
     }
 }
