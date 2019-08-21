@@ -19,13 +19,12 @@ class TaskRepository(ctx: Context) {
     }
 
     fun getTasks(): Flowable<List<TaskRepoEntity>> {
-        return allTasks.flatMap {
-            val newArray = ArrayList<TaskRepoEntity>()
-            for (task in it) {
-                newArray.add(TaskRepoEntity(task))
-            }
-
-            return@flatMap Flowable.fromArray(newArray)
+        return allTasks.flatMap { taskDatabaseEntityList ->
+            return@flatMap Flowable.fromArray(
+                    taskDatabaseEntityList.map { taskDatabaseEntity ->
+                        TaskRepoEntity(taskDatabaseEntity)
+                    }
+            )
         }
     }
 

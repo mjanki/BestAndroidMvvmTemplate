@@ -8,9 +8,7 @@ data class TaskRepoEntity(
         var name: String,
         var date: OffsetDateTime = OffsetDateTime.now(),
         var status: Int = 0) {
-
-    constructor(): this(null, "")
-
+    
     constructor(taskDatabaseEntity: TaskDatabaseEntity) : this(
             taskDatabaseEntity.id,
             taskDatabaseEntity.name,
@@ -18,12 +16,10 @@ data class TaskRepoEntity(
             taskDatabaseEntity.status
     )
 
-    fun mapToDatabase(): TaskDatabaseEntity {
-        return TaskDatabaseEntity(
-                id,
-                name,
-                date,
-                status
-        )
-    }
+    fun mapToDatabase() = TaskDatabaseEntity(
+            id,
+            name,
+            date,
+            status
+    )
 }

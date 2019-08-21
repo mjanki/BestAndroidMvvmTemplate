@@ -16,13 +16,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     private var disposables = CompositeDisposable()
 
     init {
-        disposables.add(taskRepository.getTasks().subscribe {
-            val newArray = ArrayList<TaskViewModelEntity>()
-            for (task in it) {
-                newArray.add(TaskViewModelEntity(task))
-            }
-
-            allTasks.postValue(newArray)
+        disposables.add(taskRepository.getTasks().subscribe { taskRepoEntityList ->
+            allTasks.postValue(taskRepoEntityList.map { taskRepoEntity ->
+                TaskViewModelEntity(taskRepoEntity)
+            })
         })
     }
 
