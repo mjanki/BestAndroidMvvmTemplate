@@ -20,6 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         targetCompatibility = "8"
         sourceCompatibility = "8"
@@ -38,7 +39,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
 
     // OffsetDateTime backport
-    implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
 
     testImplementation "junit:junit:4.12"
     androidTestImplementation "androidx.test:runner:$test_version"
