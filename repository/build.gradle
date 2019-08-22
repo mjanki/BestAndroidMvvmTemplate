@@ -44,9 +44,6 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
 
-    // Anko Commons
-    implementation "org.jetbrains.anko:anko-commons:$anko_version"
-
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "androidx.test:runner:$test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"

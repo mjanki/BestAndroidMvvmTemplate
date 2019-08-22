@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import org.umbrellahq.database.model.TaskDatabaseEntity
 
@@ -14,8 +15,8 @@ interface TaskDao {
     fun getAll(): Flowable<List<TaskDatabaseEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(taskDatabaseEntity: TaskDatabaseEntity)
+    fun insert(taskDatabaseEntity: TaskDatabaseEntity): Completable
 
     @Query("DELETE from tasks")
-    fun deleteAll()
+    fun deleteAll(): Completable
 }

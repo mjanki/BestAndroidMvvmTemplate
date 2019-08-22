@@ -1,1 +1,1 @@
-include ':view', ':viewmodel', ':database', ':network', ':util', ':repository', ':model'
+include ':view', ':viewmodel', ':database', ':network', ':util', ':repository'

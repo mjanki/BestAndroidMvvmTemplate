@@ -1,8 +1,8 @@
 package org.umbrellahq.repository.dataSource
 
 import android.content.Context
+import io.reactivex.Completable
 import io.reactivex.Flowable
-import org.jetbrains.anko.doAsync
 import org.umbrellahq.database.AppDatabase
 import org.umbrellahq.database.dao.TaskDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
@@ -29,9 +29,6 @@ class TaskRepository(ctx: Context) {
                 )
             }
 
-    fun insertTask(taskRepoEntity: TaskRepoEntity) {
-        doAsync {
+    fun insertTask(taskRepoEntity: TaskRepoEntity): Completable =
             taskDao.insert(taskRepoDatabaseMapper.downstream(taskRepoEntity))
-        }
-    }
 }

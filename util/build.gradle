@@ -35,6 +35,10 @@ dependencies {
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
 
+    // RxKotlin & RxAndroid
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "androidx.test:runner:$test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
