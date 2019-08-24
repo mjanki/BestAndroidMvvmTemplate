@@ -11,7 +11,7 @@ import org.umbrellahq.viewmodel.mappers.TaskRepoViewModelMapper
 import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 
 class TaskViewModel(application: Application) : AndroidViewModel(application) {
-    private var taskRepository: TaskRepository = TaskRepository(application)
+    private var taskRepository = TaskRepository(application)
     private var allTasks = MutableLiveData<List<TaskViewModelEntity>>()
 
     private var disposables = CompositeDisposable()
@@ -42,10 +42,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
                         )
                 ).subscribeBackgroundObserveOnMain()
         )
-
     }
 
     override fun onCleared() {
         disposables.clear()
+        taskRepository.clearDisposables()
     }
 }

@@ -35,6 +35,11 @@ dependencies {
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
 
+    // Retrofit2
+    implementation "com.squareup.retrofit2:retrofit:2.6.1"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.6.1"
+    implementation "com.squareup.retrofit2:converter-gson:2.6.1"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "androidx.test:runner:$test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
