@@ -1,2 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.umbrellahq.network" />
+    package="org.umbrellahq.network" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

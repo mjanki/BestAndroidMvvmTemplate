@@ -39,6 +39,7 @@ dependencies {
 
     // RxKotlin
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
 
     // Room Dependencies
     implementation "androidx.room:room-runtime:$room_version"
