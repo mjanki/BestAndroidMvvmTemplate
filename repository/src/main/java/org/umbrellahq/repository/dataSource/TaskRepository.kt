@@ -3,13 +3,13 @@ package org.umbrellahq.repository.dataSource
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.umbrellahq.database.dao.TaskDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
 import org.umbrellahq.network.daos.TaskNetworkDao
 import org.umbrellahq.repository.mappers.TaskDatabaseRepoMapper
 import org.umbrellahq.repository.model.TaskRepoEntity
+import org.umbrellahq.util.extensions.getValue
+import org.umbrellahq.util.extensions.subscribeBackground
 
 class TaskRepository(ctx: Context) : Repository(ctx) {
 
@@ -37,23 +37,15 @@ class TaskRepository(ctx: Context) : Repository(ctx) {
     }
 
     fun updateTasksByMerging() {
-        disposables.add(taskNetworkDao.loadTasks()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    // TODO: update database by merging
+        allTasks.getValue({
+            // TODO: do something with value of allTasks
+        })
 
-                    for (entity in it) {
-                        println("NOTE NOTE: ---")
-                        println("NOTE NOTE: NETWORK ENTITY UUID: ${entity.uuid}")
-                        println("NOTE NOTE: NETWORK ENTITY NAME: ${entity.name}")
-                        println("NOTE NOTE: NETWORK ENTITY DATE: ${entity.date}")
-                        println("NOTE NOTE: NETWORK ENTITY STATUS: ${entity.status}")
-                        println("NOTE NOTE: ---")
-                    }
-                }, {
-                    // TODO: handle network error
-                }))
+        taskNetworkDao.loadTasks().subscribeBackground(onSuccess = {
+            // TODO: update database by merging
+        }, onFailure = {
+            // TODO: handle network error
+        })
     }
 
     fun insertTask(taskRepoEntity: TaskRepoEntity): Completable =

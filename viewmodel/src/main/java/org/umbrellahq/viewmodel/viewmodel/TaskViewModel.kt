@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
 import org.umbrellahq.repository.dataSource.TaskRepository
-import org.umbrellahq.util.extensions.subscribeBackgroundObserveOnMain
+import org.umbrellahq.util.extensions.subscribeBackground
 import org.umbrellahq.viewmodel.mappers.TaskRepoViewModelMapper
 import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 
@@ -31,6 +31,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getAllTasks(): LiveData<List<TaskViewModelEntity>> = allTasks
 
+    fun update() {
+        taskRepository.updateTasksByMerging()
+    }
+
     fun insertTask(name: String) {
         val taskViewModelEntity = TaskViewModelEntity()
         taskViewModelEntity.name = name
@@ -40,12 +44,11 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
                         taskViewModelRepoMapper.downstream(
                                 taskViewModelEntity
                         )
-                ).subscribeBackgroundObserveOnMain()
+                ).subscribeBackground()
         )
     }
 
     override fun onCleared() {
         disposables.clear()
-        taskRepository.clearDisposables()
     }
 }
