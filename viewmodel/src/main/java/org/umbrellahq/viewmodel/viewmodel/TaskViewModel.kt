@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
 import org.umbrellahq.repository.dataSource.TaskRepository
-import org.umbrellahq.util.extensions.subscribeBackground
+import org.umbrellahq.util.extensions.execute
 import org.umbrellahq.viewmodel.mappers.TaskRepoViewModelMapper
 import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 
@@ -44,7 +44,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
                         taskViewModelRepoMapper.downstream(
                                 taskViewModelEntity
                         )
-                ).subscribeBackground()
+                ).execute()
         )
     }
 

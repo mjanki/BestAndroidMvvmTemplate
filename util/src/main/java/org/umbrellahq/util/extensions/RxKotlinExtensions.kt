@@ -7,7 +7,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 // Use to invoke Completable
-fun Completable.subscribeBackground(
+fun Completable.execute(
         onSuccess: (() -> Unit)? = null,
         onFailure: ((throwable: Throwable) -> Unit)? = null
 ) : Disposable {
@@ -29,11 +29,11 @@ fun <T> Flowable<T>.getValue(
 ) {
     Completable.fromAction {
         onSuccess(blockingFirst())
-    }.subscribeBackground(onFailure = onFailure)
+    }.execute(onFailure = onFailure)
 }
 
 // Use to invoke Observable
-fun <T> Observable<T>.subscribeBackground(
+fun <T> Observable<T>.execute(
         onSuccess: ((value: T) -> Unit),
         onFailure: ((throwable: Throwable) -> Unit)? = null
 ) : Disposable {
