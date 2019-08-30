@@ -1,6 +1,5 @@
 package org.umbrellahq.database
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -38,11 +37,9 @@ class TaskDaoInstrumentedTest {
 
     @Before
     fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-
         // Create test database
         db = Room.inMemoryDatabaseBuilder(
-                context,
+                ApplicationProvider.getApplicationContext(),
                 AppDatabase::class.java
         ).allowMainThreadQueries().build()
 
