@@ -6,6 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
+// Use to invoke Completable
 fun Completable.subscribeBackground(
         onSuccess: (() -> Unit)? = null,
         onFailure: ((throwable: Throwable) -> Unit)? = null
@@ -21,6 +22,7 @@ fun Completable.subscribeBackground(
     )
 }
 
+// Use to get single value of Flowable
 fun <T> Flowable<T>.getValue(
         onSuccess: ((value: T) -> Unit),
         onFailure: ((throwable: Throwable) -> Unit)? = null
@@ -30,6 +32,7 @@ fun <T> Flowable<T>.getValue(
     }.subscribeBackground(onFailure = onFailure)
 }
 
+// Use to invoke Observable
 fun <T> Observable<T>.subscribeBackground(
         onSuccess: ((value: T) -> Unit),
         onFailure: ((throwable: Throwable) -> Unit)? = null

@@ -35,13 +35,12 @@ dependencies {
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
 
+    // Kotlin Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+
     // Retrofit2
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit2_version"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
-
-    // RxKotlin
-    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit2_version"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "androidx.test:runner:$test_version"

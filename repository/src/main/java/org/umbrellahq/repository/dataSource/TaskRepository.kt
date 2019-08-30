@@ -3,13 +3,16 @@ package org.umbrellahq.repository.dataSource
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.umbrellahq.database.dao.TaskDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
 import org.umbrellahq.network.daos.TaskNetworkDao
 import org.umbrellahq.repository.mappers.TaskDatabaseRepoMapper
 import org.umbrellahq.repository.model.TaskRepoEntity
+import org.umbrellahq.util.extensions.consume
 import org.umbrellahq.util.extensions.getValue
-import org.umbrellahq.util.extensions.subscribeBackground
 
 class TaskRepository(ctx: Context) : Repository(ctx) {
 
@@ -37,15 +40,20 @@ class TaskRepository(ctx: Context) : Repository(ctx) {
     }
 
     fun updateTasksByMerging() {
-        allTasks.getValue({
-            // TODO: do something with value of allTasks
-        })
+        CoroutineScope(Dispatchers.IO).launch {
+            taskNetworkDao.loadTasks().consume(
+                    onSuccess = { taskNetworkEntityList ->
+                        // TODO: use network entity's UUID to sync with database
 
-        taskNetworkDao.loadTasks().subscribeBackground(onSuccess = {
-            // TODO: update database by merging
-        }, onFailure = {
-            // TODO: handle network error
-        })
+                        allTasks.getValue({ taskDatabaseEntity ->
+                            // TODO: get database entities to update same UUIDs or insert
+                        })
+                    },
+                    onFailure = {
+                        // TODO: handle network error (figure out how)
+                    }
+            )
+        }
     }
 
     fun insertTask(taskRepoEntity: TaskRepoEntity): Completable =
