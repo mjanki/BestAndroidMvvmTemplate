@@ -29,27 +29,22 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "androidx.appcompat:appcompat:$androidx_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
-
-    // OffsetDateTime backport
-    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
-
-    // Kotlin Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+    implementation libs.kotlin
+    implementation libs.androidxAppCompat
+    implementation libs.constraintLayout
+    implementation libs.kotlinCoroutines
 
     // RxKotlin & RxAndroid
-    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation libs.rxKotlin
+    implementation libs.rxAndroid
 
-    // Retrofit2
-    implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
-    
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation "androidx.test:runner:$test_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // Retrofit
+    implementation libs.retrofit
+
+    // OffsetDateTime backport
+    implementation libs.threetenabp
 }
+
 repositories {
     mavenCentral()
 }

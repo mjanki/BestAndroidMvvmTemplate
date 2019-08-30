@@ -32,20 +32,19 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // OffsetDateTime backport
-    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
-
-    // Kotlin Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+    implementation libs.kotlin
+    implementation libs.kotlinCoroutines
 
     // Retrofit2
-    implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
-    implementation "com.squareup.retrofit2:converter-moshi:$retrofit2_version"
+    implementation libs.retrofit
+    implementation libs.retrofitMoshi
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation "androidx.test:runner:$test_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // OffsetDateTime backport
+    implementation libs.threetenabp
+
+    // Testing
+    testImplementation libs.junit
+    androidTestImplementation libs.testRunner
 
     implementation project(':util')
 }

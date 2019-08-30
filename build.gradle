@@ -1,26 +1,79 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = "1.3.50"
-    ext.androidx_version = "1.0.2"
-    ext.constraint_layout_version = "1.1.3"
-    ext.lifecycle_version = "2.0.0"
-    ext.room_version = "2.1.0"
-    ext.rxkotlin_version = "2.4.0"
-    ext.rxandroid_version = "2.1.1"
-    ext.retrofit2_version = "2.6.1"
+    ext {
+        kotlinVersion = "1.3.41"
+        androidxAppCompatVersion = "1.0.2"
+        constraintLayoutVersion = "1.1.3"
+        materialVersion = "1.0.0"
+        lifecycleExtensionsVersion = "2.0.0"
+
+        // Kotlin Coroutines
+        kotlinCoroutinesVersion = "1.3.0"
+
+        // rxAndroid & rxKotlin
+        rxKotlinVersion = "2.4.0"
+        rxAndroidVersion = "2.1.1"
+
+        // Room
+        roomVersion = "2.1.0"
+
+        // Retrofit
+        retrofitVersion = "2.6.1"
+
+        // External Utils
+        threetenabpVersion = "1.2.1"
+
+        // Testing
+        junitVersion = "4.12"
+        testJunitExtVersion = "1.1.1"
+        testRunnerVersion = "1.2.0"
+        testEspressoVersion = "3.2.0"
+
+
+        libs = [
+                kotlin: ("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"),
+                androidxAppCompat: ("androidx.appcompat:appcompat:$androidxAppCompatVersion"),
+                constraintLayout: ("androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"),
+                material: ("com.google.android.material:material:$materialVersion"),
+
+                // ViewModel & LiveData
+                lifecycleExtensions: ("android.arch.lifecycle:extensions:$lifecycleExtensionsVersion"),
+
+                kotlinCoroutines: ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesVersion"),
+
+                rxKotlin: ("io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"),
+                rxAndroid: ("io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"),
+
+                roomCompiler: ("androidx.room:room-compiler:$roomVersion"),
+                roomRuntime: ("androidx.room:room-runtime:$roomVersion"),
+                roomRxJava: ("androidx.room:room-rxjava2:$roomVersion"),
+                roomTesting: ("androidx.room:room-testing:$roomVersion"),
+
+                retrofit: ("com.squareup.retrofit2:retrofit:$retrofitVersion"),
+                retrofitMoshi: ("com.squareup.retrofit2:converter-moshi:$retrofitVersion"),
+
+                threetenabp: ("com.jakewharton.threetenabp:threetenabp:$threetenabpVersion"),
+
+                junit: ("junit:junit:$junitVersion"),
+                testJunitExt: ("androidx.test.ext:junit:$testJunitExtVersion"),
+                testRunner: ("androidx.test:runner:$testRunnerVersion"),
+                testEspresso: ("androidx.test.espresso:espresso-core:$testEspressoVersion")
+
+        ]
+    }
+
     ext.espresso_version = "3.2.0"
     ext.test_version = "1.2.0"
     ext.junit_ext_version = "1.1.1"
-    ext.threetenabp_version = "1.2.1"
-    ext.kotlin_coroutines_version = "1.3.0"
     repositories {
         google()
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

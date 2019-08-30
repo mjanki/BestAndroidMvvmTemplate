@@ -48,28 +48,28 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "androidx.arch.core:core-runtime:2.0.1"
-    implementation "androidx.arch.core:core-testing:2.0.1"
-
-    // Room Dependencies
-    implementation "androidx.room:room-compiler:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-testing:$room_version"
-    implementation "androidx.room:room-rxjava2:$room_version"
+    implementation libs.kotlin
 
     // RxKotlin
-    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
+    implementation libs.rxKotlin
+
+    // Room
+    implementation libs.roomCompiler
+    annotationProcessor libs.roomCompiler
+    kapt libs.roomCompiler
+    implementation libs.roomRuntime
+    implementation libs.roomRxJava
+    implementation libs.roomTesting
+
+    implementation "androidx.arch.core:core-testing:2.0.1"
 
     // OffsetDateTime backport
-    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
+    implementation libs.threetenabp
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation "androidx.test:runner:$test_version"
-    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // Testing
+    testImplementation libs.junit
+    androidTestImplementation libs.testJunitExt
+    androidTestImplementation libs.testRunner
 
     implementation project(':util')
 }
