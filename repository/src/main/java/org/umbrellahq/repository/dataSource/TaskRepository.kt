@@ -3,28 +3,27 @@ package org.umbrellahq.repository.dataSource
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.umbrellahq.database.dao.TaskDao
+import org.umbrellahq.database.dao.TaskDatabaseDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
 import org.umbrellahq.network.daos.TaskNetworkDao
 import org.umbrellahq.repository.mappers.TaskDatabaseRepoMapper
 import org.umbrellahq.repository.model.TaskRepoEntity
-import org.umbrellahq.util.extensions.consume
 import org.umbrellahq.util.extensions.getValue
 
 class TaskRepository(ctx: Context) : Repository(ctx) {
 
+    // DAOs
     private var taskNetworkDao = TaskNetworkDao()
+    private var taskDatabaseDao: TaskDatabaseDao = appDatabase.taskDao()
 
-    private var taskDao: TaskDao = appDatabase.taskDao()
+    // Observables
     private var allTasks: Flowable<List<TaskDatabaseEntity>>
 
+    // Mappers
     private var taskRepoDatabaseMapper = TaskDatabaseRepoMapper()
 
     init {
-        allTasks = taskDao.getAll()
+        allTasks = taskDatabaseDao.getAll()
     }
 
     fun getTasks(): Flowable<List<TaskRepoEntity>> {
@@ -40,22 +39,19 @@ class TaskRepository(ctx: Context) : Repository(ctx) {
     }
 
     fun updateTasksByMerging() {
-        CoroutineScope(Dispatchers.IO).launch {
-            taskNetworkDao.loadTasks().consume(
-                    onSuccess = { taskNetworkEntityList ->
-                        // TODO: use network entity's UUID to sync with database
+        executeNetworkCall(
+                taskNetworkDao.loadTasks(),
+                onSuccess = { taskNetworkEntityList ->
+                    // TODO: use network entity's UUID to sync with database
+                    println("NOTE NOTE CODE: ${taskNetworkEntityList.code()}")
 
-                        allTasks.getValue({ taskDatabaseEntity ->
-                            // TODO: get database entities to update same UUIDs or insert
-                        })
-                    },
-                    onFailure = {
-                        // TODO: handle network error (figure out how)
-                    }
-            )
-        }
+                    allTasks.getValue({ taskDatabaseEntity ->
+                        // TODO: get database entities to update same UUIDs or insert
+                    })
+                }
+        )
     }
 
     fun insertTask(taskRepoEntity: TaskRepoEntity): Completable =
-            taskDao.insert(taskRepoDatabaseMapper.downstream(taskRepoEntity))
+            taskDatabaseDao.insert(taskRepoDatabaseMapper.downstream(taskRepoEntity))
 }

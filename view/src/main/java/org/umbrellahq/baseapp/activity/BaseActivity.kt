@@ -2,6 +2,7 @@ package org.umbrellahq.baseapp.activity
 
 import android.os.Bundle
 import android.transition.Fade
+import com.jakewharton.threetenabp.AndroidThreeTen
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.util.NavigationUtil
 import org.umbrellahq.util.foundation.FoundationActivity
@@ -9,6 +10,9 @@ import org.umbrellahq.util.foundation.FoundationActivity
 open class BaseActivity : FoundationActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize AndroidThreeTen
+        AndroidThreeTen.init(application)
 
         // Setup main fragment id and main constraint layout id in NavigationUtil
         NavigationUtil.setup(R.id.flContainer, R.id.clContainer)

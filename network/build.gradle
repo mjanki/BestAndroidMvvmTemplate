@@ -33,10 +33,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation libs.kotlin
-    implementation libs.kotlinCoroutines
 
     // Retrofit2
     implementation libs.retrofit
+    implementation libs.retrofitRxJava
     implementation libs.retrofitMoshi
 
     // OffsetDateTime backport

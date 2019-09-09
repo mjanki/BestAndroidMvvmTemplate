@@ -5,6 +5,8 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import retrofit2.HttpException
+import retrofit2.Response
 
 // Use to invoke Completable
 fun Completable.execute(
@@ -33,15 +35,23 @@ fun <T> Flowable<T>.getValue(
 }
 
 // Use to invoke Observable
-fun <T> Observable<T>.execute(
-        onSuccess: ((value: T) -> Unit),
+fun <T> Observable<Response<T>>.execute(
+        onSuccess: ((value: Response<T>) -> Unit),
         onFailure: ((throwable: Throwable) -> Unit)? = null
 ) : Disposable {
 
     return subscribeOn(
             Schedulers.io()
     ).subscribe (
-            { onSuccess(it) },
+            { response ->
+                if (response.isSuccessful) {
+                    onSuccess(response)
+                } else {
+                    onFailure?.let { onFailure ->
+                        onFailure(HttpException(response))
+                    }
+                }
+            },
             { throwable ->
                 onFailure?.let { onFailure -> onFailure(throwable) }
             }

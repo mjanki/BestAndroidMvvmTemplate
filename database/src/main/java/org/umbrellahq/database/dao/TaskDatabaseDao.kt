@@ -1,6 +1,5 @@
 package org.umbrellahq.database.dao
 
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,7 +9,7 @@ import io.reactivex.Flowable
 import org.umbrellahq.database.model.TaskDatabaseEntity
 
 @Dao
-interface TaskDao {
+interface TaskDatabaseDao {
     @Query("SELECT * from tasks")
     fun getAll(): Flowable<List<TaskDatabaseEntity>>
 

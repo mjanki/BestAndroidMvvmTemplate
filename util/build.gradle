@@ -35,7 +35,6 @@ dependencies {
     implementation libs.kotlin
     implementation libs.androidxAppCompat
     implementation libs.constraintLayout
-    implementation libs.kotlinCoroutines
 
     // RxKotlin & RxAndroid
     implementation libs.rxKotlin

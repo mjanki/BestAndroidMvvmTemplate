@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.junit.*
 import org.junit.runner.RunWith
-import org.umbrellahq.database.dao.TaskDao
+import org.umbrellahq.database.dao.TaskDatabaseDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
 import java.io.IOException
 
@@ -17,10 +17,10 @@ import java.io.IOException
  * @see [Testing documentation](http://d.android.com/tools/testing)
  */
 @RunWith(AndroidJUnit4::class)
-class TaskDaoInstrumentedTest {
+class TaskDatabaseDaoInstrumentedTest {
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var taskDao: TaskDao
+    private lateinit var taskDatabaseDao: TaskDatabaseDao
     private lateinit var db: AppDatabase
 
     private lateinit var testTaskDatabaseEntity: TaskDatabaseEntity
@@ -43,7 +43,7 @@ class TaskDaoInstrumentedTest {
                 AppDatabase::class.java
         ).allowMainThreadQueries().build()
 
-        taskDao = db.taskDao()
+        taskDatabaseDao = db.taskDao()
     }
 
     @After
@@ -55,11 +55,11 @@ class TaskDaoInstrumentedTest {
     @Test
     fun testMultipleEntriesCount() {
         // Add 2 tasks
-        taskDao.insert(testTaskDatabaseEntity).blockingAwait()
-        taskDao.insert(testTaskDatabaseEntity).blockingAwait()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
 
         // Get all tasks
-        val allTasks = taskDao.getAll().blockingFirst()
+        val allTasks = taskDatabaseDao.getAll().blockingFirst()
 
         // Check if database has 2 tasks
         Assert.assertEquals(2, allTasks.size)
@@ -67,9 +67,9 @@ class TaskDaoInstrumentedTest {
 
     @Test
     fun testSingleEntryValue() {
-        taskDao.insert(testTaskDatabaseEntity).blockingAwait()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
 
-        val allTasks = taskDao.getAll().blockingFirst()
+        val allTasks = taskDatabaseDao.getAll().blockingFirst()
 
         Assert.assertEquals(1, allTasks.size)
         Assert.assertEquals(testTaskDatabaseEntity.name, allTasks[0].name)
@@ -77,15 +77,15 @@ class TaskDaoInstrumentedTest {
 
     @Test
     fun testSingleEntryUpdateValue() {
-        taskDao.insert(testTaskDatabaseEntity).blockingAwait()
-        var allTasks = taskDao.getAll().blockingFirst()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
+        var allTasks = taskDatabaseDao.getAll().blockingFirst()
 
         Assert.assertEquals(1, allTasks.size)
 
         val newName = "Eyad"
         allTasks[0].name = newName
-        taskDao.insert(allTasks[0]).blockingAwait()
-        allTasks = taskDao.getAll().blockingFirst()
+        taskDatabaseDao.insert(allTasks[0]).blockingAwait()
+        allTasks = taskDatabaseDao.getAll().blockingFirst()
 
         Assert.assertEquals(1, allTasks.size)
         Assert.assertEquals(newName, allTasks[0].name)
@@ -93,15 +93,15 @@ class TaskDaoInstrumentedTest {
 
     @Test
     fun testDeleteAllEntries() {
-        taskDao.insert(testTaskDatabaseEntity).blockingAwait()
-        taskDao.insert(testTaskDatabaseEntity).blockingAwait()
-        taskDao.insert(testTaskDatabaseEntity).blockingAwait()
-        var allTasks = taskDao.getAll().blockingFirst()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
+        var allTasks = taskDatabaseDao.getAll().blockingFirst()
 
         Assert.assertEquals(3, allTasks.size)
 
-        taskDao.deleteAll().blockingAwait()
-        allTasks = taskDao.getAll().blockingFirst()
+        taskDatabaseDao.deleteAll().blockingAwait()
+        allTasks = taskDatabaseDao.getAll().blockingFirst()
 
         Assert.assertEquals(0, allTasks.size)
     }

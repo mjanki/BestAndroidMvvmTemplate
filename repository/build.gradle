@@ -33,7 +33,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     implementation libs.kotlin
-    implementation libs.kotlinCoroutines
 
     // RxKotlin
     implementation libs.rxKotlin
