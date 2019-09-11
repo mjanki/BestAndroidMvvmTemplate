@@ -9,6 +9,8 @@ import org.umbrellahq.util.enums.ErrorNetworkTypes
 data class ErrorNetworkDatabaseEntity(
         @PrimaryKey(autoGenerate = true) var id: Long?,
         @ColumnInfo(name = "type") var type: ErrorNetworkTypes = ErrorNetworkTypes.OTHER,
+        @ColumnInfo(name = "shouldPersist") var shouldPersist: Boolean = false,
         @ColumnInfo(name = "code") var code: Int = 0,
-        @ColumnInfo(name = "message") var message: String = ""
+        @ColumnInfo(name = "message") var message: String = "",
+        @ColumnInfo(name = "action") var action: String = ""
 )

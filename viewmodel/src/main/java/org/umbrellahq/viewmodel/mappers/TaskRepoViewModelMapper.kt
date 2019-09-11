@@ -6,16 +6,16 @@ import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 
 class TaskRepoViewModelMapper : ViewModelMapperInterface<TaskViewModelEntity, TaskRepoEntity> {
     override fun downstream(currentLayerEntity: TaskViewModelEntity) = TaskRepoEntity(
-            currentLayerEntity.id,
-            currentLayerEntity.name,
-            currentLayerEntity.date,
-            currentLayerEntity.status
+            id = currentLayerEntity.id,
+            name = currentLayerEntity.name,
+            date = currentLayerEntity.date,
+            status = currentLayerEntity.status
     )
 
     override fun upstream(nextLayerEntity: TaskRepoEntity) = TaskViewModelEntity(
-            nextLayerEntity.id,
-            nextLayerEntity.name,
-            nextLayerEntity.date,
-            nextLayerEntity.status
+            id = nextLayerEntity.id,
+            name = nextLayerEntity.name,
+            date = nextLayerEntity.date,
+            status = nextLayerEntity.status
     )
 }

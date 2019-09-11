@@ -49,8 +49,15 @@ open class Repository(ctx: Context) {
                     )
             )
 
+    private fun insertErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity): Completable =
+            errorNetworkDatabaseDao.insert(
+                    errorNetworkRepoDatabaseRepoMapper.downstream(errorNetworkRepoEntity)
+            )
+
     protected fun <T> executeNetworkCall(
             observable: Observable<Response<T>>,
+            shouldPersist: Boolean = false,
+            action: String = "",
             onSuccess: ((value: Response<T>) -> Unit),
             onFailure: ((throwable: Throwable) -> Unit)? = null) {
 
@@ -67,12 +74,10 @@ open class Repository(ctx: Context) {
 
                     when (throwable) {
                         is SocketTimeoutException -> {
-                            // TODO: handle timeout universally
                             errorNetworkRepoEntity.type = ErrorNetworkTypes.TIMEOUT
                         }
 
                         is IOException -> {
-                            // TODO: handle IOExceptions (network or conversion error) universally
                             errorNetworkRepoEntity.type = ErrorNetworkTypes.IO
                         }
 
@@ -86,9 +91,10 @@ open class Repository(ctx: Context) {
                         }
                     }
 
-                    errorNetworkDatabaseDao.insert(
-                            errorNetworkRepoDatabaseRepoMapper.downstream(errorNetworkRepoEntity)
-                    ).execute()
+                    errorNetworkRepoEntity.shouldPersist = shouldPersist
+                    errorNetworkRepoEntity.action = action
+
+                    insertErrorNetwork(errorNetworkRepoEntity).execute()
 
                     onFailure?.let { onFailure ->
                         onFailure(throwable)

@@ -40,12 +40,13 @@ class TaskRepository(ctx: Context) : Repository(ctx) {
 
     fun updateTasksByMerging() {
         executeNetworkCall(
-                taskNetworkDao.loadTasks(),
+                observable = taskNetworkDao.loadTasks(),
+                action = "Fetching tasks from the cloud",
                 onSuccess = { taskNetworkEntityList ->
                     // TODO: use network entity's UUID to sync with database
                     println("NOTE NOTE CODE: ${taskNetworkEntityList.code()}")
 
-                    allTasks.getValue({ taskDatabaseEntity ->
+                    allTasks.getValue({
                         // TODO: get database entities to update same UUIDs or insert
                     })
                 }

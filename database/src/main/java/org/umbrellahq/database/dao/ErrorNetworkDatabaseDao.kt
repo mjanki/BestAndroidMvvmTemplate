@@ -9,7 +9,7 @@ import org.umbrellahq.database.model.ErrorNetworkDatabaseEntity
 interface ErrorNetworkDatabaseDao {
     @Query("SELECT * from network_errors")
     fun getAll(): Flowable<List<ErrorNetworkDatabaseEntity>>
-
+    
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(errorNetworkDatabaseEntity: ErrorNetworkDatabaseEntity): Completable
 

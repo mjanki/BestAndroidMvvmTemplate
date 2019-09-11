@@ -9,18 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.activity.SecondaryActivity
+import org.umbrellahq.util.foundation.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.push
-import org.umbrellahq.viewmodel.model.ErrorNetworkViewModelEntity
 import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 import org.umbrellahq.viewmodel.viewmodel.TaskViewModel
 
-class MainFragment : BaseFragment() {
-    lateinit var taskVM: TaskViewModel
+class MainFragment : FoundationFragment() {
+    private lateinit var taskVM: TaskViewModel
 
     companion object {
         const val REQUEST_CODE_1 = 1
@@ -46,18 +45,6 @@ class MainFragment : BaseFragment() {
                 println("NOTE NOTE: Name: ${taskVMEntity.name}")
             }
         })
-    }
-
-    override fun handleErrorNetwork(errorNetworkViewModelEntity: ErrorNetworkViewModelEntity) {
-        Snackbar.make(
-                clMainFragment,
-                "${errorNetworkViewModelEntity.id} with code ${errorNetworkViewModelEntity.code}",
-                Snackbar.LENGTH_SHORT
-        ).addCallback(object : Snackbar.Callback() {
-            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                handlePostErrorNetwork()
-            }
-        }).show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

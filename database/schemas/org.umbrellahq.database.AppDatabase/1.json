@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a018517adce857a2d8db74d40ba1d98f",
+    "identityHash": "894689c1037389fe469d2933764d7704",
     "entities": [
       {
         "tableName": "tasks",
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "network_errors",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL, `code` INTEGER NOT NULL, `message` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL, `shouldPersist` INTEGER NOT NULL, `code` INTEGER NOT NULL, `message` TEXT NOT NULL, `action` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -59,6 +59,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "shouldPersist",
+            "columnName": "shouldPersist",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "code",
             "columnName": "code",
             "affinity": "INTEGER",
@@ -67,6 +73,12 @@
           {
             "fieldPath": "message",
             "columnName": "message",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "action",
+            "columnName": "action",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -84,7 +96,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a018517adce857a2d8db74d40ba1d98f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '894689c1037389fe469d2933764d7704')"
     ]
   }
 }

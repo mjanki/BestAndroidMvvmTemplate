@@ -8,7 +8,6 @@ import org.umbrellahq.util.push
 import org.umbrellahq.util.setupToolbar
 
 class SecondaryActivity : BaseActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

@@ -6,16 +6,16 @@ import org.umbrellahq.repository.model.TaskRepoEntity
 
 class TaskDatabaseRepoMapper : RepoMapperInterface<TaskRepoEntity, TaskDatabaseEntity> {
     override fun downstream(currentLayerEntity: TaskRepoEntity) = TaskDatabaseEntity(
-            currentLayerEntity.id,
-            currentLayerEntity.name,
-            currentLayerEntity.date,
-            currentLayerEntity.status
+            id = currentLayerEntity.id,
+            name = currentLayerEntity.name,
+            date = currentLayerEntity.date,
+            status = currentLayerEntity.status
     )
 
     override fun upstream(nextLayerEntity: TaskDatabaseEntity) = TaskRepoEntity(
-            nextLayerEntity.id,
-            nextLayerEntity.name,
-            nextLayerEntity.date,
-            nextLayerEntity.status
+            id = nextLayerEntity.id,
+            name = nextLayerEntity.name,
+            date = nextLayerEntity.date,
+            status = nextLayerEntity.status
     )
 }

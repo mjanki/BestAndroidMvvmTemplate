@@ -6,16 +6,20 @@ import org.umbrellahq.viewmodel.model.ErrorNetworkViewModelEntity
 
 class ErrorNetworkRepoViewModelMapper : ViewModelMapperInterface<ErrorNetworkViewModelEntity, ErrorNetworkRepoEntity> {
     override fun downstream(currentLayerEntity: ErrorNetworkViewModelEntity) = ErrorNetworkRepoEntity(
-            currentLayerEntity.id,
-            currentLayerEntity.type,
-            currentLayerEntity.code,
-            currentLayerEntity.message
+            id = currentLayerEntity.id,
+            type = currentLayerEntity.type,
+            shouldPersist = currentLayerEntity.shouldPersist,
+            code = currentLayerEntity.code,
+            message = currentLayerEntity.message,
+            action = currentLayerEntity.action
     )
 
     override fun upstream(nextLayerEntity: ErrorNetworkRepoEntity) = ErrorNetworkViewModelEntity(
-            nextLayerEntity.id,
-            nextLayerEntity.type,
-            nextLayerEntity.code,
-            nextLayerEntity.message
+            id = nextLayerEntity.id,
+            type = nextLayerEntity.type,
+            shouldPersist = nextLayerEntity.shouldPersist,
+            code = nextLayerEntity.code,
+            message = nextLayerEntity.message,
+            action = nextLayerEntity.action
     )
 }

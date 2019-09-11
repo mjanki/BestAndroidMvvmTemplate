@@ -10,14 +10,14 @@ import org.umbrellahq.viewmodel.model.ErrorNetworkViewModelEntity
 
 class ErrorNetworkViewModel(application: Application) : BaseViewModel(application) {
     private var errorRepository = Repository(application)
-    private var allErrorsNetwork = MutableLiveData<List<ErrorNetworkViewModelEntity>>()
+    private var errorsNetwork = MutableLiveData<List<ErrorNetworkViewModelEntity>>()
 
     private var errorNetworkRepoViewModelMapper = ErrorNetworkRepoViewModelMapper()
-    
+
     init {
         disposables.add(
                 errorRepository.getErrorsNetwork().subscribe { errorNetworkRepoEntityList ->
-                    allErrorsNetwork.postValue(
+                    errorsNetwork.postValue(
                             errorNetworkRepoEntityList.map { errorNetworkRepoEntity ->
                                 errorNetworkRepoViewModelMapper.upstream(errorNetworkRepoEntity)
                             }
@@ -26,7 +26,7 @@ class ErrorNetworkViewModel(application: Application) : BaseViewModel(applicatio
         )
     }
 
-    fun getAllErrorsNetwork(): LiveData<List<ErrorNetworkViewModelEntity>> = allErrorsNetwork
+    fun getErrorsNetwork(): LiveData<List<ErrorNetworkViewModelEntity>> = errorsNetwork
 
     fun deleteErrorNetwork(errorNetworkViewModelEntity: ErrorNetworkViewModelEntity) {
         disposables.add(
