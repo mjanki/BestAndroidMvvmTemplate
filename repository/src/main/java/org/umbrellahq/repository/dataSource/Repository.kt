@@ -49,10 +49,11 @@ open class Repository(ctx: Context) {
                     )
             )
 
-    private fun insertErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity): Completable =
-            errorNetworkDatabaseDao.insert(
-                    errorNetworkRepoDatabaseRepoMapper.downstream(errorNetworkRepoEntity)
-            )
+    private fun insertErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity) {
+        errorNetworkDatabaseDao.insert(
+                errorNetworkRepoDatabaseRepoMapper.downstream(errorNetworkRepoEntity)
+        ).execute()
+    }
 
     protected fun <T> executeNetworkCall(
             observable: Observable<Response<T>>,
@@ -94,7 +95,7 @@ open class Repository(ctx: Context) {
                     errorNetworkRepoEntity.shouldPersist = shouldPersist
                     errorNetworkRepoEntity.action = action
 
-                    insertErrorNetwork(errorNetworkRepoEntity).execute()
+                    insertErrorNetwork(errorNetworkRepoEntity)
 
                     onFailure?.let { onFailure ->
                         onFailure(throwable)
