@@ -24,10 +24,19 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
                     )
                 }
         )
+
+        disposables.add(
+                taskRepository.isRetrievingTasks.subscribe {
+                    isRetrievingTasks.postValue(it)
+                }
+        )
     }
 
     fun getAllTasks(): LiveData<List<TaskViewModelEntity>> = allTasks
 
+    private val isRetrievingTasks = MutableLiveData<Boolean>()
+    fun getIsLoading(): LiveData<Boolean> = isRetrievingTasks
+    
     fun update() {
         taskRepository.updateTasksByMerging()
     }

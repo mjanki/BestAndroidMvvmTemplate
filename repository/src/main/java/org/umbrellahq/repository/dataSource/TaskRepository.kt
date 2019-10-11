@@ -3,6 +3,8 @@ package org.umbrellahq.repository.dataSource
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
 import org.umbrellahq.database.dao.TaskDatabaseDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
 import org.umbrellahq.network.daos.TaskNetworkDao
@@ -26,19 +28,18 @@ class TaskRepository(ctx: Context) : Repository(ctx) {
         allTasks = taskDatabaseDao.getAll()
     }
 
-    fun getTasks(): Flowable<List<TaskRepoEntity>> {
-        updateTasksByMerging()
+    fun getTasks(): Flowable<List<TaskRepoEntity>> =
+            allTasks.flatMap { taskDatabaseEntityList ->
+                Flowable.fromArray(
+                        taskDatabaseEntityList.map { taskDatabaseEntity ->
+                            taskRepoDatabaseMapper.upstream(taskDatabaseEntity)
+                        }
+                )
+            }
 
-        return allTasks.flatMap { taskDatabaseEntityList ->
-            Flowable.fromArray(
-                    taskDatabaseEntityList.map { taskDatabaseEntity ->
-                        taskRepoDatabaseMapper.upstream(taskDatabaseEntity)
-                    }
-            )
-        }
-    }
-
+    val isRetrievingTasks = PublishSubject.create<Boolean>()
     fun updateTasksByMerging() {
+        isRetrievingTasks.onNext(true)
         executeNetworkCall(
                 observable = taskNetworkDao.loadTasks(),
                 action = "Fetching tasks from the cloud",
@@ -49,6 +50,9 @@ class TaskRepository(ctx: Context) : Repository(ctx) {
                     allTasks.getValue({
                         // TODO: get database entities to update same UUIDs or insert
                     })
+                },
+                onComplete = {
+                    isRetrievingTasks.onNext(false)
                 }
         )
     }

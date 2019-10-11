@@ -45,6 +45,10 @@ class MainFragment : FoundationFragment() {
                 println("NOTE NOTE: Name: ${taskVMEntity.name}")
             }
         })
+
+        taskVM.getIsLoading().observe(viewLifecycleOwner, Observer {
+            tvLoading.visibility = if (it) { View.VISIBLE } else { View.INVISIBLE }
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

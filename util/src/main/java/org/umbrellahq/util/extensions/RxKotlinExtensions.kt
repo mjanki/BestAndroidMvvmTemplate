@@ -17,7 +17,7 @@ fun Completable.execute(
     return subscribeOn(
             Schedulers.io()
     ).subscribe (
-            { onSuccess?.let { onSuccess() } },
+            { onSuccess?.let { onSuccess -> onSuccess() } },
             { throwable ->
                 onFailure?.let { onFailure -> onFailure(throwable) }
             }
@@ -37,12 +37,15 @@ fun <T> Flowable<T>.getValue(
 // Use to invoke Observable
 fun <T> Observable<Response<T>>.execute(
         onSuccess: ((value: Response<T>) -> Unit),
-        onFailure: ((throwable: Throwable) -> Unit)? = null
+        onFailure: ((throwable: Throwable) -> Unit)? = null,
+        onComplete: (() -> Unit)? = null
 ) : Disposable {
 
     return subscribeOn(
             Schedulers.io()
-    ).subscribe (
+    ).doOnComplete {
+        onComplete?.let { onComplete -> onComplete() }
+    }.subscribe (
             { response ->
                 if (response.isSuccessful) {
                     onSuccess(response)

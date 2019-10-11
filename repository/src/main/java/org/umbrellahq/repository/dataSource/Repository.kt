@@ -60,7 +60,8 @@ open class Repository(ctx: Context) {
             shouldPersist: Boolean = false,
             action: String = "",
             onSuccess: ((value: Response<T>) -> Unit),
-            onFailure: ((throwable: Throwable) -> Unit)? = null) {
+            onFailure: ((throwable: Throwable) -> Unit)? = null,
+            onComplete: (() -> Unit)? = null) {
 
         observable.execute(
                 onSuccess = { response ->
@@ -99,6 +100,11 @@ open class Repository(ctx: Context) {
 
                     onFailure?.let { onFailure ->
                         onFailure(throwable)
+                    }
+                },
+                onComplete = {
+                    onComplete?.let { onComplete ->
+                        onComplete()
                     }
                 }
         )
