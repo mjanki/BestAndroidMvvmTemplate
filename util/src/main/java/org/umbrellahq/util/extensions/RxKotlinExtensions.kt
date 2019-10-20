@@ -3,10 +3,16 @@ package org.umbrellahq.util.extensions
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import retrofit2.Response
+
+object RxKotlinExtensions {
+    var isTesting = false
+    fun getScheduler(): Scheduler = if (isTesting) Schedulers.trampoline() else Schedulers.io()
+}
 
 // Use to invoke Completable
 fun Completable.execute(
@@ -15,7 +21,7 @@ fun Completable.execute(
 ): Disposable {
 
     return subscribeOn(
-            Schedulers.io()
+            RxKotlinExtensions.getScheduler()
     ).subscribe (
             { onSuccess?.let { onSuccess -> onSuccess() } },
             { throwable ->
@@ -42,7 +48,7 @@ fun <T> Observable<Response<T>>.execute(
 ): Disposable {
 
     return subscribeOn(
-            Schedulers.io()
+            RxKotlinExtensions.getScheduler()
     ).doOnComplete {
         onComplete?.let { onComplete -> onComplete() }
     }.subscribe (

@@ -2,6 +2,8 @@ package org.umbrellahq.network.daos
 
 import io.reactivex.subjects.PublishSubject
 import org.umbrellahq.network.clients.TaskClient
+import org.umbrellahq.network.model.TaskNetworkEntity
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -13,15 +15,19 @@ class TaskNetworkDao : BaseNetworkDao() {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build().create(TaskClient::class.java)
 
+    fun setRequestInterface(taskClient: TaskClient) {
+        requestInterface = taskClient
+    }
+
     val isRetrievingTasks = PublishSubject.create<Boolean>()
+    val retrievedTasks = PublishSubject.create<Response<List<TaskNetworkEntity>>>()
     fun retrieveTasks() {
         isRetrievingTasks.onNext(true)
         executeNetworkCall(
                 observable = requestInterface.getTasks(),
                 action = "Fetching tasks from the cloud",
                 onSuccess = {
-                    // TODO: use network entity's UUID to sync with database
-                    println("NOTE NOTE CODE: ${it.code()}")
+                    retrievedTasks.onNext(it)
                 },
                 onComplete = {
                     isRetrievingTasks.onNext(false)

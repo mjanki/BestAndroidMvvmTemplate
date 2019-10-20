@@ -44,7 +44,11 @@ dependencies {
 
     // Testing
     testImplementation libs.junit
+    androidTestImplementation libs.testJunitExt
     androidTestImplementation libs.testRunner
+
+    // Mockito
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 
     implementation project(':util')
 }
