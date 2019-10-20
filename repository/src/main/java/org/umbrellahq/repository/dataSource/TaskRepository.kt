@@ -3,17 +3,15 @@ package org.umbrellahq.repository.dataSource
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Single
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxkotlin.addTo
 import org.umbrellahq.database.dao.TaskDatabaseDao
 import org.umbrellahq.database.model.TaskDatabaseEntity
 import org.umbrellahq.network.daos.TaskNetworkDao
-import org.umbrellahq.repository.mappers.TaskDatabaseRepoMapper
+import org.umbrellahq.repository.mappers.ErrorNetworkRepoNetworkMapper
+import org.umbrellahq.repository.mappers.TaskRepoDatabaseMapper
 import org.umbrellahq.repository.model.TaskRepoEntity
-import org.umbrellahq.util.extensions.getValue
 
 class TaskRepository(ctx: Context) : Repository(ctx) {
-
     // DAOs
     private var taskNetworkDao = TaskNetworkDao()
     private var taskDatabaseDao: TaskDatabaseDao = appDatabase.taskDao()
@@ -22,10 +20,17 @@ class TaskRepository(ctx: Context) : Repository(ctx) {
     private var allTasks: Flowable<List<TaskDatabaseEntity>>
 
     // Mappers
-    private var taskRepoDatabaseMapper = TaskDatabaseRepoMapper()
+    private var taskRepoDatabaseMapper = TaskRepoDatabaseMapper()
+    private var errorNetworkRepoNetworkMapper = ErrorNetworkRepoNetworkMapper()
 
     init {
         allTasks = taskDatabaseDao.getAll()
+
+        taskNetworkDao.errorNetwork.subscribe {
+            insertErrorNetwork(
+                    errorNetworkRepoNetworkMapper.upstream(it)
+            )
+        }.addTo(disposables)
     }
 
     fun getTasks(): Flowable<List<TaskRepoEntity>> =
@@ -37,24 +42,9 @@ class TaskRepository(ctx: Context) : Repository(ctx) {
                 )
             }
 
-    val isRetrievingTasks = PublishSubject.create<Boolean>()
+    val isRetrievingTasks = taskNetworkDao.isRetrievingTasks
     fun updateTasksByMerging() {
-        isRetrievingTasks.onNext(true)
-        executeNetworkCall(
-                observable = taskNetworkDao.loadTasks(),
-                action = "Fetching tasks from the cloud",
-                onSuccess = { taskNetworkEntityList ->
-                    // TODO: use network entity's UUID to sync with database
-                    println("NOTE NOTE CODE: ${taskNetworkEntityList.code()}")
-
-                    allTasks.getValue({
-                        // TODO: get database entities to update same UUIDs or insert
-                    })
-                },
-                onComplete = {
-                    isRetrievingTasks.onNext(false)
-                }
-        )
+        taskNetworkDao.retrieveTasks()
     }
 
     fun insertTask(taskRepoEntity: TaskRepoEntity): Completable =

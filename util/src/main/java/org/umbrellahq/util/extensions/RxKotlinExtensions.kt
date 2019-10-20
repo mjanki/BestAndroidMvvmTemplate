@@ -12,7 +12,7 @@ import retrofit2.Response
 fun Completable.execute(
         onSuccess: (() -> Unit)? = null,
         onFailure: ((throwable: Throwable) -> Unit)? = null
-) : Disposable {
+): Disposable {
 
     return subscribeOn(
             Schedulers.io()
@@ -28,8 +28,8 @@ fun Completable.execute(
 fun <T> Flowable<T>.getValue(
         onSuccess: ((value: T) -> Unit),
         onFailure: ((throwable: Throwable) -> Unit)? = null
-) {
-    Completable.fromAction {
+): Disposable {
+    return Completable.fromAction {
         onSuccess(blockingFirst())
     }.execute(onFailure = onFailure)
 }
@@ -39,7 +39,7 @@ fun <T> Observable<Response<T>>.execute(
         onSuccess: ((value: Response<T>) -> Unit),
         onFailure: ((throwable: Throwable) -> Unit)? = null,
         onComplete: (() -> Unit)? = null
-) : Disposable {
+): Disposable {
 
     return subscribeOn(
             Schedulers.io()

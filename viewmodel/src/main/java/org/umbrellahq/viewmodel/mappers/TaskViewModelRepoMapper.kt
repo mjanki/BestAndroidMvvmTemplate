@@ -4,7 +4,7 @@ import org.umbrellahq.repository.model.TaskRepoEntity
 import org.umbrellahq.viewmodel.interfaces.ViewModelMapperInterface
 import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 
-class TaskRepoViewModelMapper : ViewModelMapperInterface<TaskViewModelEntity, TaskRepoEntity> {
+class TaskViewModelRepoMapper : ViewModelMapperInterface<TaskViewModelEntity, TaskRepoEntity> {
     override fun downstream(currentLayerEntity: TaskViewModelEntity) = TaskRepoEntity(
             id = currentLayerEntity.id,
             name = currentLayerEntity.name,

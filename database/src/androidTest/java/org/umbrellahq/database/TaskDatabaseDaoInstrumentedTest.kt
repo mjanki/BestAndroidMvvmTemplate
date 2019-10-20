@@ -20,13 +20,13 @@ import java.io.IOException
 class TaskDatabaseDaoInstrumentedTest {
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var taskDatabaseDao: TaskDatabaseDao
     private lateinit var db: AppDatabase
+    private lateinit var taskDatabaseDao: TaskDatabaseDao
 
     private lateinit var testTaskDatabaseEntity: TaskDatabaseEntity
 
     @Before
-    fun setupAndroidThreeTen() {
+    fun setup() {
         AndroidThreeTen.init(ApplicationProvider.getApplicationContext())
 
         testTaskDatabaseEntity = TaskDatabaseEntity(
@@ -36,7 +36,7 @@ class TaskDatabaseDaoInstrumentedTest {
     }
 
     @Before
-    fun createDb() {
+    fun setupDB() {
         // Create test database
         db = Room.inMemoryDatabaseBuilder(
                 ApplicationProvider.getApplicationContext(),
