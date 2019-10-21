@@ -2,21 +2,21 @@
 
 buildscript {
     ext {
-        kotlinVersion = "1.3.41"
-        androidxAppCompatVersion = "1.0.2"
+        kotlinVersion = "1.3.50"
+        androidxAppCompatVersion = "1.1.0"
         constraintLayoutVersion = "1.1.3"
         materialVersion = "1.0.0"
-        lifecycleExtensionsVersion = "2.0.0"
+        lifecycleExtensionsVersion = "2.1.0"
 
         // rxAndroid & rxKotlin
         rxKotlinVersion = "2.4.0"
         rxAndroidVersion = "2.1.1"
 
         // Room
-        roomVersion = "2.1.0"
+        roomVersion = "2.2.0"
 
         // Retrofit
-        retrofitVersion = "2.6.1"
+        retrofitVersion = "2.6.2"
 
         // External Utils
         threetenabpVersion = "1.2.1"
@@ -27,6 +27,7 @@ buildscript {
         testRunnerVersion = "1.2.0"
         testEspressoVersion = "3.2.0"
         mockitoKotlinVersion = "2.2.0"
+        archCoreTestingVersion = "2.1.0"
 
 
         libs = [
@@ -56,9 +57,9 @@ buildscript {
                 testJunitExt: ("androidx.test.ext:junit:$testJunitExtVersion"),
                 testRunner: ("androidx.test:runner:$testRunnerVersion"),
                 testEspresso: ("androidx.test.espresso:espresso-core:$testEspressoVersion"),
+                archCoreTesting: ("androidx.arch.core:core-testing:$archCoreTestingVersion"),
 
                 mockitoKotlin: ("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion")
-
         ]
     }
 
@@ -66,8 +67,9 @@ buildscript {
         google()
         jcenter()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.5.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // NOTE: Do not place your application dependencies here; they belong

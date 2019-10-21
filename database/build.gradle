@@ -18,8 +18,10 @@ android {
         // used by Room, to test migrations
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["room.schemaLocation":
-                                     "$projectDir/schemas".toString()]
+                arguments = [
+                        "room.schemaLocation": "$projectDir/schemas".toString(),
+                        "room.incremental":"true"
+                ]
             }
         }
     }
@@ -63,8 +65,6 @@ dependencies {
     implementation libs.roomRxJava
     implementation libs.roomTesting
 
-    implementation "androidx.arch.core:core-testing:2.0.1"
-
     // OffsetDateTime backport
     implementation libs.threetenabp
 
@@ -72,6 +72,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.testJunitExt
     androidTestImplementation libs.testRunner
+    implementation libs.archCoreTesting
 
     implementation project(':util')
 }
