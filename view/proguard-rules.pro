@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+#keep json classes
+
+######## Mockito
+-dontwarn org.mockito.**
+
+######## Java
+-dontwarn javax.**
+-dontwarn java.awt.**
+-dontwarn net.bytebuddy.**
+-dontwarn java.lang.**
