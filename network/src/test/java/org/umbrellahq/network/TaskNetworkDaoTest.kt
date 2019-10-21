@@ -34,11 +34,23 @@ class TaskNetworkDaoTest {
         )
 
         successTaskClient = mock {
-            on { getTasks() } doReturn Observable.just(Response.success(taskNetworkEntityList))
+            on { getTasks() } doReturn Observable.just(
+                    Response.success(
+                            taskNetworkEntityList
+                    )
+            )
         }
 
         failureTaskClient = mock {
-            on { getTasks() } doReturn Observable.just(Response.error(404, ResponseBody.create(MediaType.parse("text/plain"), "MY PERSONAL ERROR MESSAGE")))
+            on { getTasks() } doReturn Observable.just(
+                    Response.error(
+                            404,
+                            ResponseBody.create(
+                                    MediaType.parse("text/plain"),
+                                    "MY PERSONAL ERROR MESSAGE"
+                            )
+                    )
+            )
         }
 
         taskNetworkDao = TaskNetworkDao()
@@ -83,10 +95,16 @@ class TaskNetworkDaoTest {
     fun testRetrieveTasksFailure() {
         taskNetworkDao.setRequestInterface(failureTaskClient)
 
-        val testObserver = taskNetworkDao.retrievedTasks.test()
+        val testRetrievedTasksObserver = taskNetworkDao.retrievedTasks.test()
+        val testErrorNetworkObserver = taskNetworkDao.errorNetwork.test()
 
         taskNetworkDao.retrieveTasks()
 
-        testObserver.assertValueCount(0)
+        testRetrievedTasksObserver.assertValueCount(0)
+        testErrorNetworkObserver.assertValueCount(1)
+
+        val errorNetworkValue = testErrorNetworkObserver.values()[0]
+
+        Assert.assertEquals(404, errorNetworkValue.code)
     }
 }

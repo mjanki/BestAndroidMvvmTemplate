@@ -48,7 +48,7 @@ dependencies {
     androidTestImplementation libs.testRunner
 
     // Mockito
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+    testImplementation libs.mockitoKotlin
 
     implementation project(':util')
 }
