@@ -27,6 +27,8 @@ android {
         targetCompatibility = "8"
         sourceCompatibility = "8"
     }
+
+    useLibrary "android.test.mock"
 }
 
 dependencies {
@@ -50,7 +52,12 @@ dependencies {
 
     // Testing
     testImplementation libs.junit
+    androidTestImplementation libs.testJunitExt
     androidTestImplementation libs.testRunner
+
+    // Mockito
+    testImplementation libs.mockitoKotlin
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
 
     implementation project(':network')
     implementation project(':database')

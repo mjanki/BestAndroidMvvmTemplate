@@ -68,7 +68,7 @@ class MainFragment : FoundationFragment() {
         }
 
         bPrintTasks.setOnClickListener {
-            taskVM.update()
+            taskVM.updateTasks()
             /*println("NOTE NOTE: SIZE: ${taskVM.getAllTasks().value?.size}")
             taskVM.getAllTasks().value?.let {
                 for (task in it) {

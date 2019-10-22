@@ -1,57 +1,27 @@
 package org.umbrellahq.repository.dataSource
 
 import android.content.Context
-import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import org.umbrellahq.database.AppDatabase
-import org.umbrellahq.database.dao.ErrorNetworkDatabaseDao
-import org.umbrellahq.database.model.ErrorNetworkDatabaseEntity
-import org.umbrellahq.repository.mappers.ErrorNetworkRepoDatabaseMapper
-import org.umbrellahq.repository.model.ErrorNetworkRepoEntity
-import org.umbrellahq.util.extensions.execute
 
-open class Repository(ctx: Context) {
-    protected var appDatabase: AppDatabase = AppDatabase(ctx)
-
-    // DAOs
-    protected var disposables = CompositeDisposable()
-    private var errorNetworkDatabaseDao: ErrorNetworkDatabaseDao = appDatabase.errorNetworkDao()
-
-    // Observables
-    private var allErrorsNetwork: Flowable<List<ErrorNetworkDatabaseEntity>>
-
-    // Mappers
-    private var errorNetworkRepoDatabaseMapper = ErrorNetworkRepoDatabaseMapper()
-
+open class Repository(ctx: Context?) {
+    protected lateinit var appDatabase: AppDatabase
     init {
-        allErrorsNetwork = errorNetworkDatabaseDao.getAll()
-    }
-
-    fun getErrorsNetwork(): Flowable<List<ErrorNetworkRepoEntity>> {
-        return allErrorsNetwork.flatMap { errorNetworkDatabaseEntityList ->
-            Flowable.fromArray(
-                    errorNetworkDatabaseEntityList.map { errorNetworkDatabaseEntity ->
-                        errorNetworkRepoDatabaseMapper.upstream(errorNetworkDatabaseEntity)
-                    }
-            )
+        ctx?.let {
+            appDatabase = AppDatabase(it)
         }
     }
 
-    fun deleteErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity): Completable =
-            errorNetworkDatabaseDao.delete(
-                    errorNetworkRepoDatabaseMapper.downstream(
-                            errorNetworkRepoEntity
-                    )
-            )
+    // To override
+    open fun init() { /* Implement in subclasses */ }
 
-    protected fun insertErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity) {
-        errorNetworkDatabaseDao.insert(
-                errorNetworkRepoDatabaseMapper.downstream(errorNetworkRepoEntity)
-        ).execute()
-    }
+    // DAOs
+    protected var disposables = CompositeDisposable()
 
     fun clearDisposables() {
         disposables.clear()
     }
+
+    fun getDisposablesSize() = disposables.size()
+    fun getDisposableIsDisposed() = disposables.isDisposed
 }

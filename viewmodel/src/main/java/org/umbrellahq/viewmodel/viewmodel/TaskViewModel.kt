@@ -16,6 +16,8 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
     private var taskViewModelRepoMapper = TaskViewModelRepoMapper()
 
     init {
+        taskRepository.init()
+
         taskRepository.getTasks().subscribe { taskRepoEntityList ->
             allTasks.postValue(
                     taskRepoEntityList.map { taskRepoEntity ->
@@ -33,10 +35,6 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
 
     private val isRetrievingTasks = MutableLiveData<Boolean>()
     fun getIsLoading(): LiveData<Boolean> = isRetrievingTasks
-    
-    fun update() {
-        taskRepository.updateTasksByMerging()
-    }
 
     fun insertTask(name: String) {
         val taskViewModelEntity = TaskViewModelEntity()
@@ -49,6 +47,9 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         ).execute()
     }
 
+    fun updateTasks() {
+        taskRepository.updateTasks()
+    }
     override fun onCleared() {
         super.onCleared()
         taskRepository.clearDisposables()
