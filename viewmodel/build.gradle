@@ -42,8 +42,15 @@ dependencies {
     // OffsetDateTime backport
     implementation libs.threetenabp
 
+    // Testing
     testImplementation libs.junit
+    androidTestImplementation libs.testJunitExt
     androidTestImplementation libs.testRunner
+    implementation libs.archCoreTesting
+
+    // Mockito
+    testImplementation libs.mockitoKotlin
+    testImplementation libs.mockitoInline
 
     implementation project(':util')
     implementation project(':repository')

@@ -34,6 +34,7 @@ open class BaseActivity : FoundationActivity() {
 
         // Initialize ErrorsNetwork observable
         errorNetworkVM = ViewModelProviders.of(this).get(ErrorNetworkViewModel::class.java)
+        errorNetworkVM.init()
 
         errorNetworkVM.getErrorsNetwork().observe(
                 this,

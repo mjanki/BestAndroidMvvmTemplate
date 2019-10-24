@@ -1,7 +1,6 @@
 package org.umbrellahq.repository.dataSource
 
 import android.content.Context
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.subjects.PublishSubject
@@ -41,16 +40,22 @@ class TaskRepository(ctx: Context? = null) : ErrorRepository(ctx) {
 
         isRetrievingTasks = taskNetworkDao.isRetrievingTasks
 
-        taskNetworkDao.errorNetwork.subscribe {
+        taskNetworkDao.errorNetwork.subscribe { errorNetworkEntity ->
             insertErrorNetwork(
-                    errorNetworkRepoNetworkMapper.upstream(it)
+                    errorNetworkRepoNetworkMapper.upstream(
+                            errorNetworkEntity
+                    )
             )
         }.addTo(disposables)
 
         taskNetworkDao.retrievedTasks.subscribe {
             it.body()?.let { taskNetworkEntities ->
                 for (taskNetworkEntity in taskNetworkEntities) {
-                    insertTask(taskRepoNetworkMapper.upstream(taskNetworkEntity)).execute()
+                    insertTask(
+                            taskRepoNetworkMapper.upstream(
+                                    taskNetworkEntity
+                            )
+                    )
                 }
             }
         }.addTo(disposables)
@@ -60,7 +65,9 @@ class TaskRepository(ctx: Context? = null) : ErrorRepository(ctx) {
             allTasks.flatMap { taskDatabaseEntityList ->
                 Flowable.fromArray(
                         taskDatabaseEntityList.map { taskDatabaseEntity ->
-                            taskRepoDatabaseMapper.upstream(taskDatabaseEntity)
+                            taskRepoDatabaseMapper.upstream(
+                                    taskDatabaseEntity
+                            )
                         }
                 )
             }
@@ -70,6 +77,11 @@ class TaskRepository(ctx: Context? = null) : ErrorRepository(ctx) {
         taskNetworkDao.retrieveTasks()
     }
 
-    fun insertTask(taskRepoEntity: TaskRepoEntity): Completable =
-            taskDatabaseDao.insert(taskRepoDatabaseMapper.downstream(taskRepoEntity))
+    fun insertTask(taskRepoEntity: TaskRepoEntity) {
+        taskDatabaseDao.insert(
+                taskRepoDatabaseMapper.downstream(
+                        taskRepoEntity
+                )
+        ).execute()
+    }
 }

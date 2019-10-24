@@ -27,6 +27,7 @@ buildscript {
         testRunnerVersion = "1.2.0"
         testEspressoVersion = "3.2.0"
         mockitoKotlinVersion = "2.2.0"
+        mockitoInlineVersion = "2.13.0"
         archCoreTestingVersion = "2.1.0"
 
 
@@ -59,7 +60,8 @@ buildscript {
                 testEspresso: ("androidx.test.espresso:espresso-core:$testEspressoVersion"),
                 archCoreTesting: ("androidx.arch.core:core-testing:$archCoreTestingVersion"),
 
-                mockitoKotlin: ("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion")
+                mockitoKotlin: ("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"),
+                mockitoInline: ("org.mockito:mockito-inline:$mockitoInlineVersion")
         ]
     }
 

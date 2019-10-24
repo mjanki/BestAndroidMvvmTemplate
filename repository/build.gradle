@@ -57,7 +57,7 @@ dependencies {
 
     // Mockito
     testImplementation libs.mockitoKotlin
-    testImplementation 'org.mockito:mockito-inline:2.13.0'
+    testImplementation libs.mockitoInline
 
     implementation project(':network')
     implementation project(':database')

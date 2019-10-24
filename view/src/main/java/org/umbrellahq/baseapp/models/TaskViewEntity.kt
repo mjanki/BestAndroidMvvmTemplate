@@ -1,8 +1,8 @@
-package org.umbrellahq.viewmodel.model
+package org.umbrellahq.baseapp.models
 
 import org.threeten.bp.OffsetDateTime
 
-data class TaskViewModelEntity(
+data class TaskViewEntity(
         var id: Long? = null,
         var name: String,
         var date: OffsetDateTime = OffsetDateTime.now(),

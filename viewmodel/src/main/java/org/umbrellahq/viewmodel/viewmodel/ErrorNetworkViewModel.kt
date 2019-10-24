@@ -9,12 +9,17 @@ import org.umbrellahq.viewmodel.mappers.ErrorNetworkViewModelRepoMapper
 import org.umbrellahq.viewmodel.model.ErrorNetworkViewModelEntity
 
 class ErrorNetworkViewModel(application: Application) : BaseViewModel(application) {
-    private var errorRepository = ErrorRepository(application)
+    private lateinit var errorRepository: ErrorRepository
     private var errorsNetwork = MutableLiveData<List<ErrorNetworkViewModelEntity>>()
 
     private var errorNetworkRepoViewModelMapper = ErrorNetworkViewModelRepoMapper()
 
-    init {
+    fun init() {
+        init(testErrorRepository = null)
+    }
+
+    fun init(testErrorRepository: ErrorRepository? = null) {
+        errorRepository = testErrorRepository ?: ErrorRepository(getApplication())
         errorRepository.init()
 
         errorRepository.getErrorsNetwork().subscribe { errorNetworkRepoEntityList ->

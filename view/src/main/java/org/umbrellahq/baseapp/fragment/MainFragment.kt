@@ -11,8 +11,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.umbrellahq.baseapp.R
-import org.umbrellahq.baseapp.activity.BaseActivity
 import org.umbrellahq.baseapp.activity.SecondaryActivity
+import org.umbrellahq.baseapp.mappers.TaskViewViewModelMapper
+import org.umbrellahq.baseapp.models.TaskViewEntity
 import org.umbrellahq.util.foundation.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.util.push
@@ -21,6 +22,8 @@ import org.umbrellahq.viewmodel.viewmodel.TaskViewModel
 
 class MainFragment : FoundationFragment() {
     private lateinit var taskVM: TaskViewModel
+
+    private val taskViewViewModelMapper = TaskViewViewModelMapper()
 
     companion object {
         const val REQUEST_CODE_1 = 1
@@ -39,6 +42,7 @@ class MainFragment : FoundationFragment() {
         super.onActivityCreated(savedInstanceState)
 
         taskVM = ViewModelProviders.of(this).get(TaskViewModel::class.java)
+        taskVM.init()
 
         taskVM.getAllTasks().observe(viewLifecycleOwner, Observer<List<TaskViewModelEntity>> {
             println("NOTE NOTE: OBSERVING")
@@ -47,7 +51,7 @@ class MainFragment : FoundationFragment() {
             }
         })
 
-        taskVM.getIsLoading().observe(viewLifecycleOwner, Observer {
+        taskVM.getIsRetrievingTasks().observe(viewLifecycleOwner, Observer {
             tvLoading.visibility = if (it) { View.VISIBLE } else { View.INVISIBLE }
         })
     }
@@ -64,17 +68,23 @@ class MainFragment : FoundationFragment() {
         }
 
         bAddTask.setOnClickListener {
-            taskVM.insertTask("New Task ${taskVM.getAllTasks().value?.size}")
+            taskVM.insertTask(
+                    taskViewViewModelMapper.downstream(
+                            TaskViewEntity(
+                                    name = "New Task ${taskVM.getAllTasks().value?.size}"
+                            )
+                    )
+            )
         }
 
         bPrintTasks.setOnClickListener {
-            taskVM.updateTasks()
-            /*println("NOTE NOTE: SIZE: ${taskVM.getAllTasks().value?.size}")
+            //taskVM.updateTasks()
+            println("NOTE NOTE: SIZE: ${taskVM.getAllTasks().value?.size}")
             taskVM.getAllTasks().value?.let {
                 for (task in it) {
                     println("NOTE NOTE: ${task.id}: ${task.name}")
                 }
-            }*/
+            }
         }
     }
 

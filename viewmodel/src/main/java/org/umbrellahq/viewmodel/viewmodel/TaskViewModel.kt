@@ -5,17 +5,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.addTo
 import org.umbrellahq.repository.dataSource.TaskRepository
-import org.umbrellahq.util.extensions.execute
 import org.umbrellahq.viewmodel.mappers.TaskViewModelRepoMapper
 import org.umbrellahq.viewmodel.model.TaskViewModelEntity
 
 class TaskViewModel(application: Application) : BaseViewModel(application) {
-    private var taskRepository = TaskRepository(application)
+    private lateinit var taskRepository: TaskRepository
     private var allTasks = MutableLiveData<List<TaskViewModelEntity>>()
 
     private var taskViewModelRepoMapper = TaskViewModelRepoMapper()
 
-    init {
+    fun init() {
+        init(testTaskRepository = null)
+    }
+
+    fun init(testTaskRepository: TaskRepository? = null) {
+        taskRepository = testTaskRepository ?: TaskRepository(getApplication())
         taskRepository.init()
 
         taskRepository.getTasks().subscribe { taskRepoEntityList ->
@@ -34,22 +38,20 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
     fun getAllTasks(): LiveData<List<TaskViewModelEntity>> = allTasks
 
     private val isRetrievingTasks = MutableLiveData<Boolean>()
-    fun getIsLoading(): LiveData<Boolean> = isRetrievingTasks
-
-    fun insertTask(name: String) {
-        val taskViewModelEntity = TaskViewModelEntity()
-        taskViewModelEntity.name = name
-
-        taskRepository.insertTask(
-                taskViewModelRepoMapper.downstream(
-                        taskViewModelEntity
-                )
-        ).execute()
-    }
+    fun getIsRetrievingTasks(): LiveData<Boolean> = isRetrievingTasks
 
     fun updateTasks() {
         taskRepository.updateTasks()
     }
+
+    fun insertTask(taskViewModelEntity: TaskViewModelEntity) {
+        taskRepository.insertTask(
+                taskViewModelRepoMapper.downstream(
+                        taskViewModelEntity
+                )
+        )
+    }
+
     override fun onCleared() {
         super.onCleared()
         taskRepository.clearDisposables()
