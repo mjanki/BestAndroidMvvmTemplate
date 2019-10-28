@@ -5,20 +5,18 @@ import androidx.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.*
 import io.reactivex.BackpressureStrategy
 import io.reactivex.subjects.PublishSubject
-import org.junit.Assert
-import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.MockitoAnnotations
 import org.threeten.bp.OffsetDateTime
-import org.umbrellahq.repository.dataSource.TaskRepository
-import org.umbrellahq.repository.model.TaskRepoEntity
-import org.umbrellahq.viewmodel.model.TaskViewModelEntity
-import org.umbrellahq.viewmodel.viewmodel.TaskViewModel
+import org.umbrellahq.repository.models.TaskRepoEntity
+import org.umbrellahq.repository.repositories.TaskRepository
+import org.umbrellahq.viewmodel.models.TaskViewModelEntity
+import org.umbrellahq.viewmodel.viewmodels.TaskViewModel
 
 class TaskViewModelTest {
     @get:Rule
@@ -50,13 +48,14 @@ class TaskViewModelTest {
         taskRepository = mock {
             on { isRetrievingTasks } doReturn isRetrievingTasks
             on { getTasks() } doReturn retrievedTasks.toFlowable(BackpressureStrategy.LATEST)
-            on { updateTasks() } doAnswer {
+            on { retrieveTasks() } doAnswer {
                 isRetrievingTasks.onNext(true)
 
                 retrievedTasks.onNext(
                         listOf(
                                 TaskRepoEntity(
                                         id = 42,
+                                        uuid = "UUID Test",
                                         name = "MY UPDATED TASKS",
                                         date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00")
                                 )
@@ -66,7 +65,7 @@ class TaskViewModelTest {
                 isRetrievingTasks.onNext(false)
             }
             on { insertTask(any()) } doAnswer {
-                Assert.assertEquals(1, it.arguments.size)
+                assertEquals(1, it.arguments.size)
 
                 val argument = it.arguments[0] as TaskRepoEntity
                 retrievedTasks.onNext(
@@ -84,6 +83,7 @@ class TaskViewModelTest {
                 listOf(
                         TaskRepoEntity(
                                 id = 42,
+                                uuid = "UUID Test",
                                 name = "MY TASKS",
                                 date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00")
                         )
@@ -97,8 +97,8 @@ class TaskViewModelTest {
     }
 
     @Test
-    fun updateTasks() {
-        taskVM.updateTasks()
+    fun testRetrieveTasks() {
+        taskVM.retrieveTasks()
 
         isRetrievingTasksArgumentCaptor.run {
             verify(isRetrievingTasksObserver, times(2)).onChanged(capture())
@@ -114,7 +114,7 @@ class TaskViewModelTest {
     }
 
     @Test
-    fun insertTask() {
+    fun testInsertTask() {
         taskVM.insertTask(
                 TaskViewModelEntity(
                         name = "MY TASKS",

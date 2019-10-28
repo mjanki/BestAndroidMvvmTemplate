@@ -1,8 +1,8 @@
 package org.umbrellahq.repository.mappers
 
-import org.umbrellahq.network.model.ErrorNetworkEntity
+import org.umbrellahq.network.models.ErrorNetworkEntity
 import org.umbrellahq.repository.interfaces.RepoMapperInterface
-import org.umbrellahq.repository.model.ErrorNetworkRepoEntity
+import org.umbrellahq.repository.models.ErrorNetworkRepoEntity
 
 class ErrorNetworkRepoNetworkMapper : RepoMapperInterface<ErrorNetworkRepoEntity, ErrorNetworkEntity> {
     override fun downstream(currentLayerEntity: ErrorNetworkRepoEntity) = ErrorNetworkEntity(

@@ -3,7 +3,7 @@ package org.umbrellahq.network.daos
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
-import org.umbrellahq.network.model.ErrorNetworkEntity
+import org.umbrellahq.network.models.ErrorNetworkEntity
 import org.umbrellahq.util.enums.ErrorNetworkTypes
 import org.umbrellahq.util.extensions.execute
 import retrofit2.HttpException

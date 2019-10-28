@@ -8,6 +8,8 @@ buildscript {
         materialVersion = "1.0.0"
         lifecycleExtensionsVersion = "2.1.0"
 
+        androidxNavigationVersion = "2.1.0"
+
         // rxAndroid & rxKotlin
         rxKotlinVersion = "2.4.0"
         rxAndroidVersion = "2.1.1"
@@ -40,6 +42,10 @@ buildscript {
                 // ViewModel & LiveData
                 lifecycleExtensions: ("android.arch.lifecycle:extensions:$lifecycleExtensionsVersion"),
 
+                // Navigation
+                androidxNavigation: ("androidx.navigation:navigation-fragment-ktx:$androidxNavigationVersion"),
+                androidxNavigationUi: ("androidx.navigation:navigation-ui-ktx:$androidxNavigationVersion"),
+
                 rxKotlin: ("io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"),
                 rxAndroid: ("io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"),
 
@@ -58,6 +64,9 @@ buildscript {
                 testJunitExt: ("androidx.test.ext:junit:$testJunitExtVersion"),
                 testRunner: ("androidx.test:runner:$testRunnerVersion"),
                 testEspresso: ("androidx.test.espresso:espresso-core:$testEspressoVersion"),
+                testEspressoContrib: ("androidx.test.espresso:espresso-contrib:$testEspressoVersion"),
+                testRules: ("androidx.test:rules:$testRunnerVersion"),
+                testOrchestrator: ("androidx.test:orchestrator:$testRunnerVersion"),
                 archCoreTesting: ("androidx.arch.core:core-testing:$archCoreTestingVersion"),
 
                 mockitoKotlin: ("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"),

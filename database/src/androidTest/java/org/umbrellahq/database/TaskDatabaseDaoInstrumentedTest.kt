@@ -7,8 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.junit.*
 import org.junit.runner.RunWith
-import org.umbrellahq.database.dao.TaskDatabaseDao
-import org.umbrellahq.database.model.TaskDatabaseEntity
+import org.umbrellahq.database.daos.TaskDatabaseDao
+import org.umbrellahq.database.models.TaskDatabaseEntity
 import java.io.IOException
 
 /**
@@ -30,8 +30,9 @@ class TaskDatabaseDaoInstrumentedTest {
         AndroidThreeTen.init(ApplicationProvider.getApplicationContext())
 
         testTaskDatabaseEntity = TaskDatabaseEntity(
-                null,
-                "Ahmad"
+                id = null,
+                uuid = "UUID Test",
+                name = "Ahmad"
         )
     }
 

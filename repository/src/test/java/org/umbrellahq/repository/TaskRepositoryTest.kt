@@ -11,13 +11,13 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.threeten.bp.OffsetDateTime
-import org.umbrellahq.database.dao.TaskDatabaseDao
-import org.umbrellahq.database.model.TaskDatabaseEntity
+import org.umbrellahq.database.daos.TaskDatabaseDao
+import org.umbrellahq.database.models.TaskDatabaseEntity
 import org.umbrellahq.network.daos.TaskNetworkDao
-import org.umbrellahq.network.model.ErrorNetworkEntity
-import org.umbrellahq.network.model.TaskNetworkEntity
-import org.umbrellahq.repository.dataSource.TaskRepository
-import org.umbrellahq.repository.model.TaskRepoEntity
+import org.umbrellahq.network.models.ErrorNetworkEntity
+import org.umbrellahq.network.models.TaskNetworkEntity
+import org.umbrellahq.repository.repositories.TaskRepository
+import org.umbrellahq.repository.models.TaskRepoEntity
 import org.umbrellahq.util.extensions.RxKotlinExtensions
 import retrofit2.Response
 
@@ -75,6 +75,7 @@ class TaskRepositoryTest {
 
             on { getAll() } doReturn Flowable.just(listOf(TaskDatabaseEntity(
                     id = 51,
+                    uuid = "UUID Test",
                     name = "MOCK ENTITY",
                     date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
                     status = 1
@@ -85,7 +86,7 @@ class TaskRepositoryTest {
     }
 
     @Test
-    fun getTasks() {
+    fun testGetTasks() {
         val testObserver = taskRepository.getTasks().test()
 
         testObserver.assertValueCount(1)
@@ -97,10 +98,10 @@ class TaskRepositoryTest {
     }
 
     @Test
-    fun updateTasks() {
+    fun testRetrieveTasks() {
         val testObserver = retrievedTasks.test()
 
-        taskRepository.updateTasks()
+        taskRepository.retrieveTasks()
 
         testObserver.assertValueCount(1)
 
@@ -125,11 +126,12 @@ class TaskRepositoryTest {
     }
 
     @Test
-    fun insertTask() {
+    fun testInsertTask() {
         val testObserver = databaseTasks.test()
 
         taskRepository.insertTask(TaskRepoEntity(
                 id = 51L,
+                uuid = "UUID Test",
                 name = "MOCK ENTITY",
                 date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
                 status = 1

@@ -3,11 +3,11 @@ package org.umbrellahq.repository
 import org.junit.Assert
 import org.junit.Test
 import org.threeten.bp.OffsetDateTime
-import org.umbrellahq.database.model.TaskDatabaseEntity
-import org.umbrellahq.network.model.TaskNetworkEntity
+import org.umbrellahq.database.models.TaskDatabaseEntity
+import org.umbrellahq.network.models.TaskNetworkEntity
 import org.umbrellahq.repository.mappers.TaskRepoDatabaseMapper
 import org.umbrellahq.repository.mappers.TaskRepoNetworkMapper
-import org.umbrellahq.repository.model.TaskRepoEntity
+import org.umbrellahq.repository.models.TaskRepoEntity
 
 class TaskRepoMapperTest {
 
@@ -18,6 +18,7 @@ class TaskRepoMapperTest {
         val mappedValue = mapper.downstream(
                 TaskRepoEntity(
                         id = 51L,
+                        uuid = "UUID Test",
                         name = "MOCK ENTITY",
                         date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
                         status = 1
@@ -51,6 +52,7 @@ class TaskRepoMapperTest {
         val mappedValue = mapper.downstream(
                 TaskRepoEntity(
                         id = 51L,
+                        uuid = "UUID Test",
                         name = "MOCK ENTITY",
                         date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
                         status = 1
@@ -67,6 +69,7 @@ class TaskRepoMapperTest {
         val mappedValue = mapper.upstream(
                 TaskDatabaseEntity(
                         id = 51L,
+                        uuid = "UUID Test",
                         name = "MOCK ENTITY",
                         date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
                         status = 1

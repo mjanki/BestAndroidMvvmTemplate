@@ -1,20 +1,20 @@
 package org.umbrellahq.repository.mappers
 
 import org.threeten.bp.OffsetDateTime
-import org.umbrellahq.network.model.TaskNetworkEntity
+import org.umbrellahq.network.models.TaskNetworkEntity
 import org.umbrellahq.repository.interfaces.RepoMapperInterface
-import org.umbrellahq.repository.model.TaskRepoEntity
+import org.umbrellahq.repository.models.TaskRepoEntity
 
 class TaskRepoNetworkMapper : RepoMapperInterface<TaskRepoEntity, TaskNetworkEntity> {
     override fun downstream(currentLayerEntity: TaskRepoEntity) = TaskNetworkEntity(
-            uuid = "${currentLayerEntity.id}",
+            uuid = currentLayerEntity.uuid,
             name = currentLayerEntity.name,
             date = "${currentLayerEntity.date}",
             status = currentLayerEntity.status
     )
 
     override fun upstream(nextLayerEntity: TaskNetworkEntity) = TaskRepoEntity(
-            id = nextLayerEntity.uuid.toLong(),
+            uuid = nextLayerEntity.uuid,
             name = nextLayerEntity.name,
             date = OffsetDateTime.parse(nextLayerEntity.date),
             status = nextLayerEntity.status

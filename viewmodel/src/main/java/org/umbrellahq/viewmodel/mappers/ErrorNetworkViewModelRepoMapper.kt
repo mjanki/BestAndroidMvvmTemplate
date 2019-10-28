@@ -1,8 +1,8 @@
 package org.umbrellahq.viewmodel.mappers
 
-import org.umbrellahq.repository.model.ErrorNetworkRepoEntity
+import org.umbrellahq.repository.models.ErrorNetworkRepoEntity
 import org.umbrellahq.viewmodel.interfaces.ViewModelMapperInterface
-import org.umbrellahq.viewmodel.model.ErrorNetworkViewModelEntity
+import org.umbrellahq.viewmodel.models.ErrorNetworkViewModelEntity
 
 class ErrorNetworkViewModelRepoMapper : ViewModelMapperInterface<ErrorNetworkViewModelEntity, ErrorNetworkRepoEntity> {
     override fun downstream(currentLayerEntity: ErrorNetworkViewModelEntity) = ErrorNetworkRepoEntity(

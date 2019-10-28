@@ -10,10 +10,10 @@ import io.reactivex.subjects.PublishSubject
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.umbrellahq.database.dao.ErrorNetworkDatabaseDao
-import org.umbrellahq.database.model.ErrorNetworkDatabaseEntity
-import org.umbrellahq.repository.dataSource.ErrorRepository
-import org.umbrellahq.repository.model.ErrorNetworkRepoEntity
+import org.umbrellahq.database.daos.ErrorNetworkDatabaseDao
+import org.umbrellahq.database.models.ErrorNetworkDatabaseEntity
+import org.umbrellahq.repository.repositories.ErrorRepository
+import org.umbrellahq.repository.models.ErrorNetworkRepoEntity
 import org.umbrellahq.util.enums.ErrorNetworkTypes
 import org.umbrellahq.util.extensions.RxKotlinExtensions
 

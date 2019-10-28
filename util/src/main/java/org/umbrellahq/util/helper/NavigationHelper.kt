@@ -1,37 +1,14 @@
 package org.umbrellahq.util.helper
 
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
-import androidx.core.util.Pair
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
 import org.umbrellahq.util.NavigationUtil
 import org.umbrellahq.util.R
-
-fun createSceneTransitionAnimation(activity: FragmentActivity,
-                                   sharedView: View? = null,
-                                   sharedViews: ArrayList<View>? = null): ActivityOptionsCompat? {
-
-    try {
-        if (sharedView != null) {
-            val transitionName = ViewCompat.getTransitionName(sharedView) ?: throw IllegalArgumentException()
-            return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, sharedView, transitionName)
-        } else if (sharedViews != null) {
-            val sharedViewsArray = sharedViews.map { view -> Pair.create(view, ViewCompat.getTransitionName(view)) }.toTypedArray()
-            return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, *sharedViewsArray)
-        }
-    } catch (e: IllegalArgumentException) {
-        Log.e(NavigationUtil.TAG, "Please define transitionName for each of your shared elements")
-    }
-
-    return null
-}
 
 fun addOverlay(activity: FragmentActivity) {
     if (NavigationUtil.constraintLayoutResId == -1) {

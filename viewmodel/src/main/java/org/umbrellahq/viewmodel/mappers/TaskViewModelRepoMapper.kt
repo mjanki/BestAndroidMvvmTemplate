@@ -1,8 +1,8 @@
 package org.umbrellahq.viewmodel.mappers
 
-import org.umbrellahq.repository.model.TaskRepoEntity
+import org.umbrellahq.repository.models.TaskRepoEntity
 import org.umbrellahq.viewmodel.interfaces.ViewModelMapperInterface
-import org.umbrellahq.viewmodel.model.TaskViewModelEntity
+import org.umbrellahq.viewmodel.models.TaskViewModelEntity
 
 class TaskViewModelRepoMapper : ViewModelMapperInterface<TaskViewModelEntity, TaskRepoEntity> {
     override fun downstream(currentLayerEntity: TaskViewModelEntity) = TaskRepoEntity(

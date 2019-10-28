@@ -2,7 +2,7 @@ package org.umbrellahq.network.daos
 
 import io.reactivex.subjects.PublishSubject
 import org.umbrellahq.network.clients.TaskClient
-import org.umbrellahq.network.model.TaskNetworkEntity
+import org.umbrellahq.network.models.TaskNetworkEntity
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

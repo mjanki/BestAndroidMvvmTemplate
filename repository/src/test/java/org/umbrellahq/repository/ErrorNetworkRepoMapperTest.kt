@@ -2,11 +2,11 @@ package org.umbrellahq.repository
 
 import org.junit.Assert
 import org.junit.Test
-import org.umbrellahq.database.model.ErrorNetworkDatabaseEntity
-import org.umbrellahq.network.model.ErrorNetworkEntity
+import org.umbrellahq.database.models.ErrorNetworkDatabaseEntity
+import org.umbrellahq.network.models.ErrorNetworkEntity
 import org.umbrellahq.repository.mappers.ErrorNetworkRepoDatabaseMapper
 import org.umbrellahq.repository.mappers.ErrorNetworkRepoNetworkMapper
-import org.umbrellahq.repository.model.ErrorNetworkRepoEntity
+import org.umbrellahq.repository.models.ErrorNetworkRepoEntity
 import org.umbrellahq.util.enums.ErrorNetworkTypes
 
 class ErrorNetworkRepoMapperTest {

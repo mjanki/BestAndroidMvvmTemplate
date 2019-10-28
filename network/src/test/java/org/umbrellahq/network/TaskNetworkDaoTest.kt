@@ -10,7 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.umbrellahq.network.clients.TaskClient
 import org.umbrellahq.network.daos.TaskNetworkDao
-import org.umbrellahq.network.model.TaskNetworkEntity
+import org.umbrellahq.network.models.TaskNetworkEntity
 import org.umbrellahq.util.extensions.RxKotlinExtensions
 import retrofit2.Response
 

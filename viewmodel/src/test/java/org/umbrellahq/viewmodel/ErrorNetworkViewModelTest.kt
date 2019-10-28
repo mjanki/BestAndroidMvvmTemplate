@@ -14,16 +14,11 @@ import org.junit.Rule
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.MockitoAnnotations
-import org.threeten.bp.OffsetDateTime
-import org.umbrellahq.repository.dataSource.ErrorRepository
-import org.umbrellahq.repository.dataSource.TaskRepository
-import org.umbrellahq.repository.model.ErrorNetworkRepoEntity
-import org.umbrellahq.repository.model.TaskRepoEntity
+import org.umbrellahq.repository.repositories.ErrorRepository
+import org.umbrellahq.repository.models.ErrorNetworkRepoEntity
 import org.umbrellahq.util.enums.ErrorNetworkTypes
-import org.umbrellahq.viewmodel.model.ErrorNetworkViewModelEntity
-import org.umbrellahq.viewmodel.model.TaskViewModelEntity
-import org.umbrellahq.viewmodel.viewmodel.ErrorNetworkViewModel
-import org.umbrellahq.viewmodel.viewmodel.TaskViewModel
+import org.umbrellahq.viewmodel.models.ErrorNetworkViewModelEntity
+import org.umbrellahq.viewmodel.viewmodels.ErrorNetworkViewModel
 
 class ErrorNetworkViewModelTest {
     @get:Rule

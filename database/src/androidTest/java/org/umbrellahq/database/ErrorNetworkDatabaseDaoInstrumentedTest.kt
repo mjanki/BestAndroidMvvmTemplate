@@ -6,8 +6,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.*
 import org.junit.runner.RunWith
-import org.umbrellahq.database.dao.ErrorNetworkDatabaseDao
-import org.umbrellahq.database.model.ErrorNetworkDatabaseEntity
+import org.umbrellahq.database.daos.ErrorNetworkDatabaseDao
+import org.umbrellahq.database.models.ErrorNetworkDatabaseEntity
 import org.umbrellahq.util.enums.ErrorNetworkTypes
 import java.io.IOException
 

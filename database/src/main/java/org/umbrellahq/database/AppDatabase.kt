@@ -5,13 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import org.umbrellahq.database.dao.ErrorNetworkDatabaseDao
+import org.umbrellahq.database.daos.ErrorNetworkDatabaseDao
 
-import org.umbrellahq.database.dao.TaskDatabaseDao
-import org.umbrellahq.database.model.ErrorNetworkDatabaseEntity
-import org.umbrellahq.database.model.TaskDatabaseEntity
-import org.umbrellahq.database.typeConverters.DateTypeConverter
-import org.umbrellahq.database.typeConverters.ErrorNetworkTypeConverter
+import org.umbrellahq.database.daos.TaskDatabaseDao
+import org.umbrellahq.database.models.ErrorNetworkDatabaseEntity
+import org.umbrellahq.database.models.TaskDatabaseEntity
+import org.umbrellahq.database.type_converters.DateTypeConverter
+import org.umbrellahq.database.type_converters.ErrorNetworkTypeConverter
 
 @Database(entities = [
     TaskDatabaseEntity::class,
