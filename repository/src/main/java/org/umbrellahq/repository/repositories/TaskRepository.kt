@@ -54,7 +54,7 @@ class TaskRepository(ctx: Context? = null) : ErrorRepository(ctx) {
                 for (taskNetworkEntity in taskNetworkEntities) {
                     val taskRepoEntity = taskRepoNetworkMapper.upstream(taskNetworkEntity)
 
-                    taskDatabaseDao.getWithUUID(taskNetworkEntity.uuid).getValue(
+                    taskDatabaseDao.getByUUID(taskNetworkEntity.uuid).getValue(
                             onSuccess = { taskDatabaseEntities ->
                                 if (taskDatabaseEntities.isNotEmpty()) {
                                     taskRepoEntity.id = taskDatabaseEntities[0].id

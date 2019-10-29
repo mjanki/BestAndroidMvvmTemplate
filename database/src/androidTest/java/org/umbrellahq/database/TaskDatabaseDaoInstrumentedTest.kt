@@ -52,71 +52,112 @@ class TaskDatabaseDaoInstrumentedTest {
 
     @Test
     fun insert_twoTasks_shouldHaveTwoTasks() {
-        // Add 2 tasks
-        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
-        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
+        // Insert 2 tasks
+        taskDatabaseDao.insert(testTaskDatabaseEntity).test()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).test()
 
         // Get all tasks
-        val allTasks = taskDatabaseDao.getAll().blockingFirst()
+        val resultList = taskDatabaseDao.getAll().test()
+        val insertedTaskList = resultList.values()[0]
 
-        // Check if database has 2 tasks
-        Assert.assertEquals(2, allTasks.size)
+        // Check we have 2 tasks
+        Assert.assertEquals(2, insertedTaskList.size)
     }
 
     @Test
     fun insert_oneTask_shouldHaveSameTask() {
-        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
+        // Insert 1 task
+        taskDatabaseDao.insert(testTaskDatabaseEntity).test()
 
-        val allTasks = taskDatabaseDao.getAll().blockingFirst()
+        // Get all tasks
+        val resultList = taskDatabaseDao.getAll().test()
+        val insertedTaskList = resultList.values()[0]
 
-        Assert.assertEquals(1, allTasks.size)
-        Assert.assertEquals(testTaskDatabaseEntity.name, allTasks[0].name)
+        // Check we have 1 task
+        Assert.assertEquals(1, insertedTaskList.size)
+
+        // Check that task has the same name
+        Assert.assertEquals(testTaskDatabaseEntity.name, insertedTaskList[0].name)
     }
 
     @Test
     fun insert_oneTaskThenUpdate_shouldHaveUpdatedTask() {
-        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
-        var allTasks = taskDatabaseDao.getAll().blockingFirst()
+        // Insert 1 task
+        val result = taskDatabaseDao.insert(testTaskDatabaseEntity).test()
+        val id = result.values()[0]
 
-        Assert.assertEquals(1, allTasks.size)
+        // Get all tasks
+        var resultList = taskDatabaseDao.getAll().test()
+        var insertedTaskList = resultList.values()[0]
 
+        // Check we have 1 task
+        Assert.assertEquals(1, insertedTaskList.size)
+
+        // Set ID to update the same task, and change name
         val newName = "Eyad"
-        allTasks[0].name = newName
-        taskDatabaseDao.insert(allTasks[0]).blockingAwait()
-        allTasks = taskDatabaseDao.getAll().blockingFirst()
+        insertedTaskList[0].id = id
+        insertedTaskList[0].name = newName
 
-        Assert.assertEquals(1, allTasks.size)
-        Assert.assertEquals(newName, allTasks[0].name)
+        // Update with new values
+        taskDatabaseDao.insert(insertedTaskList[0]).test()
+
+        // Get all tasks again
+        resultList = taskDatabaseDao.getAll().test()
+        insertedTaskList = resultList.values()[0]
+
+        // Check we have 1 task
+        Assert.assertEquals(1, insertedTaskList.size)
+
+        // Check that task has new updated name
+        Assert.assertEquals(newName, insertedTaskList[0].name)
     }
 
     @Test
     fun deleteAll_shouldHaveNoTasks() {
-        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
-        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
-        taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
-        var allTasks = taskDatabaseDao.getAll().blockingFirst()
+        // Insert 3 tasks
+        taskDatabaseDao.insert(testTaskDatabaseEntity).test()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).test()
+        taskDatabaseDao.insert(testTaskDatabaseEntity).test()
 
-        Assert.assertEquals(3, allTasks.size)
+        // Get all tasks
+        var resultList = taskDatabaseDao.getAll().test()
+        var insertedTaskList = resultList.values()[0]
 
-        taskDatabaseDao.deleteAll().blockingAwait()
-        allTasks = taskDatabaseDao.getAll().blockingFirst()
+        // Check we have 3 tasks
+        Assert.assertEquals(3, insertedTaskList.size)
 
-        Assert.assertEquals(0, allTasks.size)
+        // Delete all tasks
+        taskDatabaseDao.deleteAll().test()
+
+        // Get all tasks again
+        resultList = taskDatabaseDao.getAll().test()
+        insertedTaskList = resultList.values()[0]
+
+        // Check we have no tasks
+        Assert.assertEquals(0, insertedTaskList.size)
     }
 
     @Test
     fun getWithUUID_shouldReturnTaskWithUUID() {
+        // Create 2 UUIDs and Names
         val uuid1 = UUID.randomUUID().toString()
         val name1 = "Mamoon"
 
         val uuid2 = UUID.randomUUID().toString()
         val name2 = "Ayman"
 
-        taskDatabaseDao.insert(getTaskDatabaseEntity(uuid = uuid1, name = name1)).blockingAwait()
-        taskDatabaseDao.insert(getTaskDatabaseEntity(uuid = uuid2, name = name2)).blockingAwait()
+        // Insert 2 tasks with UUIDs and Names
+        taskDatabaseDao.insert(getTaskDatabaseEntity(uuid = uuid1, name = name1)).test()
+        taskDatabaseDao.insert(getTaskDatabaseEntity(uuid = uuid2, name = name2)).test()
 
-        val tasksWithUUID1 = taskDatabaseDao.getWithUUID(uuid1).blockingFirst()
+        // Get tasks with first UUID
+        val resultList = taskDatabaseDao.getByUUID(uuid1).test()
+        val tasksWithUUID1 = resultList.values()[0]
+
+        // Check we have 1 task with first UUID
         Assert.assertEquals(1, tasksWithUUID1.size)
+
+        // Check that task has name for task with first UUID
         Assert.assertEquals(name1, tasksWithUUID1[0].name)
     }
 
