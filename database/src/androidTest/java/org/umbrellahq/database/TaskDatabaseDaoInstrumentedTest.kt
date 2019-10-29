@@ -10,6 +10,7 @@ import org.junit.runner.RunWith
 import org.umbrellahq.database.daos.TaskDatabaseDao
 import org.umbrellahq.database.models.TaskDatabaseEntity
 import java.io.IOException
+import java.util.*
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -29,11 +30,7 @@ class TaskDatabaseDaoInstrumentedTest {
     fun setup() {
         AndroidThreeTen.init(ApplicationProvider.getApplicationContext())
 
-        testTaskDatabaseEntity = TaskDatabaseEntity(
-                id = null,
-                uuid = "UUID Test",
-                name = "Ahmad"
-        )
+        testTaskDatabaseEntity = getTaskDatabaseEntity()
     }
 
     @Before
@@ -54,7 +51,7 @@ class TaskDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testMultipleEntriesCount() {
+    fun insert_twoTasks_shouldHaveTwoTasks() {
         // Add 2 tasks
         taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
         taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
@@ -67,7 +64,7 @@ class TaskDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testSingleEntryValue() {
+    fun insert_oneTask_shouldHaveSameTask() {
         taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
 
         val allTasks = taskDatabaseDao.getAll().blockingFirst()
@@ -77,7 +74,7 @@ class TaskDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testSingleEntryUpdateValue() {
+    fun insert_oneTaskThenUpdate_shouldHaveUpdatedTask() {
         taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
         var allTasks = taskDatabaseDao.getAll().blockingFirst()
 
@@ -93,7 +90,7 @@ class TaskDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testDeleteAllEntries() {
+    fun deleteAll_shouldHaveNoTasks() {
         taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
         taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
         taskDatabaseDao.insert(testTaskDatabaseEntity).blockingAwait()
@@ -106,4 +103,33 @@ class TaskDatabaseDaoInstrumentedTest {
 
         Assert.assertEquals(0, allTasks.size)
     }
+
+    @Test
+    fun getWithUUID_shouldReturnTaskWithUUID() {
+        val uuid1 = UUID.randomUUID().toString()
+        val name1 = "Mamoon"
+
+        val uuid2 = UUID.randomUUID().toString()
+        val name2 = "Ayman"
+
+        taskDatabaseDao.insert(getTaskDatabaseEntity(uuid = uuid1, name = name1)).blockingAwait()
+        taskDatabaseDao.insert(getTaskDatabaseEntity(uuid = uuid2, name = name2)).blockingAwait()
+
+        val tasksWithUUID1 = taskDatabaseDao.getWithUUID(uuid1).blockingFirst()
+        Assert.assertEquals(1, tasksWithUUID1.size)
+        Assert.assertEquals(name1, tasksWithUUID1[0].name)
+    }
+
+    // region Helper
+
+    private fun getTaskDatabaseEntity(
+            uuid: String = "UUID Test",
+            name: String = "Ahmad"
+    ): TaskDatabaseEntity = TaskDatabaseEntity(
+            id = null,
+            uuid = uuid,
+            name = name
+    )
+
+    // endregion Helper
 }

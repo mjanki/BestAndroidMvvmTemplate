@@ -1,10 +1,8 @@
 package org.umbrellahq.util.extensions
 
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.Scheduler
+import io.reactivex.*
 import io.reactivex.disposables.Disposable
+import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import retrofit2.Response
@@ -28,6 +26,25 @@ fun Completable.execute(
                 onFailure?.let { onFailure -> onFailure(throwable) }
             }
     )
+}
+
+// Use to invoke Single
+fun <T> Single<T>.execute(
+        onSuccess: ((value: T) -> Unit)? = null,
+        onFailure: ((throwable: Throwable) -> Unit)? = null
+) {
+
+    subscribeOn(
+            RxKotlinExtensions.getScheduler()
+    ).subscribe(object : DisposableSingleObserver<T>() {
+        override fun onSuccess(t: T) {
+            onSuccess?.let { onSuccess -> onSuccess(t) }
+        }
+
+        override fun onError(e: Throwable) {
+            onFailure?.let { onFailure -> onFailure(e) }
+        }
+    })
 }
 
 // Use to get single value of Flowable

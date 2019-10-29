@@ -48,10 +48,10 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testMultipleEntriesCount() {
+    fun insert_twoErrorNetwork_shouldHaveTwoErrorNetworks() {
         // Add 2 network errors
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
 
         // Get all network errors
         val allErrorNetwork = errorNetworkDatabaseDao.getAll().blockingFirst()
@@ -61,8 +61,8 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testSingleEntryValue() {
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
+    fun insert_oneErrorNetwork_shouldHaveSameErrorNetwork() {
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
 
         val allErrorNetwork = errorNetworkDatabaseDao.getAll().blockingFirst()
 
@@ -73,15 +73,15 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testSingleEntryUpdateValue() {
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
+    fun insert_oneErrorNetworkThenUpdate_shouldHaveUpdatedErrorNetwork() {
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
         var allErrorNetwork = errorNetworkDatabaseDao.getAll().blockingFirst()
 
         Assert.assertEquals(1, allErrorNetwork.size)
 
         val newCode = 200
         allErrorNetwork[0].code = newCode
-        errorNetworkDatabaseDao.insert(allErrorNetwork[0]).blockingAwait()
+        errorNetworkDatabaseDao.insert(allErrorNetwork[0]).blockingGet()
         allErrorNetwork = errorNetworkDatabaseDao.getAll().blockingFirst()
 
         Assert.assertEquals(1, allErrorNetwork.size)
@@ -89,9 +89,9 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testDeleteSingleEntry() {
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
+    fun delete_oneErrorNetwork_shouldHaveSizeMinusOne() {
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
         
         var allErrorNetwork = errorNetworkDatabaseDao.getAll().blockingFirst()
         Assert.assertEquals(2, allErrorNetwork.size)
@@ -102,10 +102,36 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun testDeleteAllEntries() {
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingAwait()
+    fun delete_oneErrorNetwork_shouldNotHaveThatErrorNetwork() {
+        val id = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
+
+        var errorNetworksId = errorNetworkDatabaseDao.getById(id).blockingFirst()
+        Assert.assertEquals(1, errorNetworksId.size)
+
+        errorNetworkDatabaseDao.delete(id).blockingAwait()
+        errorNetworksId = errorNetworkDatabaseDao.getById(id).blockingFirst()
+        Assert.assertEquals(0, errorNetworksId.size)
+    }
+
+    @Test
+    fun delete_oneErrorNetwork_shouldHaveOtherErrorNetworks() {
+        val id1 = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
+        val id2 = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
+
+        var allErrorNetworks = errorNetworkDatabaseDao.getAll().blockingFirst()
+        Assert.assertEquals(2, allErrorNetworks.size)
+
+        errorNetworkDatabaseDao.delete(id1).blockingAwait()
+        allErrorNetworks = errorNetworkDatabaseDao.getAll().blockingFirst()
+        Assert.assertEquals(1, allErrorNetworks.size)
+        Assert.assertEquals(id2, allErrorNetworks[0].id)
+    }
+
+    @Test
+    fun deleteAll_shouldHaveNoErrorNetworks() {
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).blockingGet()
         var allErrorNetwork = errorNetworkDatabaseDao.getAll().blockingFirst()
 
         Assert.assertEquals(3, allErrorNetwork.size)

@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 import org.junit.Assert
 import org.junit.Before
@@ -53,7 +54,7 @@ class ErrorRepositoryTest {
                 val argument = it.arguments[0] as ErrorNetworkDatabaseEntity
                 databaseErrorsNetwork.onNext(listOf(argument))
 
-                Completable.complete()
+                Single.just(1)
             }
         }
 
