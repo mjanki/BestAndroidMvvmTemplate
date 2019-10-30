@@ -4,11 +4,11 @@ apply plugin: 'kotlin-android'
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    compileSdkVersion globalConfiguration["compiledSdkVersion"]
+    compileSdkVersion globalConfiguration.compiledSdkVersion
 
     defaultConfig {
-        minSdkVersion globalConfiguration["minSdkVersion"]
-        targetSdkVersion globalConfiguration["targetSdkVersion"]
+        minSdkVersion globalConfiguration.minSdkVersion
+        targetSdkVersion globalConfiguration.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -45,6 +45,12 @@ dependencies {
 
     // OffsetDateTime backport
     implementation libs.threetenabp
+
+    // Testing
+    testImplementation libs.junit
+    androidTestImplementation libs.testRunner
+    androidTestImplementation libs.testRules
+    androidTestImplementation libs.testJunitExt
 }
 
 repositories {

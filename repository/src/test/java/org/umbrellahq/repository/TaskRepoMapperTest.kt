@@ -11,9 +11,9 @@ import org.umbrellahq.repository.models.TaskRepoEntity
 
 class TaskRepoMapperTest {
 
-    // Task Network
+    // TaskRepoNetworkMapper Tests
     @Test
-    fun testTaskRepoNetworkMapperDownstream() {
+    fun taskRepoNetworkMapperDownstream_shouldMapCorrectly() {
         val mapper = TaskRepoNetworkMapper()
         val mappedValue = mapper.downstream(
                 TaskRepoEntity(
@@ -25,29 +25,30 @@ class TaskRepoMapperTest {
                 )
         )
 
-        Assert.assertEquals("51", mappedValue.uuid)
+        Assert.assertEquals("UUID Test", mappedValue.uuid)
         Assert.assertEquals("2007-12-23T10:15:30+01:00", mappedValue.date)
     }
 
     @Test
-    fun testTaskRepoNetworkMapperUpstream() {
+    fun taskRepoNetworkMapperUpstream_shouldMapCorrectly() {
         val mapper = TaskRepoNetworkMapper()
         val mappedValue = mapper.upstream(
                 TaskNetworkEntity(
-                        uuid = "51",
+                        uuid = "UUID Test",
                         name = "MOCK ENTITY",
                         date = "2007-12-23T10:15:30+01:00",
                         status = 1
                 )
         )
 
-        Assert.assertEquals(51L, mappedValue.id)
+        Assert.assertEquals(null, mappedValue.id)
+        Assert.assertEquals("UUID Test", mappedValue.uuid)
         Assert.assertEquals(OffsetDateTime.parse("2007-12-23T10:15:30+01:00"), mappedValue.date)
     }
 
-    // Task Database
+    // TaskRepoDatabaseMapper Tests
     @Test
-    fun testTaskRepoDatabaseMapperDownstream() {
+    fun taskRepoDatabaseMapperDownstream_shouldMapCorrectly() {
         val mapper = TaskRepoDatabaseMapper()
         val mappedValue = mapper.downstream(
                 TaskRepoEntity(
@@ -64,7 +65,7 @@ class TaskRepoMapperTest {
     }
 
     @Test
-    fun testTaskRepoDatabaseMapperUpstream() {
+    fun taskRepoDatabaseMapperUpstream_shouldMapCorrectly() {
         val mapper = TaskRepoDatabaseMapper()
         val mappedValue = mapper.upstream(
                 TaskDatabaseEntity(

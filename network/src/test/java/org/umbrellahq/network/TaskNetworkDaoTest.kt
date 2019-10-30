@@ -23,6 +23,7 @@ class TaskNetworkDaoTest {
     @Mock
     private lateinit var taskClient: TaskClient
 
+    // Mock Entities
     private val testTaskNetworkEntity = TaskNetworkEntity(
             uuid = "MY UUID",
             name = "MOCK ENTITY",
@@ -40,12 +41,14 @@ class TaskNetworkDaoTest {
 
     @Before
     fun setUp() {
+        // Set to true to use correct subscribeOn scheduler for testing
         RxKotlinExtensions.isTesting = true
+
         taskNetworkDao = TaskNetworkDao()
     }
 
     @Test
-    fun test_isRetrievingTasks_shouldReturnTrueThenFalseOnRetrieveTasks() {
+    fun isRetrievingTasks_shouldReturnTrueThenFalseOnRetrieveTasks() {
         // Mock taskClient.getTasks() to return mock success
         Mockito.`when`(taskClient.getTasks()).thenReturn(
                 Observable.just(Response.success(listOf(testTaskNetworkEntity)))
@@ -71,7 +74,7 @@ class TaskNetworkDaoTest {
     }
 
     @Test
-    fun test_retrieveTasks_shouldEmitTasksOnSuccess() {
+    fun retrieveTasks_shouldEmitTasksOnSuccess() {
         // Mock taskClient.getTasks() to return mock success
         Mockito.`when`(taskClient.getTasks()).thenReturn(
                 Observable.just(Response.success(listOf(testTaskNetworkEntity)))
@@ -106,7 +109,7 @@ class TaskNetworkDaoTest {
     }
 
     @Test
-    fun test_retrieveTasks_shouldEmitErrorAndNoTasksOnError() {
+    fun retrieveTasks_shouldEmitErrorAndNoTasksOnError() {
         // Mock taskClient.getTasks() to return mock error
         Mockito.`when`(taskClient.getTasks()).thenReturn(
                 Observable.just(testResponseError)

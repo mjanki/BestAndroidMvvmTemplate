@@ -4,8 +4,8 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 import org.junit.Assert
 import org.junit.Before
@@ -16,10 +16,11 @@ import org.umbrellahq.database.models.TaskDatabaseEntity
 import org.umbrellahq.network.daos.TaskNetworkDao
 import org.umbrellahq.network.models.ErrorNetworkEntity
 import org.umbrellahq.network.models.TaskNetworkEntity
-import org.umbrellahq.repository.repositories.TaskRepository
 import org.umbrellahq.repository.models.TaskRepoEntity
+import org.umbrellahq.repository.repositories.TaskRepository
 import org.umbrellahq.util.extensions.RxKotlinExtensions
 import retrofit2.Response
+
 
 class TaskRepositoryTest {
     private lateinit var taskRepository: TaskRepository
@@ -34,8 +35,33 @@ class TaskRepositoryTest {
     private lateinit var taskDatabaseDao: TaskDatabaseDao
     private val databaseTasks = PublishSubject.create<List<TaskDatabaseEntity>>()
 
+    // Mock Entities
+    private val testTaskDatabaseEntity = TaskDatabaseEntity(
+            id = 51,
+            uuid = "UUID Test",
+            name = "MOCK DATABASE ENTITY",
+            date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
+            status = 1
+    )
+
+    private var testTaskNetworkEntity = TaskNetworkEntity(
+            uuid = "UUID Test",
+            name = "MOCK NETWORK ENTITY",
+            date = "2007-12-23T10:15:30+01:00",
+            status = 1
+    )
+
+    private var testTaskRepoEntity = TaskRepoEntity(
+            id = 51L,
+            uuid = "UUID Test",
+            name = "MOCK ENTITY",
+            date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
+            status = 1
+    )
+
     @Before
     fun setup() {
+        // Set to true to use correct subscribeOn scheduler for testing
         RxKotlinExtensions.isTesting = true
 
         taskRepository = TaskRepository()
@@ -47,14 +73,7 @@ class TaskRepositoryTest {
             on { retrieveTasks() } doAnswer {
                 isRetrievingTasks.onNext(true)
 
-                val taskNetworkEntityList = listOf(
-                        TaskNetworkEntity(
-                                uuid = "51",
-                                name = "MOCK ENTITY",
-                                date = "2007-12-23T10:15:30+01:00",
-                                status = 1
-                        )
-                )
+                val taskNetworkEntityList = listOf(testTaskNetworkEntity)
 
                 retrievedTasks.onNext(Response.success(taskNetworkEntityList))
 
@@ -70,73 +89,89 @@ class TaskRepositoryTest {
                 val taskDatabaseEntityList = listOf(argument)
                 databaseTasks.onNext(taskDatabaseEntityList)
 
-                Completable.complete()
+                Single.just(1)
             }
 
-            on { getAll() } doReturn Flowable.just(listOf(TaskDatabaseEntity(
-                    id = 51,
-                    uuid = "UUID Test",
-                    name = "MOCK ENTITY",
-                    date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
-                    status = 1
-            )))
+            on { getAll() } doReturn Flowable.just(listOf(testTaskDatabaseEntity))
         }
 
         taskRepository.init(taskNetworkDao, taskDatabaseDao)
     }
 
     @Test
-    fun testGetTasks() {
+    fun getTasks_shouldGetMockDatabaseTasks() {
+        // Change id for testing purposes
+        testTaskDatabaseEntity.id = 55L
+
+        // Initialize taskRepository again because we changed mock
+        taskRepository.init(taskNetworkDao, taskDatabaseDao)
+
+        // Observe getTasks()
         val testObserver = taskRepository.getTasks().test()
 
+        // Check getTasks was emitted 1 time
         testObserver.assertValueCount(1)
 
+        // Get Task emitted
         val values = testObserver.values()[0]
 
+        // Check we have 1 task
         Assert.assertEquals(1, values.size)
-        Assert.assertEquals(51L, values[0].id)
+
+        // Check it has mock values
+        Assert.assertEquals(testTaskDatabaseEntity.id, values[0].id)
     }
 
     @Test
-    fun testRetrieveTasks() {
+    fun retrieveTasks_shouldEmitMockNetworkTasks() {
+        // Observe retrievedTasks
         val testObserver = retrievedTasks.test()
 
+        // Retrieve tasks
         taskRepository.retrieveTasks()
 
+        // Check retrievedTasks was emitted 1 time
         testObserver.assertValueCount(1)
 
+        // Get Task emitted
         val value = testObserver.values()[0].body()
 
+        // Check it's not null
         Assert.assertNotNull(value)
 
         value?.let {
+            // Check we have 1 task
             Assert.assertEquals(1, it.size)
-            Assert.assertEquals("MOCK ENTITY", it[0].name)
+
+            // Check it has mock values
+            Assert.assertEquals(testTaskNetworkEntity.name, it[0].name)
         }
     }
 
     @Test
-    fun testDisposables() {
+    fun clearDisposables_shouldClearDisposables() {
+        // Check taskRepository has 2 disposables (errorNetwork & retrievedTasks)
         Assert.assertEquals(2, taskRepository.getDisposablesSize())
+
+        // Check they are not disposed yet
         Assert.assertEquals(false, taskRepository.getDisposableIsDisposed())
 
+        // Clear Disposables
         taskRepository.clearDisposables()
 
+        // Check they are now disposed
         Assert.assertEquals(0, taskRepository.getDisposablesSize())
     }
 
     @Test
-    fun testInsertTask() {
+    fun insertTask_mockDatabaseTaskEntity_shouldHaveOneTask() {
+        // Observe databaseTasks
         val testObserver = databaseTasks.test()
 
-        taskRepository.insertTask(TaskRepoEntity(
-                id = 51L,
-                uuid = "UUID Test",
-                name = "MOCK ENTITY",
-                date = OffsetDateTime.parse("2007-12-23T10:15:30+01:00"),
-                status = 1
-        ))
+        // Insert task
+        taskRepository.insertTask(testTaskRepoEntity)
 
+        // Check we have 1 task
         testObserver.assertValueCount(1)
     }
 }

@@ -11,9 +11,9 @@ import org.umbrellahq.util.enums.ErrorNetworkTypes
 
 class ErrorNetworkRepoMapperTest {
 
-    // Task Network
+    // ErrorNetworkRepoNetworkMapper Tests
     @Test
-    fun testErrorNetworkRepoNetworkMapperDownstream() {
+    fun errorNetworkRepoNetworkMapperDownstream_shouldMapCorrectly() {
         val mapper = ErrorNetworkRepoNetworkMapper()
         val mappedValue = mapper.downstream(
                 ErrorNetworkRepoEntity(
@@ -28,7 +28,7 @@ class ErrorNetworkRepoMapperTest {
     }
 
     @Test
-    fun testErrorNetworkRepoNetworkMapperUpstream() {
+    fun errorNetworkRepoNetworkMapperUpstream_shouldMapCorrectly() {
         val mapper = ErrorNetworkRepoNetworkMapper()
         val mappedValue = mapper.upstream(
                 ErrorNetworkEntity(
@@ -41,9 +41,9 @@ class ErrorNetworkRepoMapperTest {
         Assert.assertEquals("TESTING", mappedValue.action)
     }
 
-    // Task Database
+    // ErrorNetworkRepoDatabaseMapper Tests
     @Test
-    fun testErrorNetworkRepoDatabaseMapperDownstream() {
+    fun errorNetworkRepoDatabaseMapperDownstream_shouldMapCorrectly() {
         val mapper = ErrorNetworkRepoDatabaseMapper()
         val mappedValue = mapper.downstream(
                 ErrorNetworkRepoEntity(
@@ -59,7 +59,7 @@ class ErrorNetworkRepoMapperTest {
     }
 
     @Test
-    fun testErrorNetworkRepoDatabaseMapperUpstream() {
+    fun errorNetworkRepoDatabaseMapperUpstream_shouldMapCorrectly() {
         val mapper = ErrorNetworkRepoDatabaseMapper()
         val mappedValue = mapper.upstream(
                 ErrorNetworkDatabaseEntity(

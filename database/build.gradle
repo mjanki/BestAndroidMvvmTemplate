@@ -5,11 +5,11 @@ apply plugin: 'kotlin-kapt'
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    compileSdkVersion globalConfiguration["compiledSdkVersion"]
+    compileSdkVersion globalConfiguration.compiledSdkVersion
 
     defaultConfig {
-        minSdkVersion globalConfiguration["minSdkVersion"]
-        targetSdkVersion globalConfiguration["targetSdkVersion"]
+        minSdkVersion globalConfiguration.minSdkVersion
+        targetSdkVersion globalConfiguration.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -20,7 +20,8 @@ android {
             annotationProcessorOptions {
                 arguments = [
                         "room.schemaLocation": "$projectDir/schemas".toString(),
-                        "room.incremental":"true"
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"
                 ]
             }
         }
@@ -58,12 +59,10 @@ dependencies {
     implementation libs.rxKotlin
 
     // Room
-    implementation libs.roomCompiler
-    annotationProcessor libs.roomCompiler
     kapt libs.roomCompiler
     implementation libs.roomRuntime
     implementation libs.roomRxJava
-    implementation libs.roomTesting
+    testImplementation libs.roomTesting
 
     // OffsetDateTime backport
     implementation libs.threetenabp

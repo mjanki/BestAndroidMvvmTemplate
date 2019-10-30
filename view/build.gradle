@@ -7,12 +7,12 @@ apply plugin: 'kotlin-android-extensions'
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    compileSdkVersion globalConfiguration["compiledSdkVersion"]
+    compileSdkVersion globalConfiguration.compiledSdkVersion
 
     defaultConfig {
         applicationId "org.umbrellahq.baseapp"
-        minSdkVersion globalConfiguration["minSdkVersion"]
-        targetSdkVersion globalConfiguration["targetSdkVersion"]
+        minSdkVersion globalConfiguration.minSdkVersion
+        targetSdkVersion globalConfiguration.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

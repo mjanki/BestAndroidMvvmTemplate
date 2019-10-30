@@ -98,6 +98,7 @@ allprojects {
         minSdkVersion = 21
         targetSdkVersion = 28
         compiledSdkVersion = 28
+        var = compiledSdkVersion
     }
 }
 
