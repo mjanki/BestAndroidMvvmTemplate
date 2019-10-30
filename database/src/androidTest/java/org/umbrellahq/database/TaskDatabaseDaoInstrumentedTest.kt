@@ -24,6 +24,7 @@ class TaskDatabaseDaoInstrumentedTest {
     private lateinit var db: AppDatabase
     private lateinit var taskDatabaseDao: TaskDatabaseDao
 
+    // Mock Entities
     private lateinit var testTaskDatabaseEntity: TaskDatabaseEntity
 
     @Before

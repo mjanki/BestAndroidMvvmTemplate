@@ -10,66 +10,60 @@ import org.umbrellahq.repository.models.ErrorNetworkRepoEntity
 import org.umbrellahq.util.enums.ErrorNetworkTypes
 
 class ErrorNetworkRepoMapperTest {
+    // Mock Entities
+    private var testErrorNetworkRepoEntity = ErrorNetworkRepoEntity(
+            id = 51L,
+            type = ErrorNetworkTypes.HTTP,
+            action = "TESTING"
+    )
+
+    private var testErrorNetworkEntity = ErrorNetworkEntity(
+            type = ErrorNetworkTypes.HTTP,
+            action = "TESTING"
+    )
+
+    private var testErrorNetworkDatabaseEntity = ErrorNetworkDatabaseEntity(
+            id = 51L,
+            type = ErrorNetworkTypes.HTTP,
+            action = "TESTING"
+    )
 
     // ErrorNetworkRepoNetworkMapper Tests
     @Test
     fun errorNetworkRepoNetworkMapperDownstream_shouldMapCorrectly() {
         val mapper = ErrorNetworkRepoNetworkMapper()
-        val mappedValue = mapper.downstream(
-                ErrorNetworkRepoEntity(
-                        id = 51L,
-                        type = ErrorNetworkTypes.HTTP,
-                        action = "TESTING"
-                )
-        )
+        val mappedValue = mapper.downstream(testErrorNetworkRepoEntity)
 
-        Assert.assertEquals(ErrorNetworkTypes.HTTP, mappedValue.type)
-        Assert.assertEquals("TESTING", mappedValue.action)
+        Assert.assertEquals(testErrorNetworkRepoEntity.type, mappedValue.type)
+        Assert.assertEquals(testErrorNetworkRepoEntity.action, mappedValue.action)
     }
 
     @Test
     fun errorNetworkRepoNetworkMapperUpstream_shouldMapCorrectly() {
         val mapper = ErrorNetworkRepoNetworkMapper()
-        val mappedValue = mapper.upstream(
-                ErrorNetworkEntity(
-                        type = ErrorNetworkTypes.HTTP,
-                        action = "TESTING"
-                )
-        )
+        val mappedValue = mapper.upstream(testErrorNetworkEntity)
 
-        Assert.assertEquals(ErrorNetworkTypes.HTTP, mappedValue.type)
-        Assert.assertEquals("TESTING", mappedValue.action)
+        Assert.assertEquals(testErrorNetworkEntity.type, mappedValue.type)
+        Assert.assertEquals(testErrorNetworkEntity.action, mappedValue.action)
     }
 
     // ErrorNetworkRepoDatabaseMapper Tests
     @Test
     fun errorNetworkRepoDatabaseMapperDownstream_shouldMapCorrectly() {
         val mapper = ErrorNetworkRepoDatabaseMapper()
-        val mappedValue = mapper.downstream(
-                ErrorNetworkRepoEntity(
-                        id = 51L,
-                        type = ErrorNetworkTypes.HTTP,
-                        action = "TESTING"
-                )
-        )
+        val mappedValue = mapper.downstream(testErrorNetworkRepoEntity)
 
-        Assert.assertEquals(51L, mappedValue.id)
-        Assert.assertEquals(ErrorNetworkTypes.HTTP, mappedValue.type)
-        Assert.assertEquals("TESTING", mappedValue.action)
+        Assert.assertEquals(testErrorNetworkRepoEntity.id, mappedValue.id)
+        Assert.assertEquals(testErrorNetworkRepoEntity.type, mappedValue.type)
+        Assert.assertEquals(testErrorNetworkRepoEntity.action, mappedValue.action)
     }
 
     @Test
     fun errorNetworkRepoDatabaseMapperUpstream_shouldMapCorrectly() {
         val mapper = ErrorNetworkRepoDatabaseMapper()
-        val mappedValue = mapper.upstream(
-                ErrorNetworkDatabaseEntity(
-                        id = 51L,
-                        type = ErrorNetworkTypes.HTTP,
-                        action = "TESTING"
-                )
-        )
+        val mappedValue = mapper.upstream(testErrorNetworkDatabaseEntity)
 
-        Assert.assertEquals(ErrorNetworkTypes.HTTP, mappedValue.type)
-        Assert.assertEquals("TESTING", mappedValue.action)
+        Assert.assertEquals(testErrorNetworkDatabaseEntity.type, mappedValue.type)
+        Assert.assertEquals(testErrorNetworkDatabaseEntity.action, mappedValue.action)
     }
 }

@@ -18,17 +18,13 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
     private lateinit var db: AppDatabase
     private lateinit var errorNetworkDatabaseDao: ErrorNetworkDatabaseDao
 
-    private lateinit var testErrorNetworkDatabaseEntity: ErrorNetworkDatabaseEntity
-
-    @Before
-    fun setup() {
-        testErrorNetworkDatabaseEntity = ErrorNetworkDatabaseEntity(
-                id = null,
-                type = ErrorNetworkTypes.HTTP,
-                code = 404,
-                action = "Dummy Action"
-        )
-    }
+    // Mock Entities
+    private var testErrorNetworkDatabaseEntity = ErrorNetworkDatabaseEntity(
+            id = null,
+            type = ErrorNetworkTypes.HTTP,
+            code = 404,
+            action = "Dummy Action"
+    )
     
     @Before
     fun setupDB() {

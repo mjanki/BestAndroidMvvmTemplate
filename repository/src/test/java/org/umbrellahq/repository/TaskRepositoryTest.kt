@@ -10,6 +10,8 @@ import io.reactivex.subjects.PublishSubject
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.junit.MockitoJUnitRunner
 import org.threeten.bp.OffsetDateTime
 import org.umbrellahq.database.daos.TaskDatabaseDao
 import org.umbrellahq.database.models.TaskDatabaseEntity
@@ -21,7 +23,7 @@ import org.umbrellahq.repository.repositories.TaskRepository
 import org.umbrellahq.util.extensions.RxKotlinExtensions
 import retrofit2.Response
 
-
+@RunWith(MockitoJUnitRunner::class)
 class TaskRepositoryTest {
     private lateinit var taskRepository: TaskRepository
 
@@ -36,7 +38,7 @@ class TaskRepositoryTest {
     private val databaseTasks = PublishSubject.create<List<TaskDatabaseEntity>>()
 
     // Mock Entities
-    private val testTaskDatabaseEntity = TaskDatabaseEntity(
+    private var testTaskDatabaseEntity = TaskDatabaseEntity(
             id = 51,
             uuid = "UUID Test",
             name = "MOCK DATABASE ENTITY",

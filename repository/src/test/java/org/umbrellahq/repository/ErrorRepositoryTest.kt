@@ -30,13 +30,14 @@ class ErrorRepositoryTest {
     private lateinit var errorNetworkDatabaseDao: ErrorNetworkDatabaseDao
     private val databaseErrorsNetwork = PublishSubject.create<List<ErrorNetworkDatabaseEntity>>()
 
-    private val testErrorNetworkDatabaseEntity = ErrorNetworkDatabaseEntity(
+    // Mock Entities
+    private var testErrorNetworkDatabaseEntity = ErrorNetworkDatabaseEntity(
             id = 55L,
             type = ErrorNetworkTypes.HTTP,
             action = "Test Should Emit Mock ErrorNetwork"
     )
 
-    private val testErrorNetworkRepoEntity = ErrorNetworkRepoEntity(
+    private var testErrorNetworkRepoEntity = ErrorNetworkRepoEntity(
             id = 52L,
             type = ErrorNetworkTypes.HTTP,
             action = "TESTING"
@@ -127,7 +128,7 @@ class ErrorRepositoryTest {
         val value2 = testObservable.values()[1]
 
         // Check it is empty
-        Assert.assertEquals(0, testObservable.values()[1].size)
+        Assert.assertEquals(0, value2.size)
     }
 
     @Test

@@ -21,16 +21,16 @@ class MainFragmentTest {
     var mActivityTestRule = ActivityTestRule(MainActivity::class.java)
 
     @Test
-    fun testFabAddTaskExists() {
+    fun findFabAddTask_shouldExist() {
         Espresso.onView(ViewMatchers.withId(R.id.fabAddTask)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
     @Test
-    fun testFabAddTaskWorks() {
+    fun clickFabAddTask_threeTimes_shouldDisplayThreeTasks() {
         Espresso.onView(ViewMatchers.withId(R.id.fabAddTask)).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withId(R.id.fabAddTask)).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withId(R.id.fabAddTask)).perform(ViewActions.click())
 
-        Espresso.onView(ViewMatchers.withId(R.id.rvTasks)).check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("New Task 0"))))
+        Espresso.onView(ViewMatchers.withId(R.id.rvTasks)).check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("New Task 2"))))
     }
 }

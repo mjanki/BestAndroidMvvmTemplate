@@ -24,14 +24,14 @@ class TaskNetworkDaoTest {
     private lateinit var taskClient: TaskClient
 
     // Mock Entities
-    private val testTaskNetworkEntity = TaskNetworkEntity(
+    private var testTaskNetworkEntity = TaskNetworkEntity(
             uuid = "MY UUID",
             name = "MOCK ENTITY",
             date = "N/A",
             status = 0
     )
 
-    private val testResponseError = Response.error<List<TaskNetworkEntity>>(
+    private var testResponseError = Response.error<List<TaskNetworkEntity>>(
             404,
             ResponseBody.create(
                     MediaType.parse("text/plain"),
@@ -101,10 +101,10 @@ class TaskNetworkDaoTest {
         // Check that task body has same mock values
         result?.let {
             Assert.assertEquals(1, it.size)
-            Assert.assertEquals("MY UUID", result[0].uuid)
-            Assert.assertEquals("MOCK ENTITY", result[0].name)
-            Assert.assertEquals("N/A", result[0].date)
-            Assert.assertEquals(0, result[0].status)
+            Assert.assertEquals(testTaskNetworkEntity.uuid, result[0].uuid)
+            Assert.assertEquals(testTaskNetworkEntity.name, result[0].name)
+            Assert.assertEquals(testTaskNetworkEntity.date, result[0].date)
+            Assert.assertEquals(testTaskNetworkEntity.status, result[0].status)
         }
     }
 
@@ -135,6 +135,6 @@ class TaskNetworkDaoTest {
         val errorNetworkValue = testErrorNetworkObserver.values()[0]
 
         // Check that body has same mock values
-        Assert.assertEquals(404, errorNetworkValue.code)
+        Assert.assertEquals(testResponseError.code(), errorNetworkValue.code)
     }
 }
