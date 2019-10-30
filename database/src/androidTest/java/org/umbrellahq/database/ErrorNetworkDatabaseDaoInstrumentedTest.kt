@@ -122,7 +122,7 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
         Assert.assertEquals(2, insertedErrorNetworkList.size)
 
         // Delete first network error
-        errorNetworkDatabaseDao.delete(insertedErrorNetworkList[0]).blockingAwait()
+        errorNetworkDatabaseDao.delete(insertedErrorNetworkList[0]).test()
 
         // Get all network errors again
         resultList = errorNetworkDatabaseDao.getAll().test()
@@ -202,7 +202,7 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
         Assert.assertEquals(3, insertedErrorNetworkList.size)
 
         // Delete all network errors
-        errorNetworkDatabaseDao.deleteAll().blockingAwait()
+        errorNetworkDatabaseDao.deleteAll().test()
 
         // Get all network errors again
         resultList = errorNetworkDatabaseDao.getAll().test()
