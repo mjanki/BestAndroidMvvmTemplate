@@ -20,7 +20,7 @@ Here are a few things to keep in mind before you read further:
 ## Model Custom Mappers
 Each layer will have its own **models**, along with a **mapper** per model per direct layer below it. So a **TaskViewModelEntity** will have a mapper that maps to and from a **TaskRepoEntity**. A **TaskRepoEntity** will have two mappers in the **Repository** layer that will map it to and from both **TaskNetworkEntity** and **TaskDatabaseEntity**.
 
-Each mapper will extend an interface that looks like this:
+Each mapper will implement an interface that looks like this:
 ```kotlin
 interface MapperInterface<T, V> {
     // Map from current layer entity to specific layer below entity
@@ -98,6 +98,34 @@ As for the extensions themselves; let's go through them one by one:
 
 Usage examples will be shown as we dive deeper into each layer. You can also look at the example code I have in this project.
 
-### Foundation and View
+### NavigationHelper:
+This has two methods to add and remove a blocking overlay programmatically on top of the **Activity**; I added this to fix the problem of double clicking on a button that navigates to a different **Activity**/**Fragment**. The methods `addOverlay(activity: FragmentActivity)` and `removeOverlay(activity: FragmentActivity)` both take in a `FragmentActivity` as a parameter. The idea is to add the overlay on click, and remove overlay on `onResume`. This will work as long as:
+* **Activity** uses a full screen `ConstraintLayout`.
+* The `ConstraintLayout`'s `id` is passed on `onCreate` of the **Activity** using `NavigationUtil.setup(R.id.[id])`.
 
-### Navigation
+### NavigationUtil:
+This has two things as of this moment:
+* `constraintLayoutResId: Int` to store the **Activity**'s `ConstraintLayout`'s `id` to be used in adding and removing the overlay.
+* `AppCompatActivity.setupToolbar(...)` extension to shorten setting up a `Toolbar`.
+* **NOT IMPORTANT**: this had many more extensions to help with the navigation in general; but that was before **Google** introduced the new **Navigation Components** and **Jetpack** so I removed all of it.
+
+### ViewUtil:
+This only has a `ViewGroup.inflate` helper method that shortens inflating views in **Fragments**.
+
+### FoundationActivity & FoundationFragment:
+Both basically only remove the overlay if it exists on `onResume`; might be moved to `BaseActivity` and `BaseFragment` later unless I find better uses for them. The idea is to always extend those two (in this case here we have a `BaseActivity` and a `BaseFragment` that extend those and get extended from everywhere else).
+
+# Deeper Look
+Now we shall move into the actual layers / modules of the base app. Each layer is a module in our case so I'll be using the words *layer* and *module* interchangeably.
+
+## Database Module
+
+## Network Module
+
+## Repository Module
+
+## ViewModel Module
+
+## View Module
+
+# Final Thoughts
