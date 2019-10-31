@@ -1,7 +1,6 @@
 package org.umbrellahq.baseapp.activities
 
 import android.os.Bundle
-import android.transition.Fade
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -24,13 +23,6 @@ open class BaseActivity : FoundationActivity() {
 
         // Setup main fragment id and main constraint layout id in NavigationUtil
         NavigationUtil.setup(R.id.clContainer)
-
-        val fade = Fade()
-        fade.excludeTarget(android.R.id.statusBarBackground, true)
-        fade.excludeTarget(android.R.id.navigationBarBackground, true)
-
-        window.enterTransition = fade
-        window.exitTransition = fade
 
         // Initialize ErrorsNetwork observable
         errorNetworkVM = ViewModelProviders.of(this).get(ErrorNetworkViewModel::class.java)

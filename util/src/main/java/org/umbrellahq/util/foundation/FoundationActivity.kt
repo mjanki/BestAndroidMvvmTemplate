@@ -9,9 +9,4 @@ open class FoundationActivity : AppCompatActivity() {
 
         removeOverlay(this)
     }
-
-    private inline fun consume(block: () -> Unit): Boolean {
-        block()
-        return true
-    }
 }
