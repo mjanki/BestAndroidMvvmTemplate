@@ -1,3 +1,6 @@
+# Current Version
+1.0.0 Alpha 1
+
 # Overview
 This is a base app, a template, a starting point for any android project. This template uses **MVVM Clean architecture** to the best of my understanding; it uses **reactive patterns**, **Room** for persistence, and **Retrofit2** for networking. I will start by describing and explaining everything layer by layer, starting from the lowest layers all the way until the **View** layer.
 
@@ -127,5 +130,7 @@ Now we shall move into the actual layers / modules of the base app. Each layer i
 ## ViewModel Module
 
 ## View Module
+
+# First Use
 
 # Final Thoughts
