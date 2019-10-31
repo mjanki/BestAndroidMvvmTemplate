@@ -70,22 +70,33 @@ enum class ErrorNetworkTypes {
 ```
 
 ### RxKotlinExtensions:
-This is a collection of extensions for **Rx** that aid in invoking **database** queries (without continuously observing), and in making **network** calls. It also has an **object** that has a **boolean** variable **isTesting** which should be set to **true** in tests, and it has a method **getScheduler** which will return the appropriate scheduler depending on **isTesting**. The **object** looks like this:
+This is a collection of extensions for **Rx** that aid in invoking **database** queries (without continuously observing), and in making **network** calls. It also has an `object` that has a **boolean** variable `isTesting` which should be set to `true` in tests, and it has a method `getScheduler` which will return the appropriate scheduler depending on `isTesting`. The `object` looks like this:
 ```kotlin
 object RxKotlinExtensions {
     var isTesting = false
     fun getScheduler(): Scheduler = if (isTesting) Schedulers.trampoline() else Schedulers.io()
 }
 ```
-As for the extensions themselves; let's go through them one by one. The first one executes a **Completable** which aids in simple **database** queries such as a **delete** if no value is needed back. The function **Completable.execute(...)** takes an optional **onSuccess()** and an optional **onFailure(throwable: Throwable)** which can be used to handle those two cases.
+As for the extensions themselves; let's go through them one by one:
 
-For **database** queries that return simple values such as an **insert** returning an **id** I have a **Single<T>** extension named **Single<T>.execute(...)**. It also takes an optional **onSuccess(value: T)** and an optional **onFailure(throwable: Throwable)**.
+`Completable.execute(...)`: used in simple **database** queries that return no values such as **delete**. It takes in two parameters:
+* `onSuccess()`: **optional** success handler.
+* `onFailure(throwable: Throwable)`: **optional** failure handler with `Throwable`.
 
-For **database** queries that can be continuously observed but we need to make a one-time call to them I have a **Flowable<T>** extenstion named **Flowable<T>.getValue(...)** that takes a required **onSuccess(value: T)** and an optional **onFailure(throwable: Throwable)**.
- 
-For **network** requests I have an **Observable<Response<T>>** extension named **Observable<Response<T>>.execute(...). It takes a required **onSuccess(value: Response<T>)**, an optional **onFailure(throwable: Throwable)**, and an optional **onComplete()**.
+`Single<T>.execute(...)`: used in simple **database** queries that return simple values such as an `id` after `insert`. It takes in two parameters:
+* `onSuccess(value: T)`: **optional** success handler with value.
+* `onFailure(throwable: Throwable)`: **optional** failure handler with `Throwable`.
 
-When we dive deeper in the layers we will see examples of those used which will make it clearer.
+`Flowable<T>.getValue(...)`: used to get a value **one time** from an otherwise continuously observed **database** query. It takes in two parameters:
+* `onSuccess(value: T)`: **required** success handler with value.
+* `onFailure(throwable: Throwable)`: **optional** failure handler with `Throwable`.
+
+`Observable<Response<T>>.execute(...)`: used to invoke a **network** call. It takes in three parameters:
+* `onSuccess(value: Response<T>)`: **required** success handler with value.
+* `onFailure(throwable: Throwable)`: **optional** failure handler with `Throwable`.
+* `onComplete()`: **optional** completion handler.
+
+Usage examples will be shown as we dive deeper into each layer. You can also look at the example code I have in this project.
 
 ### Foundation and View
 
