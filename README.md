@@ -23,11 +23,34 @@ Each layer will have its own **models**, along with a **mapper** per model per d
 Each mapper will extend an interface that looks like this:
 ```kotlin
 interface MapperInterface<T, V> {
-  fun downstream(currentLayerEntity: T): V
-  fun upstream(nextLayerEntity: V): T
+    // Map from current layer entity to specific layer below entity
+    fun downstream(currentLayerEntity: T): V
+
+    // Map from specific layer below entity to current layer entity
+    fun upstream(nextLayerEntity: V): T
 }
 ```
-Here `downstream(currentLayerEntity: T): V` will map from current layer to specific layer below, and `upstream(nextLayerEntity: V): T` will map from the specific layer below it to the current layer.
+
+An example would be the **TaskViewEntity** mapper in the **View** layer which would look like this:
+```kotlin
+class TaskViewViewModelMapper : MapperInterface<TaskViewEntity, TaskViewModelEntity> {
+    override fun downstream(currentLayerEntity: TaskViewEntity) = TaskViewModelEntity(
+            id = currentLayerEntity.id,
+            name = currentLayerEntity.name,
+            date = currentLayerEntity.date,
+            status = currentLayerEntity.status
+    )
+
+    override fun upstream(nextLayerEntity: TaskViewModelEntity) = TaskViewEntity(
+            id = nextLayerEntity.id,
+            name = nextLayerEntity.name,
+            date = nextLayerEntity.date,
+            status = nextLayerEntity.status
+    )
+}
+```
+
+For more info on how to use please check the example code I have in this project.
 
 ### Important Note:
 One might argue that we can share a **model** module between all layers and that would make our lives easier, especially with the **Reactive** nature of the app; in fact this is how I started this project out. However, the benefits of this more separate approach can be seen in the example starting app itself. As you can see, **TaskNetworkEntity** has a `uuid` and no `id`, **TaskDatabaseEntity** has both `id` and `uuid` for syncing purposes, **TaskRepoEntity** has both to coordinate between those two, and **TaskViewModelEntity** only has `id` because in a **single source of truth** approach where the **database** is the single source of truth the **ViewModel** layer has no business knowing about the `uuid`.
