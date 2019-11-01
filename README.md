@@ -492,7 +492,7 @@ taskNetworkDao.retrievedTasks.subscribe {
         }.addTo(disposables)
 ```
 * Of course in such examples were we continuously observe using **Rx** we don't want to forget to `addTo(disposables)` so that we can clear them in the `onCleared` method in the **ViewModel**.
-* When an error occurs I just insert that in the database directly and it will be observed in the **BaseActivity** as we'll see later. This way we can handle all network errors in one place; you can easily modify that to emit the error to upper layers instead though:
+* When an error occurs I just insert that in the database directly and it will be observed in the **BaseActivity** as we'll see later. This way we can handle all network errors in one place; you can easily modify that to emit the error to upper layers instead though; here we map the `ErrorNetworkEntity` to an `ErrorRepoEntity`:
 ```kotlin
 taskNetworkDao.errorNetwork.subscribe { errorNetworkEntity ->
     insertErrorNetwork(
@@ -501,6 +501,14 @@ taskNetworkDao.errorNetwork.subscribe { errorNetworkEntity ->
             )
     )
 }.addTo(disposables)
+```
+* In the `insertNetworkError` method we map the `ErrorRepoEntity` to an `ErrorDatabaseEntity` and then `execute()`:
+```kotlin
+fun insertErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity) {
+    errorNetworkDatabaseDao.insert(
+            errorNetworkRepoDatabaseMapper.downstream(errorNetworkRepoEntity)
+    ).execute()
+}
 ```
 
 ### Testing:
