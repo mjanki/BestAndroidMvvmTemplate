@@ -99,6 +99,8 @@ As for the extensions themselves; let's go through them one by one:
 * `onFailure(throwable: Throwable)`: **optional** failure handler with `Throwable`.
 * `onComplete()`: **optional** completion handler.
 
+This last extension for the **network** calls is particularly interesting because it will invoke the `onFailure(throwable: Throwable)` method on both network errors and `HttpException`s.
+
 Usage examples will be shown as we dive deeper into each layer. You can also look at the example code I have in this project.
 
 ### NavigationHelper:
@@ -208,6 +210,155 @@ private fun buildDatabase(context: Context) = Room.databaseBuilder(
 Database tests are under the `androidTest` sub-package; the reason why they're not under the `test` sub-package is because we need the `ApplicationContext` to test the database. Please refer to the example code that I have, it's fairly well documented with comments.
 
 ## Network Module
+The **network** module takes care of everything **network** related, and no other layer has to know about the **network** dependencies or how the **network** layer interacts with your **APIs**. It uses **Retrofit2** with **RxKotlin**. Here's a detailed rundown of what this includes at the moment:
+
+### AndroidManifest.xml:
+This simply declares that the app needs the **Internet** permission:
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
+### Models:
+This has all the models (entities) for the network. For example, `TaskNetworkEntity` under the sub-package `models` looks like this:
+```kotlin
+data class TaskNetworkEntity(
+        var uuid: String,
+        var name: String,
+        var date: String,
+        var status: Int
+)
+```
+
+Here we also have an `ErrorNetworkEntity` which can be modified to your liking; but the idea is that this is what we'll emit to the `Repository` layer to identify **Network Errors**. You'll see how that's used in the **Repository Module** section, but for now this is how `ErrorNetworkEntity` looks like:
+```kotlin
+data class ErrorNetworkEntity (
+        var type: ErrorNetworkTypes = ErrorNetworkTypes.OTHER,
+        var shouldPersist: Boolean = false,
+        var code: Int = 0,
+        var message: String = "",
+        var action: String = ""
+)
+```
+
+### Clients
+This is where you define all your endpoints (**NOT** the base URL) and the verb for each endpoint; I have one simple example of a `GET` request that has the end point `/tasks` (which will be appended to the base URL in the **DAO**) and it looks like this:
+```kotlin
+@GET("tasks")
+fun getTasks(): Observable<Response<List<TaskNetworkEntity>>>
+```
+
+The API will return a `List<TaskNetworkEntity>` but we wrap it in a `Response` so that we can handle `HttpException`s and to handle different `Response` codes (200, 201, etc...) if we wish to do so.
+
+### Data Access Objects (DAOs):
+This is where we execute the **network** calls. In each **DAO** we'll have a few `PublishSubject`s that we can observe in the **Repository** layer. Before I go into an example let me explain the idea behind a `BaseNetworkDao` class that all other **DAOs** should extend.
+
+#### BaseNetworkDao:
+The `BaseNetworkDao` is an open class that has two main things; a `PublishSubject` named `errorNetwork` that emits `ErrorNetworkEntity` when network errors occur, and a helper method `fun <T> executeNetworkCall(...)` that will figure out all the info in the error if an error occurs and emits that information into `errorNetwork` while allowing you to define an `onFailure(throwable: Throwable)` that will be called after that logic is done and the error is emitted. It takes advantage of the earlier described `RxKotlinExtensions` and is not meant to be removed, only modified; of course you can remove it if you like anyway. Here's how it looks like:
+
+```kotlin
+open class BaseNetworkDao {
+
+    val errorNetwork = PublishSubject.create<ErrorNetworkEntity>()
+    protected fun <T> executeNetworkCall(
+            observable: Observable<Response<T>>,
+            shouldPersist: Boolean = false,
+            action: String = "",
+            onSuccess: ((value: Response<T>) -> Unit),
+            onFailure: ((throwable: Throwable) -> Unit)? = null,
+            onComplete: (() -> Unit)? = null): Disposable {
+
+        return observable.execute(
+                onSuccess = { response ->
+                    onSuccess(response)
+                },
+                onFailure = { throwable ->
+                    val errorNetworkEntity = ErrorNetworkEntity()
+
+                    throwable.message?.let {
+                        errorNetworkEntity.message = it
+                    }
+
+                    when (throwable) {
+                        is SocketTimeoutException -> {
+                            errorNetworkEntity.type = ErrorNetworkTypes.TIMEOUT
+                        }
+
+                        is IOException -> {
+                            errorNetworkEntity.type = ErrorNetworkTypes.IO
+                        }
+
+                        is HttpException -> {
+                            errorNetworkEntity.type = ErrorNetworkTypes.HTTP
+                            errorNetworkEntity.code = throwable.code()
+                        }
+
+                        else -> {
+                            errorNetworkEntity.type = ErrorNetworkTypes.OTHER
+                        }
+                    }
+
+                    errorNetworkEntity.shouldPersist = shouldPersist
+                    errorNetworkEntity.action = action
+
+                    errorNetwork.onNext(errorNetworkEntity)
+
+                    onFailure?.let { onFailure ->
+                        onFailure(throwable)
+                    }
+                },
+                onComplete = {
+                    onComplete?.let { onComplete ->
+                        onComplete()
+                    }
+                }
+        )
+    }
+}
+```
+
+#### TaskNetworkDao (EXAMPLE):
+This class extends `BaseNetworkDao` and will have a few things:
+* `requestInterface` will be a `var` that will define things like the **base URL**, automatic converters (convert JSON to Model automatically), **Rx** support, and such. It looks like this:
+```kotlin
+private var requestInterface: TaskClient = Retrofit.Builder()
+        .baseUrl("https://demo2500655.mockable.io")
+        .addConverterFactory(MoshiConverterFactory.create().asLenient())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .build().create(TaskClient::class.java)
+```
+* `setRequestInterface` method that we'll use to set **mock** interfaces for testing. Remember, when testing the **network** layer we don't want to test the endpoints themselves, as that's the job of the **API** itself not the app. It's a simple setter:
+```kotlin
+fun setRequestInterface(taskClient: TaskClient) {
+    requestInterface = taskClient
+}
+```
+* A `PublishSubject` for `retrievedTasks` that will emit the result of the **network** call. It looks like this:
+```kotlin
+val retrievedTasks = PublishSubject.create<Response<List<TaskNetworkEntity>>>()
+```
+* A `PublishSubject` for `isRetrievingTasks` that will emit when a **network** call is made and when it's done (used for **UI** visual indication of *loading*). It looks like this:
+```kotlin
+val isRetrievingTasks = PublishSubject.create<Boolean>()
+```
+* `retrieveTasks` that looks like this:
+```kotlin
+fun retrieveTasks() {
+    isRetrievingTasks.onNext(true)
+    executeNetworkCall(
+            observable = requestInterface.getTasks(),
+            action = "Fetching tasks from the cloud",
+            onSuccess = {
+                retrievedTasks.onNext(it)
+            },
+            onComplete = {
+                isRetrievingTasks.onNext(false)
+            }
+    )
+}
+```
+
+### Tests:
+Network tests are under the `test` sub-package. When testing the **network** layer we mock all endpoints because testing those is the responsibility of the **API** itself. Please refer to the example code that I have, it's fairly well documented with comments.
 
 ## Repository Module
 
