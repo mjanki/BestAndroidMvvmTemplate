@@ -122,6 +122,90 @@ Both basically only remove the overlay if it exists on `onResume`; might be move
 Now we shall move into the actual layers / modules of the base app. Each layer is a module in our case so I'll be using the words *layer* and *module* interchangeably.
 
 ## Database Module
+The **database** module takes care of everything **database** related, and no other layer has to know about the **database** dependencies or how the **database** layer interacts with the database. It uses **Room** with **RxKotlin**. Here's a detailed rundown of what this includes at the moment:
+
+### Models:
+This has all the models (entities) for the database. For example, `TaskDatabaseEntity` under the sub-package `models` looks like this:
+```kotlin
+@Entity(tableName = "tasks")
+data class TaskDatabaseEntity(
+        @PrimaryKey(autoGenerate = true) var id: Long?,
+        @ColumnInfo(name = "uuid") var uuid: String,
+        @ColumnInfo(name = "name") var name: String,
+        @ColumnInfo(name = "date") var date: OffsetDateTime = OffsetDateTime.now(),
+        @ColumnInfo(name = "status") var status: Int = 0
+)
+```
+
+### Type Converters:
+The database doesn't know how to convert complicated objects into primitives, storable data types. That's why we need **Type Converters**. For example, in the previously shown `TaskDatabaseEntity` we have a column of type `OffsetDateTime`; and we'd write a type converter that we'll declare in the `AppDatabase.kt` file later (described in the **AppDatabase.kt** section below). The type converter for `OffsetDateTime` under the sub-package `type_converters` looks like this:
+```kotlin
+object DateTypeConverter {
+    private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+    @TypeConverter
+    @JvmStatic
+    fun toOffsetDateTime(value: String?): OffsetDateTime? = value?.let {
+        return formatter.parse(it, OffsetDateTime::from)
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromOffsetDateTime(date: OffsetDateTime?) = date?.format(formatter)
+}
+```
+
+### Data Access Objects (DAOs):
+This is where we define **query methods** to access the database. This is pretty straight forward; if you don't know how **Room** and **RxKotlin** can work together do your research. Here are a few examples of what I'm using:
+
+This `getByUUID(uuid: String)` method will retrieve tasks by `uuid` and will return a `Flowable` so that you can observe the changes on those tasks:
+```kotlin
+@Query("SELECT * from tasks where uuid = :uuid")
+fun getByUUID(uuid: String): Flowable<List<TaskDatabaseEntity>>
+```
+
+This `insert(taskDatabaseEntity: TaskDatabaseEntity)` method will insert a task into the database and will return a `Single<Long>` for the inserted task's `id`:
+```kotlin
+@Insert(onConflict = OnConflictStrategy.REPLACE)
+fun insert(taskDatabaseEntity: TaskDatabaseEntity): Single<Long>
+```
+
+This `deleteAll()` method will delete all tasks in the database and will just return a `Completable`:
+```kotlin
+@Query("DELETE from tasks")
+fun deleteAll(): Completable
+```
+
+Those queries can be used either by manually subscribing and doing the ***Rx*** thing; or you can just rely on the `RxKotlinExtensions` that I described earlier which will do the same thing for you. Also, feel free to write other extensions if you want to expand what's already there.
+
+### AppDatabase.kt:
+Here all you need to do is define *4 things*:
+* **Entities**:
+```kotlin
+@Database(entities = [
+    TaskDatabaseEntity::class,
+    ErrorNetworkDatabaseEntity::class
+], version = 1)
+```
+* **Type Converters**:
+```kotlin
+@TypeConverters(DateTypeConverter::class, ErrorNetworkTypeConverter::class)
+```
+* **Data Access Objects (DAOs)**:
+```kotlin
+abstract fun taskDao(): TaskDatabaseDao
+abstract fun errorNetworkDao(): ErrorNetworkDatabaseDao
+```
+* **Database Name**:
+```kotlin
+private fun buildDatabase(context: Context) = Room.databaseBuilder(
+        context.applicationContext,
+        AppDatabase::class.java, "simplyToDo.db"
+).build()
+```
+
+### Tests:
+Database tests are under the `androidTest` sub-package; the reason why they're not under the `test` sub-package is because we need the `ApplicationContext` to test the database. Please refer to the example code that I have, it's fairly well documented with comments.
 
 ## Network Module
 
