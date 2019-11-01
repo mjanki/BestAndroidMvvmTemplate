@@ -511,10 +511,55 @@ fun insertErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity) {
 }
 ```
 
-### Testing:
+### Tests:
 Repository tests are under the `test` sub-package. When testing the **Repository** layer we mock all data sources because we want to test it independent of the lower layers. Please refer to the example code that I have, it's fairly well documented with comments.
 
 ## ViewModel Module
+The ViewModel module takes care of our business logic and emitting view-specific information so that the **View** can know what to do. As usual, we have a `models`, `interfaces`, and `mappers` sub-packages that have more of the same of what we already explained. As for the `viewmodels` sub-package:
+* It has a `BaseViewModel` that for now will only hold a `CompositeDisposable` and clears it on `onCleared`. This `BaseViewModel` is intended to be extended by all other ViewModels.
+* Each **ViewModel** will have a reference to all the repositories it needs:
+```kotlin
+private lateinit var taskRepository: TaskRepository
+```
+* Each **ViewModel** will also have two `init` methods just like in the **Repository** layer.
+* Each **ViewModel** is responsible to convert **Rx** stuff to **LiveData**; so in the case of `allTasks` we'll have:
+  * A private `allTasks` property:
+  ```kotlin
+  private var allTasks = MutableLiveData<List<TaskViewModelEntity>>()
+  ```
+  * A public getter to conceal the `Mutable` part of `allTasks` (so that the **UI** can't modify it directly):
+  ```kotlin
+  fun getAllTasks(): LiveData<List<TaskViewModelEntity>> = allTasks
+  ```
+  * Then we subscribe to the repository layer's **Rx** tasks, we map them the list of `TaskRepoEntity`s to a list of `TaskViewModelEntity`s, then we post them to `allTasks`:
+  ```kotlin
+  taskRepository.getTasks().subscribe { taskRepoEntityList ->
+      allTasks.postValue(
+              taskRepoEntityList.map { taskRepoEntity ->
+                  taskViewModelRepoMapper.upstream(taskRepoEntity)
+              }.reversed()
+      )
+  }.addTo(disposables)
+  ```
+  * We do the same with `isRetrievingTasks`:
+  ```kotlin
+    taskRepository.isRetrievingTasks.subscribe {
+        isRetrievingTasks.postValue(it)
+    }.addTo(disposables)
+  ```
+* `onCleared` will clear both ViewModel's and Repository's `CompositeDisposable`:
+```kotlin
+override fun onCleared() {
+    super.onCleared()
+    taskRepository.clearDisposables()
+}
+```
+
+### ErrorNetworkViewModel:
+This ViewModel will reference `ErrorRepository` and will be used by the `BaseActivity` to handle all errors uniformly.
+
+### Tests:
+ViewModel tests are under the `test` sub-package. When testing the **ViewModel** layer we mock all repositories because we want to test it independent of the lower layers. Please refer to the example code that I have, it's fairly well documented with comments.
 
 ## View Module
 
