@@ -5,6 +5,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.umbrellahq.baseapp.R
+import org.umbrellahq.baseapp.mappers.ErrorNetworkViewViewModelMapper
+import org.umbrellahq.baseapp.models.ErrorNetworkViewEntity
 import org.umbrellahq.util.NavigationUtil
 import org.umbrellahq.util.foundation.FoundationActivity
 import org.umbrellahq.viewmodel.models.ErrorNetworkViewModelEntity
@@ -14,6 +16,7 @@ open class BaseActivity : FoundationActivity() {
 
     private lateinit var errorNetworkVM: ErrorNetworkViewModel
     private var currentErrorNetwork: ErrorNetworkViewModelEntity? = null
+    private val errorNetworkViewViewModelMapper = ErrorNetworkViewViewModelMapper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +51,14 @@ open class BaseActivity : FoundationActivity() {
 
                     currentErrorNetwork = errorNetworkVMEntityList.first()
                     currentErrorNetwork?.let { currentError ->
-                        handleErrorNetwork(currentError)
+                        handleErrorNetwork(errorNetworkViewViewModelMapper.upstream(currentError))
                     }
                 }
         )
     }
 
     // To be handled in subclasses
-    open fun handleErrorNetwork(errorNetworkViewModelEntity: ErrorNetworkViewModelEntity) { }
+    open fun handleErrorNetwork(errorNetworkViewEntity: ErrorNetworkViewEntity) { }
 
     protected fun resolveErrorNetwork() {
         currentErrorNetwork?.let {
