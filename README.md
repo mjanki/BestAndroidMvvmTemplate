@@ -562,7 +562,139 @@ This ViewModel will reference `ErrorRepository` and will be used by the `BaseAct
 ViewModel tests are under the `test` sub-package. When testing the **ViewModel** layer we mock all repositories because we want to test it independent of the lower layers. Please refer to the example code that I have, it's fairly well documented with comments.
 
 ## View Module
+The View module takes care of our **UI** only; no business logic, only displaying UI elements, moving UI elements around, navigation, and things like that. If you spot business logic in your **View** layer then you're probably doing something wrong. As usual, we have a `models`, `interfaces`, and `mappers` sub-packages that have more of the same of what we already explained. As for the `activities` and `fragments` sub-packages:
+
+* This base app uses a single activity, multiple fragments architecture; this is what **Google** recommends (not the best source I agree but what can I say?) It also uses the new **Navigation** components; I haven't used `SafeArgs` yet but they should be easily added.
+
+### BaseActivity:
+* `BaseActivity` extends `FoundationActivity`
+* It initialized `AndroidThreeTen` so that we can use `OffsetDateTime.now()`:
+```kotlin
+AndroidThreeTen.init(application)
+```
+* It sets up the `NavigationUtil` so that we can use `addOverlay` and `removeOverlay`:
+```kotlin
+NavigationUtil.setup(R.id.clContainer)
+```
+* It has an `ErrorNetworkViewModel` to handle all errors uniformly. It looks at the top error then calls `handleErrorNetwork(errorNetworkViewModelEntity: ErrorNetworkViewModelEntity)` which should be overridden in your `MainActivity` or whatever you want to call it.
+* `BaseActivity` also has a `resolveErrorNetwork` which will delete the network error from the database which will consequently emit the new error list without the one we just resolved (because we are observing the network errors in the database).
+* TODO: in Alpha 2 I will clean this to use `ErrorViewEntity` instead.
+* It looks like this:
+```kotlin
+open class BaseActivity : FoundationActivity() {
+
+    private lateinit var errorNetworkVM: ErrorNetworkViewModel
+    private var currentErrorNetwork: ErrorNetworkViewModelEntity? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Initialize AndroidThreeTen
+        AndroidThreeTen.init(application)
+
+        // Setup main fragment id and main constraint layout id in NavigationUtil
+        NavigationUtil.setup(R.id.clContainer)
+
+        // Initialize ErrorsNetwork observable
+        errorNetworkVM = ViewModelProviders.of(this).get(ErrorNetworkViewModel::class.java)
+        errorNetworkVM.init()
+
+        errorNetworkVM.getErrorsNetwork().observe(
+                this,
+                Observer { errorNetworkVMEntityList ->
+
+                    // If all errors were handled
+                    if (errorNetworkVMEntityList.isEmpty()) {
+                        currentErrorNetwork = null
+                        return@Observer
+                    }
+
+                    val firstID = errorNetworkVMEntityList.first().id
+                    val currentID = currentErrorNetwork?.id
+
+                    // We haven't handled current error
+                    if (firstID == currentID) {
+                        return@Observer
+                    }
+
+                    currentErrorNetwork = errorNetworkVMEntityList.first()
+                    currentErrorNetwork?.let { currentError ->
+                        handleErrorNetwork(currentError)
+                    }
+                }
+        )
+    }
+
+    // To be handled in subclasses
+    open fun handleErrorNetwork(errorNetworkViewModelEntity: ErrorNetworkViewModelEntity) { }
+
+    protected fun resolveErrorNetwork() {
+        currentErrorNetwork?.let {
+            errorNetworkVM.deleteErrorNetwork(it)
+        }
+    }
+}
+```
+
+### MainActivity:
+```kotlin
+class MainActivity : BaseActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        setupToolbar(toolbar, showUp = false, title = getString(R.string.app_name))
+    }
+
+    override fun handleErrorNetwork(errorNetworkViewModelEntity: ErrorNetworkViewModelEntity) {
+        Snackbar.make(
+                clContainer,
+                "${errorNetworkViewModelEntity.action} failed with ${errorNetworkViewModelEntity.code}",
+                Snackbar.LENGTH_LONG
+        ).addCallback(object : Snackbar.Callback() {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                resolveErrorNetwork()
+            }
+        }).show()
+    }
+}
+```
+
+### General Notes:
+* We declare the **ViewModel** as a `private lateinit var':
+```kotlin
+private lateinit var taskVM: TaskViewModel
+```
+* In `onCreate` we initialize it and we don't forget to call `init()`:
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    taskVM = ViewModelProviders.of(this).get(TaskViewModel::class.java)
+    taskVM.init()
+}
+```
+* We just inflate the layout in `onCreateView`:
+```kotlin
+override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    return container?.inflate(R.layout.fragment_main)
+}
+```
+* We manipulate the view after `onViewCreated`; this is because before that `Kotlin Extensions` can't access the views.
+* Check the example code I have in this project to see what you can do.
+
+### Tests:
+View tests are under the `androidTest` sub-package; they are **Espresso** tests. Please refer to the example code that I have, it's fairly well documented with comments.
 
 # First Use
+Here are the things you need to do when you first start a project with this template:
+
+* Change the package name of each module.
+* Change the package name in each module's `AndroidManifest.xml`.
+* Change the `applicationId` in the **View's** gradle file.
+* Delete all **Task** related classes / files, or keep for reference on how to use.
+* Empty the `MainFragment`.
+* Modify the `MainActivity` to your liking, or keep as is.
+* Clean out the resources that you don't want, and replace / modify the `xml` layouts.
 
 # Final Thoughts
+This is still in **Alpha 1** stage; I have some cleanups to do, and I need to clean up the documentation as well. Feedback is much appreciated at this stage; if  you think I'm doing something wrong, or if you have a suggestion please let me know. Thanks!
