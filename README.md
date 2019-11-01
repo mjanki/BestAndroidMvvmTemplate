@@ -361,6 +361,150 @@ fun retrieveTasks() {
 Network tests are under the `test` sub-package. When testing the **network** layer we mock all endpoints because testing those is the responsibility of the **API** itself. Please refer to the example code that I have, it's fairly well documented with comments.
 
 ## Repository Module
+The **Repository** module takes care of coordinating between the two data sources we have (network and database). You can implement any logic you want here, but in my opinion ideally all data sources should dump results in the database and the app should only observe the database. Here's a detailed rundown of what this includes at the moment:
+
+### Models:
+This has all the models (entities) for the repository. For example, `TaskRepoEntity` under the sub-package `models` looks like this:
+```kotlin
+data class TaskRepoEntity(
+        var id: Long? = null,
+        var uuid: String = UUID.randomUUID().toString(),
+        var name: String,
+        var date: OffsetDateTime = OffsetDateTime.now(),
+        var status: Int = 0
+)
+```
+
+### RepoMapperInterface:
+As mentioned earlier, each layer (excluding bottom layers) will have **Mappers** for all **models**, and at this moment I also have a **MapperInterface** per layer (probably going to change soon).
+
+### Mappers:
+An example of a **Mapper** is the `TaskRepoNetworkMapper` under the `mappers` sub-package and it looks like this:
+```kotlin
+class TaskRepoNetworkMapper : RepoMapperInterface<TaskRepoEntity, TaskNetworkEntity> {
+    override fun downstream(currentLayerEntity: TaskRepoEntity) = TaskNetworkEntity(
+            uuid = currentLayerEntity.uuid,
+            name = currentLayerEntity.name,
+            date = "${currentLayerEntity.date}",
+            status = currentLayerEntity.status
+    )
+
+    override fun upstream(nextLayerEntity: TaskNetworkEntity) = TaskRepoEntity(
+            uuid = nextLayerEntity.uuid,
+            name = nextLayerEntity.name,
+            date = OffsetDateTime.parse(nextLayerEntity.date),
+            status = nextLayerEntity.status
+    )
+}
+```
+
+### Repositories:
+Here we'll have all the repositories that we'll use in the **ViewModel** layer. They handle communicating with the data sources and coordinating between them so that the **ViewModel** layer doen't need to care about how the data is coming back. First let me explain the `Repository.kt` superclass that is intended to be extended for all repositories.
+
+#### Repository.kt:
+This is an open class that is intended to be extended by all other repository classes. A few points to keep in mind:
+* It will take a `Context?` as a parameter so that it can instantiate an `AppDatabase`, and it's an optional `Context?` because we'll pass a mock when we test.
+* It has an `open fun init()` that will be used to initialize it with real data. Again, this is for testing purposes.
+* It has a `CompositeDisposable` and a `clearDisposables` method that will be used to add disposables and clean them when appropriate.
+* `getDisposablesSize` and `getDisposableIsDisposed` are methods intended for testing.
+
+It looks like this:
+```kotlin
+open class Repository(ctx: Context?) {
+    protected lateinit var appDatabase: AppDatabase
+    init {
+        ctx?.let {
+            appDatabase = AppDatabase(it)
+        }
+    }
+
+    // To override
+    open fun init() { /* Implement in subclasses */ }
+
+    // DAOs
+    protected var disposables = CompositeDisposable()
+
+    fun clearDisposables() {
+        disposables.clear()
+    }
+
+    fun getDisposablesSize() = disposables.size()
+    fun getDisposableIsDisposed() = disposables.isDisposed
+}
+```
+
+#### TaskRepository (EXAMPLE):
+Each repository should be initialized first then should call `init(...)` before use. In real usage we don't need to pass anything, but for tests we need to pass mock data sources. The reason why we have two methods, an empty `init()` and another `init(testTaskNetworkDao? = null, testTaskDatabaseDao: TaskDatabaseDao? = null)` instead of just the latter is because we can't just use the latter in the **ViewModel** even if we just pass `null` because the **ViewModel** layer doesn't see the **network**'s and **database**'s entites. Here are a few pointers on how to use:
+
+* Each repository will have a reference to all data sources **DAOs**:
+```kotlin
+private lateinit var taskNetworkDao: TaskNetworkDao
+private lateinit var taskDatabaseDao: TaskDatabaseDao
+```
+* It will also have a reference to all needed **Mappers**:
+```kotlin
+private var taskRepoDatabaseMapper = TaskRepoDatabaseMapper()
+private var taskRepoNetworkMapper = TaskRepoNetworkMapper()
+private var errorNetworkRepoNetworkMapper = ErrorNetworkRepoNetworkMapper()
+```
+* If you want to observe or get something from your data sources you can have a `private` property that will hold the retrieved values then you can have a `public` method that will map that property or properties to the **Repository** models than emit to the **ViewModel**. `allTasks` is a good example, here we have a `private` property:
+```kotlin
+private lateinit var allTasks: Flowable<List<TaskDatabaseEntity>>
+```
+Then in the `init` method we set it to retrieve from the database:
+```kotlin
+allTasks = taskDatabaseDao.getAll()
+```
+Then in a public method we map it to a `Flowable` that holds a list of `TaskRepoEntity` instead of `TaskDatabaseEntity`:
+```kotlin
+fun getTasks(): Flowable<List<TaskRepoEntity>> =
+        allTasks.flatMap { taskDatabaseEntityList ->
+            Flowable.fromArray(
+                    taskDatabaseEntityList.map { taskDatabaseEntity ->
+                        taskRepoDatabaseMapper.upstream(
+                                taskDatabaseEntity
+                        )
+                    }
+            )
+        }
+```
+* `isRetrievingTasks` is just retrieved from the **network** layer and emitted directly to the **ViewModel** (which will probably just emit it to the **View** layer to handle **UI** changes for *loading* states.
+* Sometimes the repository will handle syncing without letting the upper layers know. For example, when we retrieve the tasks from the **API** we sync it with the database (which is already observed in the **ViewModel** layer). This example piece of code retrieves the tasks, then checks if we already have them, and the ones we don't have are inserted in the database:
+```kotlin
+taskNetworkDao.retrievedTasks.subscribe {
+            it.body()?.let { taskNetworkEntities ->
+                for (taskNetworkEntity in taskNetworkEntities) {
+                    val taskRepoEntity = taskRepoNetworkMapper.upstream(taskNetworkEntity)
+
+                    taskDatabaseDao.getByUUID(taskNetworkEntity.uuid).getValue(
+                            onSuccess = { taskDatabaseEntities ->
+                                if (taskDatabaseEntities.isNotEmpty()) {
+                                    taskRepoEntity.id = taskDatabaseEntities[0].id
+                                }
+
+                                insertTask(taskRepoEntity)
+                            }
+                    )
+
+
+                }
+            }
+        }.addTo(disposables)
+```
+* Of course in such examples were we continuously observe using **Rx** we don't want to forget to `addTo(disposables)` so that we can clear them in the `onCleared` method in the **ViewModel**.
+* When an error occurs I just insert that in the database directly and it will be observed in the **BaseActivity** as we'll see later. This way we can handle all network errors in one place; you can easily modify that to emit the error to upper layers instead though:
+```kotlin
+taskNetworkDao.errorNetwork.subscribe { errorNetworkEntity ->
+    insertErrorNetwork(
+            errorNetworkRepoNetworkMapper.upstream(
+                    errorNetworkEntity
+            )
+    )
+}.addTo(disposables)
+```
+
+### Testing:
+Repository tests are under the `test` sub-package. When testing the **Repository** layer we mock all data sources because we want to test it independent of the lower layers. Please refer to the example code that I have, it's fairly well documented with comments.
 
 ## ViewModel Module
 
