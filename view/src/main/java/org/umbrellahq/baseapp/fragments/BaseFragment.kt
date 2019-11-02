@@ -1,10 +1,10 @@
-package org.umbrellahq.util.foundation
+package org.umbrellahq.baseapp.fragments
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import org.umbrellahq.util.helper.removeOverlay
 
-open class FoundationFragment : Fragment() {
+open class BaseFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 

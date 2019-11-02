@@ -1,6 +1,7 @@
 package org.umbrellahq.baseapp.activities
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -8,11 +9,11 @@ import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.mappers.ErrorNetworkViewViewModelMapper
 import org.umbrellahq.baseapp.models.ErrorNetworkViewEntity
 import org.umbrellahq.util.NavigationUtil
-import org.umbrellahq.util.foundation.FoundationActivity
+import org.umbrellahq.util.helper.removeOverlay
 import org.umbrellahq.viewmodel.models.ErrorNetworkViewModelEntity
 import org.umbrellahq.viewmodel.viewmodels.ErrorNetworkViewModel
 
-open class BaseActivity : FoundationActivity() {
+open class BaseActivity : AppCompatActivity() {
 
     private lateinit var errorNetworkVM: ErrorNetworkViewModel
     private var currentErrorNetwork: ErrorNetworkViewModelEntity? = null
@@ -64,5 +65,11 @@ open class BaseActivity : FoundationActivity() {
         currentErrorNetwork?.let {
             errorNetworkVM.deleteErrorNetwork(it)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        removeOverlay(this)
     }
 }

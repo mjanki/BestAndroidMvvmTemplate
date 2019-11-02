@@ -12,12 +12,11 @@ import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.adapters.TasksRecyclerViewAdapter
 import org.umbrellahq.baseapp.mappers.TaskViewViewModelMapper
 import org.umbrellahq.baseapp.models.TaskViewEntity
-import org.umbrellahq.util.foundation.FoundationFragment
 import org.umbrellahq.util.inflate
 import org.umbrellahq.viewmodel.models.TaskViewModelEntity
 import org.umbrellahq.viewmodel.viewmodels.TaskViewModel
 
-class MainFragment : FoundationFragment() {
+class MainFragment : BaseFragment() {
     private lateinit var taskVM: TaskViewModel
 
     private val taskViewViewModelMapper = TaskViewViewModelMapper()
