@@ -14,7 +14,6 @@ import org.umbrellahq.viewmodel.models.ErrorNetworkViewModelEntity
 import org.umbrellahq.viewmodel.viewmodels.ErrorNetworkViewModel
 
 open class BaseActivity : AppCompatActivity() {
-
     private lateinit var errorNetworkVM: ErrorNetworkViewModel
     private var currentErrorNetwork: ErrorNetworkViewModelEntity? = null
     private val errorNetworkViewViewModelMapper = ErrorNetworkViewViewModelMapper()
