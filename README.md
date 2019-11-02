@@ -715,11 +715,12 @@ override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saved
 View tests are under the `androidTest` sub-package; they are **Espresso** tests. Please refer to this template's example code; it's fairly well documented with comments.
 
 # First Use
-Here are the things you need to do when you first start a project with this template:
+Here are the things you **have** to do when you first start a project with this template; I did that myself and it took me less than 10 minutes so it should be fine for starting a project:
 
 * Change the package name of each module.
 * Change the package name in each module's `AndroidManifest.xml`.
 * Change the `applicationId` in the **View's** gradle file.
+* Change all imports in your files such as `org.umbrellahq.baseapp.R` to fit your new package names.
 * Delete all **Task** related classes / files, or keep for reference on how to use.
 * Empty the `MainFragment`.
 * Modify the `MainActivity` to your liking, or keep as is.
