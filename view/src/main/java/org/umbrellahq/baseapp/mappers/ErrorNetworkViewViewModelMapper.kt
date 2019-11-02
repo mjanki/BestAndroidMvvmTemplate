@@ -1,10 +1,10 @@
 package org.umbrellahq.baseapp.mappers
 
-import org.umbrellahq.baseapp.interfaces.ViewMapperInterface
 import org.umbrellahq.baseapp.models.ErrorNetworkViewEntity
+import org.umbrellahq.util.interfaces.Mapper
 import org.umbrellahq.viewmodel.models.ErrorNetworkViewModelEntity
 
-class ErrorNetworkViewViewModelMapper : ViewMapperInterface<ErrorNetworkViewEntity, ErrorNetworkViewModelEntity> {
+class ErrorNetworkViewViewModelMapper : Mapper<ErrorNetworkViewEntity, ErrorNetworkViewModelEntity> {
     override fun downstream(currentLayerEntity: ErrorNetworkViewEntity) = ErrorNetworkViewModelEntity(
             id = currentLayerEntity.id,
             type = currentLayerEntity.type,
