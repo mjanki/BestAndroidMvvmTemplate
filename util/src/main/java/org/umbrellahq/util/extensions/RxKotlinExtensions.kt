@@ -80,6 +80,7 @@ fun <T> Observable<Response<T>>.execute(
             },
             { throwable ->
                 onFailure?.let { onFailure -> onFailure(throwable) }
+                onComplete?.let { onComplete -> onComplete() }
             }
     )
 }
