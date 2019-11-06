@@ -51,6 +51,9 @@ dependencies {
     androidTestImplementation libs.testRunner
     androidTestImplementation libs.testRules
     androidTestImplementation libs.testJunitExt
+
+    // Leak Canary
+    debugImplementation libs.leakCanary
 }
 
 repositories {

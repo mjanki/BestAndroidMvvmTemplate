@@ -32,6 +32,9 @@ buildscript {
         mockitoInlineVersion = "2.13.0"
         archCoreTestingVersion = "2.1.0"
 
+        // LeakCanary
+        leakCanaryVersion = "2.0-beta-3"
+
 
         libs = [
                 kotlin: ("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"),
@@ -70,7 +73,9 @@ buildscript {
                 archCoreTesting: ("androidx.arch.core:core-testing:$archCoreTestingVersion"),
 
                 mockitoKotlin: ("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"),
-                mockitoInline: ("org.mockito:mockito-inline:$mockitoInlineVersion")
+                mockitoInline: ("org.mockito:mockito-inline:$mockitoInlineVersion"),
+
+                leakCanary: ("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
         ]
     }
 

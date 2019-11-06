@@ -59,6 +59,9 @@ dependencies {
     testImplementation libs.mockitoKotlin
     testImplementation libs.mockitoInline
 
+    // Leak Canary
+    debugImplementation libs.leakCanary
+
     implementation project(':network')
     implementation project(':database')
     implementation project(':util')

@@ -73,6 +73,9 @@ dependencies {
     androidTestImplementation libs.testRunner
     implementation libs.archCoreTesting
 
+    // Leak Canary
+    debugImplementation libs.leakCanary
+
     implementation project(':util')
 }
 

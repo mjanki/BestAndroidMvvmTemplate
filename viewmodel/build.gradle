@@ -52,6 +52,9 @@ dependencies {
     testImplementation libs.mockitoKotlin
     testImplementation libs.mockitoInline
 
+    // Leak Canary
+    debugImplementation libs.leakCanary
+
     implementation project(':util')
     implementation project(':repository')
 }

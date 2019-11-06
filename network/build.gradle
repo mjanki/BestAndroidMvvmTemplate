@@ -50,6 +50,9 @@ dependencies {
     // Mockito
     testImplementation libs.mockitoKotlin
 
+    // Leak Canary
+    debugImplementation libs.leakCanary
+
     implementation project(':util')
 }
 repositories {
