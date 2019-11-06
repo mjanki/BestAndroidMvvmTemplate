@@ -1,10 +1,31 @@
 # Current Version
-1.0.0 Alpha 2
+1.0.0 Alpha 3
 
 # Overview
 This is a base app, a template, a starting point for any android project. This template uses [**MVVM Clean architecture**](https://www.toptal.com/android/android-apps-mvvm-with-clean-architecture) to the best of my understanding; it uses **reactive patterns** using [**RxKotlin**](https://github.com/ReactiveX/RxKotlin), [**Room**](https://developer.android.com/topic/libraries/architecture/room) for persistence, and [**Retrofit2**](https://square.github.io/retrofit/) for networking. I will start by describing and explaining everything layer by layer, starting from the lowest layers all the way until the **View** layer.
 
 <img align="center" alt="Architecture Overview" src="/README_FILES/architecture_full.png" />
+
+## First Use
+Here are the things you **have** to do when you first start a project with this template:
+
+Either use the `start.py` script (Python3):
+* In the command line go to the project.
+* Type the command `python start.py`, or `python3 start.py` depending on which python version is your default.
+* Enter the package name when prompted.
+* Enter the database name when prompted.
+
+Or do it manually:
+* Change the package name of each module.
+* Change the package name in each module's `AndroidManifest.xml`.
+* Change the `applicationId` in the **View's** gradle file.
+* Change all imports in your files such as `org.umbrellahq.baseapp.R` to fit your new package names.
+
+Then:
+* Delete all **Task** related classes / files, or keep for reference on how to use.
+* Empty the `MainFragment`.
+* Modify the `MainActivity` to your liking, or keep as is.
+* Clean out the resources that you don't want, and replace / modify the `xml` layouts.
 
 ## Quick Points
 Here are a few things to keep in mind before you read further:
@@ -713,25 +734,6 @@ override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saved
 
 ### Tests:
 View tests are under the `androidTest` sub-package; they are **Espresso** tests. Please refer to this template's example code; it's fairly well documented with comments.
-
-# First Use
-Here are the things you **have** to do when you first start a project with this template; I did that myself and it took me less than 10 minutes so it should be fine for starting a project:
-
-Either use the `start.py` script:
-* In the command line go to the project.
-* Type the command `python start.py`.
-* Enter the package name when prompted.
-* Enter the database name when prompted.
-Or do it manually:
-* Change the package name of each module.
-* Change the package name in each module's `AndroidManifest.xml`.
-* Change the `applicationId` in the **View's** gradle file.
-* Change all imports in your files such as `org.umbrellahq.baseapp.R` to fit your new package names.
-Then:
-* Delete all **Task** related classes / files, or keep for reference on how to use.
-* Empty the `MainFragment`.
-* Modify the `MainActivity` to your liking, or keep as is.
-* Clean out the resources that you don't want, and replace / modify the `xml` layouts.
 
 # Final Thoughts
 This is still in **Alpha 2** stage. Feedback is much appreciated at this stage; if  you think I'm doing something wrong, or if you have a suggestion please let me know. Thanks!
