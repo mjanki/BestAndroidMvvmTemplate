@@ -717,10 +717,17 @@ View tests are under the `androidTest` sub-package; they are **Espresso** tests.
 # First Use
 Here are the things you **have** to do when you first start a project with this template; I did that myself and it took me less than 10 minutes so it should be fine for starting a project:
 
+Either use the `start.py` script:
+* In the command line go to the project.
+* Type the command `python start.py`.
+* Enter the package name when prompted.
+* Enter the database name when prompted.
+Or do it manually:
 * Change the package name of each module.
 * Change the package name in each module's `AndroidManifest.xml`.
 * Change the `applicationId` in the **View's** gradle file.
 * Change all imports in your files such as `org.umbrellahq.baseapp.R` to fit your new package names.
+Then:
 * Delete all **Task** related classes / files, or keep for reference on how to use.
 * Empty the `MainFragment`.
 * Modify the `MainActivity` to your liking, or keep as is.
