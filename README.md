@@ -2,7 +2,7 @@
 1.0.0 Alpha 2
 
 # Overview
-This is a base app, a template, a starting point for any android project. This template uses **MVVM Clean architecture** to the best of my understanding; it uses **reactive patterns**, **Room** for persistence, and **Retrofit2** for networking. I will start by describing and explaining everything layer by layer, starting from the lowest layers all the way until the **View** layer.
+This is a base app, a template, a starting point for any android project. This template uses [**MVVM Clean architecture**](https://www.toptal.com/android/android-apps-mvvm-with-clean-architecture) to the best of my understanding; it uses **reactive patterns** using [**RxKotlin**](https://github.com/ReactiveX/RxKotlin), [**Room**](https://developer.android.com/topic/libraries/architecture/room) for persistence, and [**Retrofit2**](https://square.github.io/retrofit/) for networking. I will start by describing and explaining everything layer by layer, starting from the lowest layers all the way until the **View** layer.
 
 <img align="center" alt="Architecture Overview" src="/README_FILES/architecture_full.png" />
 
