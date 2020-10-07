@@ -51,6 +51,7 @@ dependencies {
     implementation libs.androidxAppCompat
     implementation libs.constraintLayout
     implementation libs.material
+    implementation libs.swipeRefresh
     implementation libs.lifecycleExtensions
 
     // Navigation
