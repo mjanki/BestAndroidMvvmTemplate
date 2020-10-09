@@ -62,8 +62,8 @@ allprojects {
 
     ext {
         minSdkVersion = 21
-        targetSdkVersion = 28
-        compiledSdkVersion = 28
+        targetSdkVersion = 30
+        compiledSdkVersion = 30
         var = compiledSdkVersion
     }
 }
