@@ -47,31 +47,33 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation libs.kotlin
-    implementation libs.androidxAppCompat
-    implementation libs.constraintLayout
-    implementation libs.material
-    implementation libs.swipeRefresh
-    implementation libs.lifecycleExtensions
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipeRefreshVersion"
+
+    // ViewModel & LiveData
+    implementation "android.arch.lifecycle:extensions:$lifecycleExtensionsVersion"
 
     // Navigation
-    implementation libs.androidxNavigation
-    implementation libs.androidxNavigationUi
+    implementation "androidx.navigation:navigation-fragment-ktx:$androidxNavigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$androidxNavigationVersion"
 
     // OffsetDateTime backport
-    implementation libs.threetenabp
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabpVersion"
 
     // Testing
-    testImplementation libs.junit
-    androidTestImplementation libs.testRunner
-    androidTestImplementation libs.testRules
-    androidTestUtil libs.testOrchestrator
-    androidTestImplementation libs.testJunitExt
-    androidTestImplementation libs.testEspresso
-    androidTestImplementation libs.testEspressoContrib
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$testJunitExtVersion"
+    androidTestImplementation "androidx.test:runner:$testRunnerVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$testEspressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$testEspressoVersion"
+    androidTestImplementation "androidx.test:rules:$testRunnerVersion"
+    androidTestUtil "androidx.test:orchestrator:$testRunnerVersion"
 
     // Leak Canary
-    debugImplementation libs.leakCanary
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
 
     implementation project(":viewmodel")
     implementation project(":util")

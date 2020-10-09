@@ -1,0 +1,5 @@
+----- BETA 1 -----
+
+- Changed the way of importing dependencies so that it's clear when
+  something's out of date.
+- Updated dependencies.

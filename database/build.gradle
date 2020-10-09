@@ -53,28 +53,28 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation libs.kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 
     // RxKotlin
-    implementation libs.rxKotlin
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
 
     // Room
-    kapt libs.roomCompiler
-    implementation libs.roomRuntime
-    implementation libs.roomRxJava
-    testImplementation libs.roomTesting
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-rxjava2:$roomVersion"
+    testImplementation "androidx.room:room-testing:$roomVersion"
 
     // OffsetDateTime backport
-    implementation libs.threetenabp
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabpVersion"
 
     // Testing
-    testImplementation libs.junit
-    androidTestImplementation libs.testJunitExt
-    androidTestImplementation libs.testRunner
-    implementation libs.archCoreTesting
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$testJunitExtVersion"
+    androidTestImplementation "androidx.test:runner:$testRunnerVersion"
+    implementation "androidx.arch.core:core-testing:$archCoreTestingVersion"
 
     // Leak Canary
-    debugImplementation libs.leakCanary
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
 
     implementation project(':util')
 }

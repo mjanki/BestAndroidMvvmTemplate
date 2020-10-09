@@ -32,26 +32,26 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation libs.kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 
     // Retrofit2
-    implementation libs.retrofit
-    implementation libs.retrofitRxJava
-    implementation libs.retrofitMoshi
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
 
     // OffsetDateTime backport
-    implementation libs.threetenabp
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabpVersion"
 
     // Testing
-    testImplementation libs.junit
-    androidTestImplementation libs.testJunitExt
-    androidTestImplementation libs.testRunner
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$testJunitExtVersion"
+    androidTestImplementation "androidx.test:runner:$testRunnerVersion"
 
     // Mockito
-    testImplementation libs.mockitoKotlin
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
 
     // Leak Canary
-    debugImplementation libs.leakCanary
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
 
     implementation project(':util')
 }

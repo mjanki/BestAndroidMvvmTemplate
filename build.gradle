@@ -4,7 +4,7 @@ buildscript {
     ext {
         kotlinVersion = "1.4.10"
         androidxAppCompatVersion = "1.2.0"
-        constraintLayoutVersion = "2.0.1"
+        constraintLayoutVersion = "2.0.2"
         materialVersion = "1.2.1"
         swipeRefreshVersion = "1.1.0"
 
@@ -38,50 +38,6 @@ buildscript {
 
         // LeakCanary
         leakCanaryVersion = "2.5"
-
-
-        libs = [
-                kotlin: ("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"),
-                androidxAppCompat: ("androidx.appcompat:appcompat:$androidxAppCompatVersion"),
-                constraintLayout: ("androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"),
-                material: ("com.google.android.material:material:$materialVersion"),
-                swipeRefresh: ("androidx.swiperefreshlayout:swiperefreshlayout:$swipeRefreshVersion"),
-
-                // ViewModel & LiveData
-                lifecycleExtensions: ("android.arch.lifecycle:extensions:$lifecycleExtensionsVersion"),
-
-                // Navigation
-                androidxNavigation: ("androidx.navigation:navigation-fragment-ktx:$androidxNavigationVersion"),
-                androidxNavigationUi: ("androidx.navigation:navigation-ui-ktx:$androidxNavigationVersion"),
-
-                rxKotlin: ("io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"),
-                rxAndroid: ("io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"),
-
-                roomCompiler: ("androidx.room:room-compiler:$roomVersion"),
-                roomRuntime: ("androidx.room:room-runtime:$roomVersion"),
-                roomRxJava: ("androidx.room:room-rxjava2:$roomVersion"),
-                roomTesting: ("androidx.room:room-testing:$roomVersion"),
-
-                retrofit: ("com.squareup.retrofit2:retrofit:$retrofitVersion"),
-                retrofitRxJava: ("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"),
-                retrofitMoshi: ("com.squareup.retrofit2:converter-moshi:$retrofitVersion"),
-
-                threetenabp: ("com.jakewharton.threetenabp:threetenabp:$threetenabpVersion"),
-
-                junit: ("junit:junit:$junitVersion"),
-                testJunitExt: ("androidx.test.ext:junit:$testJunitExtVersion"),
-                testRunner: ("androidx.test:runner:$testRunnerVersion"),
-                testEspresso: ("androidx.test.espresso:espresso-core:$testEspressoVersion"),
-                testEspressoContrib: ("androidx.test.espresso:espresso-contrib:$testEspressoVersion"),
-                testRules: ("androidx.test:rules:$testRunnerVersion"),
-                testOrchestrator: ("androidx.test:orchestrator:$testRunnerVersion"),
-                archCoreTesting: ("androidx.arch.core:core-testing:$archCoreTestingVersion"),
-
-                mockitoKotlin: ("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"),
-                mockitoInline: ("org.mockito:mockito-inline:$mockitoInlineVersion"),
-
-                leakCanary: ("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
-        ]
     }
 
     repositories {
@@ -90,7 +46,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.android.tools.build:gradle:4.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // NOTE: Do not place your application dependencies here; they belong
