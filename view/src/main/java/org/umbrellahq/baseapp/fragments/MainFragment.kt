@@ -1,9 +1,8 @@
 package org.umbrellahq.baseapp.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,11 +11,10 @@ import org.umbrellahq.baseapp.R
 import org.umbrellahq.baseapp.adapters.TasksRecyclerViewAdapter
 import org.umbrellahq.baseapp.mappers.TaskViewViewModelMapper
 import org.umbrellahq.baseapp.models.TaskViewEntity
-import org.umbrellahq.util.inflate
 import org.umbrellahq.viewmodel.models.TaskViewModelEntity
 import org.umbrellahq.viewmodel.viewmodels.TaskViewModel
 
-class MainFragment : BaseFragment() {
+class MainFragment : Fragment(R.layout.fragment_main) {
     private lateinit var taskVM: TaskViewModel
 
     private val taskViewViewModelMapper = TaskViewViewModelMapper()
@@ -29,10 +27,6 @@ class MainFragment : BaseFragment() {
 
         taskVM = ViewModelProviders.of(this).get(TaskViewModel::class.java)
         taskVM.init()
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return container?.inflate(R.layout.fragment_main)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
