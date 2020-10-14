@@ -12,7 +12,7 @@ class ErrorNetworkViewModel(application: Application) : BaseViewModel(applicatio
     private lateinit var errorRepository: ErrorRepository
     private var errorsNetwork = MutableLiveData<List<ErrorNetworkViewModelEntity>>()
 
-    private var errorNetworkRepoViewModelMapper = ErrorNetworkViewModelRepoMapper()
+    private var errorNetworkViewModelRepoMapper = ErrorNetworkViewModelRepoMapper()
 
     fun init() {
         init(testErrorRepository = null)
@@ -25,7 +25,7 @@ class ErrorNetworkViewModel(application: Application) : BaseViewModel(applicatio
         errorRepository.getErrorsNetwork().subscribe { errorNetworkRepoEntityList ->
             errorsNetwork.postValue(
                     errorNetworkRepoEntityList.map { errorNetworkRepoEntity ->
-                        errorNetworkRepoViewModelMapper.upstream(errorNetworkRepoEntity)
+                        errorNetworkViewModelRepoMapper.upstream(errorNetworkRepoEntity)
                     }
             )
         }.addTo(disposables)
@@ -35,7 +35,7 @@ class ErrorNetworkViewModel(application: Application) : BaseViewModel(applicatio
 
     fun deleteErrorNetwork(errorNetworkViewModelEntity: ErrorNetworkViewModelEntity) {
         errorRepository.deleteErrorNetwork(
-                errorNetworkRepoViewModelMapper.downstream(
+                errorNetworkViewModelRepoMapper.downstream(
                         errorNetworkViewModelEntity
                 )
         )
