@@ -36,13 +36,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
 
-    // RxKotlin & RxAndroid
-    implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
-
-    // Retrofit
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-
     // OffsetDateTime backport
     implementation "com.jakewharton.threetenabp:threetenabp:$threetenabpVersion"
 

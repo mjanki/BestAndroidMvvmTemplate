@@ -1,7 +1,6 @@
 package org.umbrellahq.repository.repositories
 
 import android.content.Context
-import io.reactivex.disposables.CompositeDisposable
 import org.umbrellahq.database.AppDatabase
 
 open class Repository(ctx: Context?) {
@@ -14,14 +13,4 @@ open class Repository(ctx: Context?) {
 
     // To override
     open fun init() { /* Implement in subclasses */ }
-
-    // DAOs
-    protected var disposables = CompositeDisposable()
-
-    fun clearDisposables() {
-        disposables.clear()
-    }
-
-    fun getDisposablesSize() = disposables.size()
-    fun getDisposableIsDisposed() = disposables.isDisposed
 }

@@ -1,9 +1,10 @@
 package org.umbrellahq.repository.repositories
 
 import android.content.Context
-import io.reactivex.Flowable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import org.umbrellahq.database.daos.TaskDatabaseDao
 import org.umbrellahq.database.models.TaskDatabaseEntity
 import org.umbrellahq.network.daos.TaskNetworkDao
@@ -11,8 +12,6 @@ import org.umbrellahq.repository.mappers.ErrorNetworkRepoNetworkMapper
 import org.umbrellahq.repository.mappers.TaskRepoDatabaseMapper
 import org.umbrellahq.repository.mappers.TaskRepoNetworkMapper
 import org.umbrellahq.repository.models.TaskRepoEntity
-import org.umbrellahq.util.extensions.execute
-import org.umbrellahq.util.extensions.getValue
 
 class TaskRepository(ctx: Context? = null) : ErrorRepository(ctx) {
     // DAOs
@@ -20,7 +19,8 @@ class TaskRepository(ctx: Context? = null) : ErrorRepository(ctx) {
     private lateinit var taskDatabaseDao: TaskDatabaseDao
 
     // Observables
-    private lateinit var allTasks: Flowable<List<TaskDatabaseEntity>>
+    private lateinit var allTasks: Flow<List<TaskDatabaseEntity>>
+    lateinit var isRetrievingTasksFlow: StateFlow<Boolean>
 
     // Mappers
     private var taskRepoDatabaseMapper = TaskRepoDatabaseMapper()
@@ -39,58 +39,48 @@ class TaskRepository(ctx: Context? = null) : ErrorRepository(ctx) {
 
         allTasks = taskDatabaseDao.getAll()
 
-        isRetrievingTasks = taskNetworkDao.isRetrievingTasks
+        isRetrievingTasksFlow = taskNetworkDao.getIsRetrievingTasksFlow()
 
-        taskNetworkDao.errorNetwork.subscribe { errorNetworkEntity ->
-            insertErrorNetwork(
-                    errorNetworkRepoNetworkMapper.upstream(
-                            errorNetworkEntity
-                    )
-            )
-        }.addTo(disposables)
+        GlobalScope.launch(Dispatchers.IO) {
+            taskNetworkDao.getErrorNetworkChannel().collect { errorNetworkEntity ->
+                val errorRepoEntity = errorNetworkRepoNetworkMapper.upstream(errorNetworkEntity)
+                insertErrorNetwork(errorRepoEntity)
+            }
+        }
 
-        taskNetworkDao.retrievedTasks.subscribe {
-            it.body()?.let { taskNetworkEntities ->
+        GlobalScope.launch(Dispatchers.IO) {
+            taskNetworkDao.getRetrievedTasksFlow().collectLatest { taskNetworkEntities ->
                 for (taskNetworkEntity in taskNetworkEntities) {
                     val taskRepoEntity = taskRepoNetworkMapper.upstream(taskNetworkEntity)
 
-                    taskDatabaseDao.getByUUID(taskNetworkEntity.uuid).getValue(
-                            onSuccess = { taskDatabaseEntities ->
-                                if (taskDatabaseEntities.isNotEmpty()) {
-                                    taskRepoEntity.id = taskDatabaseEntities[0].id
-                                }
+                    taskDatabaseDao.getByUUID(taskNetworkEntity.uuid)?.let { taskDatabaseEntity ->
+                        taskRepoEntity.id = taskDatabaseEntity.id
+                    }
 
-                                insertTask(taskRepoEntity)
-                            }
-                    )
-
-
+                    insertTask(taskRepoEntity)
                 }
             }
-        }.addTo(disposables)
+        }
     }
 
-    fun getTasks(): Flowable<List<TaskRepoEntity>> =
-            allTasks.flatMap { taskDatabaseEntityList ->
-                Flowable.fromArray(
-                        taskDatabaseEntityList.map { taskDatabaseEntity ->
-                            taskRepoDatabaseMapper.upstream(
-                                    taskDatabaseEntity
-                            )
-                        }
-                )
+    fun getTasks(): Flow<List<TaskRepoEntity>> =
+            allTasks.map { taskDatabaseEntityList ->
+                taskDatabaseEntityList.map { taskDatabaseEntity ->
+                    taskRepoDatabaseMapper.upstream(
+                            taskDatabaseEntity
+                    )
+                }
             }
 
-    lateinit var isRetrievingTasks: PublishSubject<Boolean>
-    fun retrieveTasks() {
+    suspend fun retrieveTasks() {
         taskNetworkDao.retrieveTasks()
     }
 
-    fun insertTask(taskRepoEntity: TaskRepoEntity) {
+    suspend fun insertTask(taskRepoEntity: TaskRepoEntity) {
         taskDatabaseDao.insert(
                 taskRepoDatabaseMapper.downstream(
                         taskRepoEntity
                 )
-        ).execute()
+        )
     }
 }

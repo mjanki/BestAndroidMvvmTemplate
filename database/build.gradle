@@ -55,13 +55,13 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 
-    // RxKotlin
-    implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
 
     // Room
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
-    implementation "androidx.room:room-rxjava2:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
     testImplementation "androidx.room:room-testing:$roomVersion"
 
     // OffsetDateTime backport

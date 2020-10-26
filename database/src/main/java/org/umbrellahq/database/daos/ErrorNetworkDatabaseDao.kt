@@ -1,28 +1,26 @@
 package org.umbrellahq.database.daos
 
 import androidx.room.*
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import org.umbrellahq.database.models.ErrorNetworkDatabaseEntity
 
 @Dao
 interface ErrorNetworkDatabaseDao {
-    @Query("SELECT * from network_errors")
-    fun getAll(): Flowable<List<ErrorNetworkDatabaseEntity>>
-
-    @Query("SELECT * from network_errors where id = :id")
-    fun getById(id: Long): Flowable<List<ErrorNetworkDatabaseEntity>>
-    
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(errorNetworkDatabaseEntity: ErrorNetworkDatabaseEntity): Single<Long>
+    suspend fun insert(errorNetworkDatabaseEntity: ErrorNetworkDatabaseEntity)
+
+    @Query("SELECT * from network_errors")
+    fun getAll(): Flow<List<ErrorNetworkDatabaseEntity>>
+
+    @Query("SELECT * from network_errors where id = :id LIMIT 1")
+    fun getById(id: Long): Flow<ErrorNetworkDatabaseEntity>
 
     @Query("DELETE from network_errors where id = :id")
-    fun delete(id: Long): Completable
+    suspend fun delete(id: Long)
 
     @Query("DELETE from network_errors")
-    fun deleteAll(): Completable
+    suspend fun deleteAll()
 
     @Delete
-    fun delete(errorNetworkDatabaseEntity: ErrorNetworkDatabaseEntity): Completable
+    suspend fun delete(errorNetworkDatabaseEntity: ErrorNetworkDatabaseEntity)
 }

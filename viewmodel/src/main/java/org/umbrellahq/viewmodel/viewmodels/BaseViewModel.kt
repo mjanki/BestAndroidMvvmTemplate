@@ -2,12 +2,10 @@ package org.umbrellahq.viewmodel.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 import kotlin.concurrent.schedule
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application) {
-    protected var disposables = CompositeDisposable()
     private var clickLock = false
 
     protected fun handleNavigationClick(delay: Long = 0, function: () -> Unit) {
@@ -26,9 +24,5 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     protected fun handleNavigationClickDelayed(function: () -> Unit) {
         handleNavigationClick(150, function)
-    }
-
-    override fun onCleared() {
-        disposables.clear()
     }
 }

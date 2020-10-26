@@ -1,71 +1,72 @@
 package org.umbrellahq.network.daos
 
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.receiveAsFlow
 import org.umbrellahq.network.models.ErrorNetworkEntity
 import org.umbrellahq.util.enums.ErrorNetworkTypes
-import org.umbrellahq.util.extensions.execute
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 import java.net.SocketTimeoutException
 
 open class BaseNetworkDao {
+    // TODO: replace with retrievedTasksChannel.asFlow() when it's out of preview
+    private val errorNetworkChannel = ConflatedBroadcastChannel<ErrorNetworkEntity>()
+    fun getErrorNetworkChannel() = errorNetworkChannel.openSubscription().receiveAsFlow()
 
-    val errorNetwork = PublishSubject.create<ErrorNetworkEntity>()
-    protected fun <T> executeNetworkCall(
-            observable: Observable<Response<T>>,
-            shouldPersist: Boolean = false,
+    protected suspend fun <T> executeNetworkCall(
+            request: (suspend () -> Response<T>),
             action: String = "",
-            onSuccess: ((value: Response<T>) -> Unit),
-            onFailure: ((throwable: Throwable) -> Unit)? = null,
-            onComplete: (() -> Unit)? = null): Disposable {
+            shouldPersist: Boolean = false,
+            onFailure: ((throwable: Throwable) -> Unit)? = null
+    ): T? {
+        var response: Response<T>? = null
+        try {
+            response = request.invoke()
+            if (!response.isSuccessful) {
+                val exception = HttpException(response)
+                handleFailure(exception, action, shouldPersist)
+                onFailure?.invoke(exception)
 
-        return observable.execute(
-                onSuccess = { response ->
-                    onSuccess(response)
-                },
-                onFailure = { throwable ->
-                    val errorNetworkEntity = ErrorNetworkEntity()
+                response = null
+            }
+        } catch (exception: Exception) {
+            handleFailure(exception, action, shouldPersist)
+            onFailure?.invoke(exception)
+        }
 
-                    throwable.message?.let {
-                        errorNetworkEntity.message = it
-                    }
+        return response?.body()
+    }
 
-                    when (throwable) {
-                        is SocketTimeoutException -> {
-                            errorNetworkEntity.type = ErrorNetworkTypes.TIMEOUT
-                        }
+    private suspend fun handleFailure(throwable: Throwable, action: String, shouldPersist: Boolean) {
+        val errorNetworkEntity = ErrorNetworkEntity()
 
-                        is IOException -> {
-                            errorNetworkEntity.type = ErrorNetworkTypes.IO
-                        }
+        throwable.message?.let {
+            errorNetworkEntity.message = it
+        }
 
-                        is HttpException -> {
-                            errorNetworkEntity.type = ErrorNetworkTypes.HTTP
-                            errorNetworkEntity.code = throwable.code()
-                        }
+        when (throwable) {
+            is SocketTimeoutException -> {
+                errorNetworkEntity.type = ErrorNetworkTypes.TIMEOUT
+            }
 
-                        else -> {
-                            errorNetworkEntity.type = ErrorNetworkTypes.OTHER
-                        }
-                    }
+            is IOException -> {
+                errorNetworkEntity.type = ErrorNetworkTypes.IO
+            }
 
-                    errorNetworkEntity.shouldPersist = shouldPersist
-                    errorNetworkEntity.action = action
+            is HttpException -> {
+                errorNetworkEntity.type = ErrorNetworkTypes.HTTP
+                errorNetworkEntity.code = throwable.code()
+            }
 
-                    errorNetwork.onNext(errorNetworkEntity)
+            else -> {
+                errorNetworkEntity.type = ErrorNetworkTypes.OTHER
+            }
+        }
 
-                    onFailure?.let { onFailure ->
-                        onFailure(throwable)
-                    }
-                },
-                onComplete = {
-                    onComplete?.let { onComplete ->
-                        onComplete()
-                    }
-                }
-        )
+        errorNetworkEntity.shouldPersist = shouldPersist
+        errorNetworkEntity.action = action
+
+        errorNetworkChannel.send(errorNetworkEntity)
     }
 }

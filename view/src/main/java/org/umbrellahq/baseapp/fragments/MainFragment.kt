@@ -50,7 +50,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     private fun setupTasksObservers() {
-        taskVM.getAllTasks().observe(viewLifecycleOwner, Observer<List<TaskViewModelEntity>> {
+        taskVM.allTasks.observe(viewLifecycleOwner, Observer<List<TaskViewModelEntity>> {
             tasksRecyclerViewAdapter.tasks = it.map { taskViewModelEntity ->
                 taskViewViewModelMapper.upstream(taskViewModelEntity)
             }.toTypedArray()
@@ -77,7 +77,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             taskVM.insertTask(
                     taskViewViewModelMapper.downstream(
                             TaskViewEntity(
-                                    name = "New Task ${taskVM.getAllTasks().value?.size}"
+                                    name = "New Task ${taskVM.allTasks.value?.size}"
                             )
                     )
             )

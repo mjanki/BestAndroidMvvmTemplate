@@ -1,19 +1,19 @@
 package org.umbrellahq.repository.repositories
 
 import android.content.Context
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.umbrellahq.database.daos.ErrorNetworkDatabaseDao
 import org.umbrellahq.database.models.ErrorNetworkDatabaseEntity
 import org.umbrellahq.repository.mappers.ErrorNetworkRepoDatabaseMapper
 import org.umbrellahq.repository.models.ErrorNetworkRepoEntity
-import org.umbrellahq.util.extensions.execute
 
 open class ErrorRepository(ctx: Context? = null): Repository(ctx) {
     // DAOs
     private lateinit var errorNetworkDatabaseDao: ErrorNetworkDatabaseDao
 
     // Observables
-    private lateinit var allErrorsNetwork: Flowable<List<ErrorNetworkDatabaseEntity>>
+    private lateinit var allErrorsNetwork: Flow<List<ErrorNetworkDatabaseEntity>>
 
     // Mappers
     private var errorNetworkRepoDatabaseMapper = ErrorNetworkRepoDatabaseMapper()
@@ -29,27 +29,21 @@ open class ErrorRepository(ctx: Context? = null): Repository(ctx) {
         allErrorsNetwork = errorNetworkDatabaseDao.getAll()
     }
 
-    fun getErrorsNetwork(): Flowable<List<ErrorNetworkRepoEntity>> {
-        return allErrorsNetwork.flatMap { errorNetworkDatabaseEntityList ->
-            Flowable.fromArray(
-                    errorNetworkDatabaseEntityList.map { errorNetworkDatabaseEntity ->
-                        errorNetworkRepoDatabaseMapper.upstream(errorNetworkDatabaseEntity)
-                    }
-            )
-        }
+    fun getErrorsNetwork(): Flow<List<ErrorNetworkRepoEntity>> = allErrorsNetwork.map {
+        it.map { error -> errorNetworkRepoDatabaseMapper.upstream(error) }
     }
 
-    fun deleteErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity) {
+    suspend fun deleteErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity) {
         errorNetworkDatabaseDao.delete(
                 errorNetworkRepoDatabaseMapper.downstream(
                         errorNetworkRepoEntity
                 )
-        ).execute()
+        )
     }
 
-    fun insertErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity) {
+    suspend fun insertErrorNetwork(errorNetworkRepoEntity: ErrorNetworkRepoEntity) {
         errorNetworkDatabaseDao.insert(
                 errorNetworkRepoDatabaseMapper.downstream(errorNetworkRepoEntity)
-        ).execute()
+        )
     }
 }
