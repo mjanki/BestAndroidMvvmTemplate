@@ -16,7 +16,7 @@ buildscript {
         coroutinesVersion = "1.3.7"
 
         // Room
-        roomVersion = "2.2.5"
+        roomVersion = "2.2.6"
 
         // Retrofit
         retrofitVersion = "2.9.0"

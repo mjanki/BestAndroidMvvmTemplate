@@ -4,6 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import org.junit.*
 import org.junit.runner.RunWith
 import org.umbrellahq.database.daos.ErrorNetworkDatabaseDao
@@ -44,167 +47,153 @@ class ErrorNetworkDatabaseDaoInstrumentedTest {
     }
 
     @Test
-    fun insert_twoErrorNetwork_shouldHaveTwoErrorNetworks() {
+    fun insert_twoErrorNetwork_shouldHaveTwoErrorNetworks() = runBlocking(Dispatchers.IO) {
         // Insert 2 network errors
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Get all network errors
-        val resultList = errorNetworkDatabaseDao.getAll().test()
-        val insertedErrorNetworkList = resultList.values()[0]
+        val resultList = errorNetworkDatabaseDao.getAll().first()
 
         // Check if database has 2 network errors
-        Assert.assertEquals(2, insertedErrorNetworkList.size)
+        Assert.assertEquals(2, resultList.size)
     }
 
     @Test
-    fun insert_oneErrorNetwork_shouldHaveSameErrorNetwork() {
+    fun insert_oneErrorNetwork_shouldHaveSameErrorNetwork() = runBlocking(Dispatchers.IO) {
         // Insert 1 network error
-        val result = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        val id = result.values()[0]
+        val id = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Get inserted network error by ID
-        val resultList = errorNetworkDatabaseDao.getById(id).test()
-        val insertedErrorNetworkList = resultList.values()[0]
-        val insertedErrorNetwork = insertedErrorNetworkList[0]
+        val result = errorNetworkDatabaseDao.getById(id)
+
+        // Check if it's not null
+        Assert.assertNotNull(result)
 
         // Check if it has the same values
-        Assert.assertEquals(testErrorNetworkDatabaseEntity.type, insertedErrorNetwork.type)
-        Assert.assertEquals(testErrorNetworkDatabaseEntity.code, insertedErrorNetwork.code)
-        Assert.assertEquals(testErrorNetworkDatabaseEntity.action, insertedErrorNetwork.action)
+        Assert.assertEquals(testErrorNetworkDatabaseEntity.type, result?.type)
+        Assert.assertEquals(testErrorNetworkDatabaseEntity.code, result?.code)
+        Assert.assertEquals(testErrorNetworkDatabaseEntity.action, result?.action)
     }
 
     @Test
-    fun insert_oneErrorNetworkThenUpdate_shouldHaveUpdatedErrorNetwork() {
+    fun insert_oneErrorNetworkThenUpdate_shouldHaveUpdatedErrorNetwork() = runBlocking(Dispatchers.IO) {
         // Insert 1 network error
-        val result = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        val id = result.values()[0]
+        val id = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Get inserted network error by ID
-        var resultList = errorNetworkDatabaseDao.getById(id).test()
-        var insertedErrorNetworkList = resultList.values()[0]
-        var insertedErrorNetwork = insertedErrorNetworkList[0]
+        var result = errorNetworkDatabaseDao.getById(id)
+
+        // Check if it's not null
+        Assert.assertNotNull(result)
 
         // Check if it's the same code
-        Assert.assertEquals(testErrorNetworkDatabaseEntity.code, insertedErrorNetwork.code)
+        Assert.assertEquals(testErrorNetworkDatabaseEntity.code, result?.code)
 
         // Set ID to update the same error, and change code
         testErrorNetworkDatabaseEntity.id = id
         testErrorNetworkDatabaseEntity.code = 200
 
         // Update with new values
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Get updated network error by ID again
-        resultList = errorNetworkDatabaseDao.getById(id).test()
-        insertedErrorNetworkList = resultList.values()[0]
-        insertedErrorNetwork = insertedErrorNetworkList[0]
+        result = errorNetworkDatabaseDao.getById(id)
 
         // Check it has the updated code
-        Assert.assertEquals(testErrorNetworkDatabaseEntity.code, insertedErrorNetwork.code)
+        Assert.assertEquals(testErrorNetworkDatabaseEntity.code, result?.code)
     }
 
     @Test
-    fun delete_oneErrorNetwork_shouldHaveSizeMinusOne() {
+    fun delete_oneErrorNetwork_shouldHaveSizeMinusOne() = runBlocking(Dispatchers.IO) {
         // Insert 2 network errors
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Get all network errors
-        var resultList = errorNetworkDatabaseDao.getAll().test()
-        var insertedErrorNetworkList = resultList.values()[0]
+        var resultList = errorNetworkDatabaseDao.getAll().first()
 
         // Check we have 2 network errors
-        Assert.assertEquals(2, insertedErrorNetworkList.size)
+        Assert.assertEquals(2, resultList.size)
 
         // Delete first network error
-        errorNetworkDatabaseDao.delete(insertedErrorNetworkList[0]).test()
+        errorNetworkDatabaseDao.delete(resultList[0])
 
         // Get all network errors again
-        resultList = errorNetworkDatabaseDao.getAll().test()
-        insertedErrorNetworkList = resultList.values()[0]
+        resultList = errorNetworkDatabaseDao.getAll().first()
 
         // Check we have 1 network error left
-        Assert.assertEquals(1, insertedErrorNetworkList.size)
+        Assert.assertEquals(1, resultList.size)
     }
 
     @Test
-    fun delete_oneErrorNetwork_shouldNotHaveThatErrorNetwork() {
+    fun delete_oneErrorNetwork_shouldNotHaveThatErrorNetwork() = runBlocking(Dispatchers.IO) {
         // Insert 1 network error
-        val result = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        val id = result.values()[0]
+        val id = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Get network error by ID
-        var resultList = errorNetworkDatabaseDao.getById(id).test()
-        var insertedErrorNetworkList = resultList.values()[0]
+        var result = errorNetworkDatabaseDao.getById(id)
 
-        // Check it exists
-        Assert.assertEquals(1, insertedErrorNetworkList.size)
+        // Check if it's not null
+        Assert.assertNotNull(result)
 
         // Delete network error by ID
-        errorNetworkDatabaseDao.delete(id).test()
+        errorNetworkDatabaseDao.delete(id)
 
         // Get network error by ID again
-        resultList = errorNetworkDatabaseDao.getById(id).test()
-        insertedErrorNetworkList = resultList.values()[0]
+        result = errorNetworkDatabaseDao.getById(id)
 
-        // Check it doesn't exist
-        Assert.assertEquals(0, insertedErrorNetworkList.size)
+        // Check if it's null
+        Assert.assertNull(result)
     }
 
     @Test
-    fun delete_oneErrorNetwork_shouldHaveOtherErrorNetworks() {
+    fun delete_oneErrorNetwork_shouldHaveOtherErrorNetworks() = runBlocking(Dispatchers.IO) {
         // Insert first network error
-        val result1 = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        val id1 = result1.values()[0]
+        val id1 = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Insert second network error
-        val result2 = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        val id2 = result2.values()[0]
+        val id2 = errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Get all network errors
-        var resultList = errorNetworkDatabaseDao.getAll().test()
-        var insertedErrorNetworkList = resultList.values()[0]
+        var resultList = errorNetworkDatabaseDao.getAll().first()
 
         // Check we have 2 network errors
-        Assert.assertEquals(2, insertedErrorNetworkList.size)
+        Assert.assertEquals(2, resultList.size)
 
         // Delete first network error by ID
-        errorNetworkDatabaseDao.delete(id1).test()
+        errorNetworkDatabaseDao.delete(id1)
 
         // Get all network errors again
-        resultList = errorNetworkDatabaseDao.getAll().test()
-        insertedErrorNetworkList = resultList.values()[0]
+        resultList = errorNetworkDatabaseDao.getAll().first()
 
         // Check 1 network error left
-        Assert.assertEquals(1, insertedErrorNetworkList.size)
+        Assert.assertEquals(1, resultList.size)
 
         // Check remaining network error is the second network error
-        Assert.assertEquals(id2, insertedErrorNetworkList[0].id)
+        Assert.assertEquals(id2, resultList[0].id)
     }
 
     @Test
-    fun deleteAll_shouldHaveNoErrorNetworks() {
+    fun deleteAll_shouldHaveNoErrorNetworks() = runBlocking(Dispatchers.IO) {
         // Insert 3 network errors
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
-        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity).test()
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
+        errorNetworkDatabaseDao.insert(testErrorNetworkDatabaseEntity)
 
         // Get all network errors
-        var resultList = errorNetworkDatabaseDao.getAll().test()
-        var insertedErrorNetworkList = resultList.values()[0]
+        var resultList = errorNetworkDatabaseDao.getAll().first()
 
         // Check we have 3 network errors
-        Assert.assertEquals(3, insertedErrorNetworkList.size)
+        Assert.assertEquals(3, resultList.size)
 
         // Delete all network errors
-        errorNetworkDatabaseDao.deleteAll().test()
+        errorNetworkDatabaseDao.deleteAll()
 
         // Get all network errors again
-        resultList = errorNetworkDatabaseDao.getAll().test()
-        insertedErrorNetworkList = resultList.values()[0]
+        resultList = errorNetworkDatabaseDao.getAll().first()
 
         // Check we have no network errors left
-        Assert.assertEquals(0, insertedErrorNetworkList.size)
+        Assert.assertEquals(0, resultList.size)
     }
 }

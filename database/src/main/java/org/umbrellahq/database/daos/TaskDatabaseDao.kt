@@ -16,7 +16,7 @@ interface TaskDatabaseDao {
     suspend fun getByUUID(uuid: String): TaskDatabaseEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(taskDatabaseEntity: TaskDatabaseEntity)
+    suspend fun insert(taskDatabaseEntity: TaskDatabaseEntity): Long
 
     @Query("DELETE from tasks")
     suspend fun deleteAll()

@@ -7,13 +7,13 @@ import org.umbrellahq.database.models.ErrorNetworkDatabaseEntity
 @Dao
 interface ErrorNetworkDatabaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(errorNetworkDatabaseEntity: ErrorNetworkDatabaseEntity)
+    suspend fun insert(errorNetworkDatabaseEntity: ErrorNetworkDatabaseEntity): Long
 
     @Query("SELECT * from network_errors")
     fun getAll(): Flow<List<ErrorNetworkDatabaseEntity>>
 
     @Query("SELECT * from network_errors where id = :id LIMIT 1")
-    fun getById(id: Long): Flow<ErrorNetworkDatabaseEntity>
+    suspend fun getById(id: Long): ErrorNetworkDatabaseEntity?
 
     @Query("DELETE from network_errors where id = :id")
     suspend fun delete(id: Long)
