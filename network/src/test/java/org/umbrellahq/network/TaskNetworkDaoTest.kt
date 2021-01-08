@@ -1,6 +1,9 @@
 package org.umbrellahq.network
 
-import io.reactivex.Observable
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.MediaType
 import okhttp3.ResponseBody
 import org.junit.Assert
@@ -12,13 +15,14 @@ import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import org.umbrellahq.network.clients.TaskClient
 import org.umbrellahq.network.daos.TaskNetworkDao
+import org.umbrellahq.network.models.ErrorNetworkEntity
 import org.umbrellahq.network.models.TaskNetworkEntity
-import org.umbrellahq.util.extensions.RxKotlinExtensions
 import retrofit2.Response
 
 @RunWith(MockitoJUnitRunner::class)
 class TaskNetworkDaoTest {
     private lateinit var taskNetworkDao: TaskNetworkDao
+    private val coroutineDispatcher = TestCoroutineDispatcher()
 
     @Mock
     private lateinit var taskClient: TaskClient
@@ -41,100 +45,139 @@ class TaskNetworkDaoTest {
 
     @Before
     fun setUp() {
-        // Set to true to use correct subscribeOn scheduler for testing
-        RxKotlinExtensions.isTesting = true
-
         taskNetworkDao = TaskNetworkDao()
     }
 
     @Test
-    fun isRetrievingTasks_shouldReturnTrueThenFalseOnRetrieveTasks() {
+    fun isRetrievingTasks_shouldReturnFalseThenTrueThenFalseOnRetrieveTasks() = coroutineDispatcher.runBlockingTest {
         // Mock taskClient.getTasks() to return mock success
-        Mockito.`when`(taskClient.getTasks()).thenReturn(
-                Observable.just(Response.success(listOf(testTaskNetworkEntity)))
+        Mockito.`when`(
+                taskClient.getTasks()
+        ).thenReturn(
+                Response.success(listOf(testTaskNetworkEntity))
         )
 
         // Set mock request interface
         taskNetworkDao.setRequestInterface(taskClient)
 
-        // Observe isRetrievingTasks
-        val testObserver = taskNetworkDao.isRetrievingTasks.test()
+        val stateList = ArrayList<Boolean>()
+        val job = launch {
+            taskNetworkDao.getIsRetrievingTasksFlow().collect {
+                stateList.add(it)
+            }
+        }
 
         // Retrieve tasks
         taskNetworkDao.retrieveTasks()
+
+        // Give time to collect all data
+        delay(100)
 
         // Check we have 2 values for isRetrievingTasks
-        testObserver.assertValueCount(2)
+        Assert.assertEquals(3, stateList.size)
 
-        // Check first value is true
-        testObserver.assertValueAt(0, true)
+        // Check first value is false (initial value)
+        Assert.assertEquals(false, stateList[0])
 
-        // Check second value is false
-        testObserver.assertValueAt(1, false)
+        // Check second value is true
+        Assert.assertEquals(true, stateList[1])
+
+        // Check third value is false
+        Assert.assertEquals(false, stateList[2])
+
+        // Cancel job so that the test can conclude
+        job.cancel()
     }
 
     @Test
-    fun retrieveTasks_shouldEmitTasksOnSuccess() {
+    fun retrieveTasks_shouldEmitTasksOnSuccess() = coroutineDispatcher.runBlockingTest {
         // Mock taskClient.getTasks() to return mock success
-        Mockito.`when`(taskClient.getTasks()).thenReturn(
-                Observable.just(Response.success(listOf(testTaskNetworkEntity)))
-        )
-
-        // Set mock request interface
-        taskNetworkDao.setRequestInterface(taskClient)
-
-        // Observe retrievedTasks
-        val testObserver = taskNetworkDao.retrievedTasks.test()
-
-        // Retrieve tasks
-        taskNetworkDao.retrieveTasks()
-
-        // Check we have 1 task
-        testObserver.assertValueCount(1)
-
-        // Get task body
-        val result = testObserver.values()[0].body()
-
-        // Check task body is not null
-        Assert.assertNotNull(result)
-
-        // Check that task body has same mock values
-        result?.let {
-            Assert.assertEquals(1, it.size)
-            Assert.assertEquals(testTaskNetworkEntity.uuid, result[0].uuid)
-            Assert.assertEquals(testTaskNetworkEntity.name, result[0].name)
-            Assert.assertEquals(testTaskNetworkEntity.date, result[0].date)
-            Assert.assertEquals(testTaskNetworkEntity.status, result[0].status)
-        }
-    }
-
-    @Test
-    fun retrieveTasks_shouldEmitErrorAndNoTasksOnError() {
-        // Mock taskClient.getTasks() to return mock error
-        Mockito.`when`(taskClient.getTasks()).thenReturn(
-                Observable.just(testResponseError)
+        Mockito.`when`(
+                taskClient.getTasks()
+        ).thenReturn(
+                Response.success(listOf(testTaskNetworkEntity))
         )
 
         // Set mock request interface
         taskNetworkDao.setRequestInterface(taskClient)
 
         // Observe retrievedTasks and errorNetwork
-        val testRetrievedTasksObserver = taskNetworkDao.retrievedTasks.test()
-        val testErrorNetworkObserver = taskNetworkDao.errorNetwork.test()
+        var tasks = ArrayList<TaskNetworkEntity>()
+
+        val tasksJob = launch {
+            taskNetworkDao.getRetrievedTasksFlow().collect {
+                tasks = ArrayList(it)
+            }
+        }
 
         // Retrieve tasks
         taskNetworkDao.retrieveTasks()
 
+        // Give time to collect all data
+        delay(100)
+
+        // Check we have 1 task
+        Assert.assertEquals(1, tasks.size)
+
+        // Get task body
+        val result = tasks.first()
+
+        // Check that task body has same mock values
+        Assert.assertEquals(testTaskNetworkEntity.uuid, result.uuid)
+        Assert.assertEquals(testTaskNetworkEntity.name, result.name)
+        Assert.assertEquals(testTaskNetworkEntity.date, result.date)
+        Assert.assertEquals(testTaskNetworkEntity.status, result.status)
+
+        tasksJob.cancel()
+    }
+
+    @Test
+    fun retrieveTasks_shouldEmitErrorAndNoTasksOnError() = coroutineDispatcher.runBlockingTest {
+        // Mock taskClient.getTasks() to return mock error
+        Mockito.`when`(
+                taskClient.getTasks()
+        ).thenReturn(
+                testResponseError
+        )
+
+        // Set mock request interface
+        taskNetworkDao.setRequestInterface(taskClient)
+
+        // Observe retrievedTasks and errorNetwork
+        var tasks = ArrayList<TaskNetworkEntity>()
+        val errors = ArrayList<ErrorNetworkEntity>()
+
+        val tasksJob = launch {
+            taskNetworkDao.getRetrievedTasksFlow().collect {
+                tasks = ArrayList(it)
+            }
+        }
+
+        val errorsJob = launch {
+            taskNetworkDao.getErrorNetworkChannel().collect {
+                errors.add(it)
+            }
+        }
+
+        // Retrieve tasks
+        taskNetworkDao.retrieveTasks()
+
+        // Give time to collect all data
+        delay(100)
+
         // Check we have 0 retrieved tasks
-        testRetrievedTasksObserver.assertValueCount(0)
+        Assert.assertEquals(0, tasks.size)
 
         // Check we have 1 error
-        testErrorNetworkObserver.assertValueCount(1)
+        Assert.assertEquals(1, errors.size)
 
         // Get error body
-        val errorNetworkValue = testErrorNetworkObserver.values()[0]
+        val error = errors.first()
 
         // Check that body has same mock values
-        Assert.assertEquals(testResponseError.code(), errorNetworkValue.code)
+        Assert.assertEquals(testResponseError.code(), error.code)
+
+        tasksJob.cancel()
+        errorsJob.cancel()
     }
 }
