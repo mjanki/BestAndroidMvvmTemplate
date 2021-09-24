@@ -9,8 +9,6 @@ android {
     defaultConfig {
         minSdkVersion globalConfiguration.minSdkVersion
         targetSdkVersion globalConfiguration.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -35,9 +33,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 
     // ViewModel & LiveData
-    implementation "android.arch.lifecycle:extensions:$lifecycleExtensionsVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleExtensionsVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleExtensionsVersion"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensionsVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleKtxExtensionsVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleKtxExtensionsVersion"
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
