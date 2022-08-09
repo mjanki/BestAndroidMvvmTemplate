@@ -1,9 +1,9 @@
 package org.umbrellahq.baseapp.activities
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.umbrellahq.baseapp.mappers.ErrorNetworkViewViewModelMapper
 import org.umbrellahq.baseapp.models.ErrorNetworkViewEntity
@@ -11,7 +11,8 @@ import org.umbrellahq.viewmodel.models.ErrorNetworkViewModelEntity
 import org.umbrellahq.viewmodel.viewmodels.ErrorNetworkViewModel
 
 open class BaseActivity : AppCompatActivity() {
-    private lateinit var errorNetworkVM: ErrorNetworkViewModel
+    private val errorNetworkVM by viewModels<ErrorNetworkViewModel>()
+
     private var currentErrorNetwork: ErrorNetworkViewModelEntity? = null
     private val errorNetworkViewViewModelMapper = ErrorNetworkViewViewModelMapper()
 
@@ -22,7 +23,6 @@ open class BaseActivity : AppCompatActivity() {
         AndroidThreeTen.init(application)
 
         // Initialize ErrorsNetwork observable
-        errorNetworkVM = ViewModelProviders.of(this).get(ErrorNetworkViewModel::class.java)
         errorNetworkVM.init()
 
         errorNetworkVM.getErrorsNetwork().observe(

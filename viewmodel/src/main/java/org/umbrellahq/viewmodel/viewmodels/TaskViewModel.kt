@@ -6,7 +6,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.umbrellahq.repository.repositories.TaskRepository
 import org.umbrellahq.viewmodel.mappers.TaskViewModelRepoMapper

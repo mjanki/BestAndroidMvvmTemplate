@@ -4,9 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import io.reactivex.Flowable
-import io.reactivex.Single
-import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.channels.BroadcastChannel
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -29,13 +27,15 @@ class TaskRepositoryTest {
 
     // Network Data Source
     private lateinit var taskNetworkDao: TaskNetworkDao
-    private val errorNetwork = PublishSubject.create<ErrorNetworkEntity>()
-    private val retrievedTasks = PublishSubject.create<Response<List<TaskNetworkEntity>>>()
-    private val isRetrievingTasks = PublishSubject.create<Boolean>()
+    //private val errorNetwork = PublishSubject.create<ErrorNetworkEntity>()
+    //private val retrievedTasks = PublishSubject.create<Response<List<TaskNetworkEntity>>>()
+    //private val isRetrievingTasks = PublishSubject.create<Boolean>()
 
     // Database Data Source
     private lateinit var taskDatabaseDao: TaskDatabaseDao
-    private val databaseTasks = PublishSubject.create<List<TaskDatabaseEntity>>()
+    private val databaseTasks = BroadcastChannel<List<TaskDatabaseEntity>>()
+
+    //private val databaseTasks = PublishSubject.create<List<TaskDatabaseEntity>>()*/
 
     // Mock Entities
     private var testTaskDatabaseEntity = TaskDatabaseEntity(
@@ -63,16 +63,13 @@ class TaskRepositoryTest {
 
     @Before
     fun setup() {
-        // Set to true to use correct subscribeOn scheduler for testing
-        RxKotlinExtensions.isTesting = true
-
         taskRepository = TaskRepository()
 
-        taskNetworkDao = mock {
-            on { errorNetwork } doReturn errorNetwork
-            on { retrievedTasks } doReturn retrievedTasks
-            on { isRetrievingTasks } doReturn isRetrievingTasks
-            on { retrieveTasks() } doAnswer {
+        /*taskNetworkDao = mock {
+            on { getErrorNetworkChannel() } doReturn errorNetwork
+            on { getRetrievedTasksFlow() } doReturn retrievedTasks
+            on { getIsRetrievingTasksFlow() } doReturn isRetrievingTasks
+            onBlocking { retrieveTasks() } doAnswer {
                 isRetrievingTasks.onNext(true)
 
                 val taskNetworkEntityList = listOf(testTaskNetworkEntity)
@@ -81,10 +78,10 @@ class TaskRepositoryTest {
 
                 isRetrievingTasks.onNext(false)
             }
-        }
+        }*/
 
         taskDatabaseDao = mock {
-            on { insert(any()) } doAnswer {
+            onBlocking { insert(any()) } doAnswer {
                 Assert.assertEquals(1, it.arguments.size)
 
                 val argument = it.arguments[0] as TaskDatabaseEntity
@@ -124,7 +121,7 @@ class TaskRepositoryTest {
         Assert.assertEquals(testTaskDatabaseEntity.id, values[0].id)
     }
 
-    @Test
+    /*@Test
     fun retrieveTasks_shouldEmitMockNetworkTasks() {
         // Observe retrievedTasks
         val testObserver = retrievedTasks.test()
@@ -175,5 +172,5 @@ class TaskRepositoryTest {
 
         // Check we have 1 task
         testObserver.assertValueCount(1)
-    }
+    }*/
 }

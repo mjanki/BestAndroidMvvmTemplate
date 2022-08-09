@@ -25,6 +25,13 @@ android {
         targetCompatibility = "8"
         sourceCompatibility = "8"
     }
+
+    tasks.withType(Test) {
+        /**
+         * fix for retrofit https://github.com/square/retrofit/issues/3341
+         */
+        jvmArgs = ["--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
+    }
 }
 
 dependencies {

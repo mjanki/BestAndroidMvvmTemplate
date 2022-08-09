@@ -1,8 +1,8 @@
 package org.umbrellahq.repository.repositories
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.umbrellahq.database.daos.TaskDatabaseDao
@@ -41,14 +41,14 @@ class TaskRepository(ctx: Context? = null) : ErrorRepository(ctx) {
 
         isRetrievingTasksFlow = taskNetworkDao.getIsRetrievingTasksFlow()
 
-        GlobalScope.launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
             taskNetworkDao.getErrorNetworkChannel().collect { errorNetworkEntity ->
                 val errorRepoEntity = errorNetworkRepoNetworkMapper.upstream(errorNetworkEntity)
                 insertErrorNetwork(errorRepoEntity)
             }
         }
 
-        GlobalScope.launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
             taskNetworkDao.getRetrievedTasksFlow().collectLatest { taskNetworkEntities ->
                 for (taskNetworkEntity in taskNetworkEntities) {
                     val taskRepoEntity = taskRepoNetworkMapper.upstream(taskNetworkEntity)

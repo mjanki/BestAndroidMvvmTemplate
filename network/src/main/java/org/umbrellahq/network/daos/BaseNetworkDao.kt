@@ -1,7 +1,7 @@
 package org.umbrellahq.network.daos
 
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.*
 import org.umbrellahq.network.models.ErrorNetworkEntity
 import org.umbrellahq.util.enums.ErrorNetworkTypes
 import retrofit2.HttpException
@@ -10,9 +10,12 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 
 open class BaseNetworkDao {
-    // TODO: replace with retrievedTasksChannel.asFlow() when it's out of preview
-    private val errorNetworkChannel = ConflatedBroadcastChannel<ErrorNetworkEntity>()
-    fun getErrorNetworkChannel() = errorNetworkChannel.openSubscription().receiveAsFlow()
+    private val errorNetworkStateFlow = MutableSharedFlow<ErrorNetworkEntity>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    fun getErrorNetworkChannel() = errorNetworkStateFlow.distinctUntilChanged()
 
     protected suspend fun <T> executeNetworkCall(
             request: (suspend () -> Response<T>),
@@ -67,6 +70,6 @@ open class BaseNetworkDao {
         errorNetworkEntity.shouldPersist = shouldPersist
         errorNetworkEntity.action = action
 
-        errorNetworkChannel.send(errorNetworkEntity)
+        errorNetworkStateFlow.emit(errorNetworkEntity)
     }
 }

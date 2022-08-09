@@ -1,6 +1,6 @@
 package org.umbrellahq.network.daos
 
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import org.umbrellahq.network.clients.TaskClient
 import org.umbrellahq.network.models.TaskNetworkEntity
@@ -20,9 +20,12 @@ class TaskNetworkDao : BaseNetworkDao() {
     private val isRetrievingTasksFlow = MutableStateFlow(false)
     fun getIsRetrievingTasksFlow(): StateFlow<Boolean> = isRetrievingTasksFlow
 
-    // TODO: replace with retrievedTasksChannel.asFlow() when it's out of preview
-    private val retrievedTasksChannel = ConflatedBroadcastChannel<List<TaskNetworkEntity>>()
-    fun getRetrievedTasksFlow(): Flow<List<TaskNetworkEntity>> = retrievedTasksChannel.openSubscription().receiveAsFlow()
+    private val retrievedTasksSharedFlow = MutableSharedFlow<List<TaskNetworkEntity>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    fun getRetrievedTasksFlow() = retrievedTasksSharedFlow.distinctUntilChanged()
 
     suspend fun retrieveTasks() {
         isRetrievingTasksFlow.value = true
@@ -33,7 +36,7 @@ class TaskNetworkDao : BaseNetworkDao() {
         )
 
         tasks?.let {
-            retrievedTasksChannel.send(it)
+            retrievedTasksSharedFlow.emit(it)
         }
 
         isRetrievingTasksFlow.value = false
